@@ -2,6 +2,7 @@ const sampleStory = {
   variables: {
     health: 10,
     gold: 3,
+    hasKey: false,
   },
 
   nodes: [
@@ -19,11 +20,24 @@ const sampleStory = {
             id: "c1",
             label: "Check phone",
             targetNodeId: "2",
+            conditions: [],
+            effects: [],
           },
           {
             id: "c2",
             label: "Search desk",
             targetNodeId: "3",
+            conditions: [],
+            effects: [{ variable: "hasKey", action: "set", value: true }],
+          },
+          {
+            id: "c3",
+            label: "Open locked door",
+            targetNodeId: "4",
+            conditions: [
+              { variable: "hasKey", operator: "equals", value: true },
+            ],
+            effects: [],
           },
         ],
       },
@@ -34,14 +48,15 @@ const sampleStory = {
       position: { x: 430, y: 60 },
       data: {
         title: "Check Phone",
-        content:
-          "The screen flickers to life.\nA single unread message waits for you.",
+        content: "A message reads: 'The key is closer than you think.'",
         blockType: "chat",
         choices: [
           {
-            id: "c3",
-            label: "Put the phone away",
+            id: "c4",
+            label: "Go back",
             targetNodeId: "1",
+            conditions: [],
+            effects: [],
           },
         ],
       },
@@ -52,14 +67,17 @@ const sampleStory = {
       position: { x: 430, y: 260 },
       data: {
         title: "Search Desk",
-        content:
-          "Inside the desk drawer you find a bent coin, a paperclip, and a tiny brass key.",
+        content: "You find a tiny brass key inside the desk drawer.",
         blockType: "timed",
         choices: [
           {
-            id: "c4",
+            id: "c5",
             label: "Use key on the door",
             targetNodeId: "4",
+            conditions: [
+              { variable: "hasKey", operator: "equals", value: true },
+            ],
+            effects: [],
           },
         ],
       },
@@ -70,8 +88,7 @@ const sampleStory = {
       position: { x: 780, y: 160 },
       data: {
         title: "Escape",
-        content:
-          "The key turns. The door clicks open.\nCold hallway air rushes in.",
+        content: "The key turns. The door clicks open.",
         blockType: "ending",
         choices: [],
       },
