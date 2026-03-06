@@ -7,7 +7,11 @@ import usePlayState from "./hooks/usePlayState";
 export default function App() {
   const story = useStoryState();
 
-  const play = usePlayState(story.nodes, story.selectedNodeId);
+  const play = usePlayState(
+    story.nodes,
+    story.selectedNodeId,
+    story.variables
+  );
 
   return (
     <div className="app-shell">
@@ -22,7 +26,7 @@ export default function App() {
 
       <main className="app-workspace">
         <section className="panel canvas-panel">
-          <StoryCanvas {...story} />
+          <StoryCanvas {...story} {...play} />
         </section>
 
         <aside className="panel sidebar-panel">
