@@ -2,6 +2,7 @@ import ChoicesEditor from "./ChoicesEditor";
 
 export default function SidebarEditor({
   nodes,
+  variables,
   selectedNode,
   updateSelectedNodeField,
   deleteSelectedNode,
@@ -17,8 +18,8 @@ export default function SidebarEditor({
 
         <div className="helper-box">
           Tip: click <span className="kbd">+ Add Block</span> to create a new
-          story node, or drag from one node handle to another to create a
-          choice link.
+          story node, drag from one node handle to another to create a choice
+          link, or use the search bar to jump to a block.
         </div>
       </div>
     );
@@ -69,6 +70,7 @@ export default function SidebarEditor({
       <ChoicesEditor
         selectedNode={selectedNode}
         nodes={nodes}
+        variables={variables}
         addChoiceToSelectedNode={addChoiceToSelectedNode}
         updateChoiceOnSelectedNode={updateChoiceOnSelectedNode}
         removeChoiceFromSelectedNode={removeChoiceFromSelectedNode}
