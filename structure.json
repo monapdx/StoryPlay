@@ -1,0 +1,370 @@
+{
+  "root_id": "root",
+  "nodes": {
+    "16176526": {
+      "id": "16176526",
+      "kind": "file",
+      "name": "effects.js",
+      "parent": "cabee1ee"
+    },
+    "root": {
+      "id": "root",
+      "kind": "folder",
+      "name": "story-builder",
+      "parent": null,
+      "children": [
+        "3a6a2035",
+        "8bf94e2c",
+        "88fe55ac",
+        "14463c2d",
+        "3b776ae0"
+      ],
+      "isOpen": true
+    },
+    "3a6a2035": {
+      "id": "3a6a2035",
+      "kind": "folder",
+      "name": "src",
+      "parent": "root",
+      "children": [
+        "ba204480",
+        "981039cb",
+        "cabee1ee",
+        "4cdb37c4",
+        "60bcec73",
+        "72f44763",
+        "61f11964"
+      ],
+      "isOpen": true
+    },
+    "ba204480": {
+      "id": "ba204480",
+      "kind": "folder",
+      "name": "components",
+      "parent": "3a6a2035",
+      "children": [
+        "1c5d2bbf",
+        "c3864cbc",
+        "1c75e325",
+        "c5fb9922"
+      ],
+      "isOpen": true
+    },
+    "1c5d2bbf": {
+      "id": "1c5d2bbf",
+      "kind": "folder",
+      "name": "preview",
+      "parent": "ba204480",
+      "children": [
+        "4e5eea51",
+        "2158039b",
+        "f841042d",
+        "067c6960"
+      ],
+      "isOpen": true
+    },
+    "c3864cbc": {
+      "id": "c3864cbc",
+      "kind": "folder",
+      "name": "editor",
+      "parent": "ba204480",
+      "children": [
+        "7af37358",
+        "0248652b",
+        "29c018c0",
+        "561d514a",
+        "87c1ea38",
+        "0b36f82a",
+        "ddec2b8b",
+        "d7b69fee"
+      ],
+      "isOpen": true
+    },
+    "1c75e325": {
+      "id": "1c75e325",
+      "kind": "folder",
+      "name": "canvas",
+      "parent": "ba204480",
+      "children": [
+        "b6508586",
+        "dfe82402",
+        "6be2637b",
+        "adb277bc"
+      ],
+      "isOpen": true
+    },
+    "c5fb9922": {
+      "id": "c5fb9922",
+      "kind": "folder",
+      "name": "widgets",
+      "parent": "ba204480",
+      "children": [
+        "a375e470",
+        "b6b688a7",
+        "084e2525",
+        "7f695f63"
+      ],
+      "isOpen": true
+    },
+    "981039cb": {
+      "id": "981039cb",
+      "kind": "folder",
+      "name": "hooks",
+      "parent": "3a6a2035",
+      "children": [
+        "c93dda2d",
+        "becb9ecb",
+        "eed6d804"
+      ],
+      "isOpen": true
+    },
+    "cabee1ee": {
+      "id": "cabee1ee",
+      "kind": "folder",
+      "name": "utils",
+      "parent": "3a6a2035",
+      "children": [
+        "4cd81ebc",
+        "1c4e308a",
+        "5bf506d7",
+        "031c6469",
+        "16176526",
+        "6da950c9",
+        "604227a5"
+      ],
+      "isOpen": true
+    },
+    "4cdb37c4": {
+      "id": "4cdb37c4",
+      "kind": "folder",
+      "name": "data",
+      "parent": "3a6a2035",
+      "children": [
+        "58cb2631"
+      ],
+      "isOpen": true
+    },
+    "8bf94e2c": {
+      "id": "8bf94e2c",
+      "kind": "file",
+      "name": "package.json",
+      "parent": "root"
+    },
+    "88fe55ac": {
+      "id": "88fe55ac",
+      "kind": "file",
+      "name": "package-lock.json",
+      "parent": "root"
+    },
+    "14463c2d": {
+      "id": "14463c2d",
+      "kind": "file",
+      "name": "vite.config.js",
+      "parent": "root"
+    },
+    "3b776ae0": {
+      "id": "3b776ae0",
+      "kind": "file",
+      "name": "index.html",
+      "parent": "root"
+    },
+    "60bcec73": {
+      "id": "60bcec73",
+      "kind": "file",
+      "name": "main.jsx",
+      "parent": "3a6a2035"
+    },
+    "72f44763": {
+      "id": "72f44763",
+      "kind": "file",
+      "name": "App.jsx",
+      "parent": "3a6a2035"
+    },
+    "61f11964": {
+      "id": "61f11964",
+      "kind": "file",
+      "name": "style.css",
+      "parent": "3a6a2035"
+    },
+    "4cd81ebc": {
+      "id": "4cd81ebc",
+      "kind": "file",
+      "name": "storyLogic.js",
+      "parent": "cabee1ee"
+    },
+    "1c4e308a": {
+      "id": "1c4e308a",
+      "kind": "file",
+      "name": "nodeHelpers.js",
+      "parent": "cabee1ee"
+    },
+    "5bf506d7": {
+      "id": "5bf506d7",
+      "kind": "file",
+      "name": "importProject.js",
+      "parent": "cabee1ee"
+    },
+    "031c6469": {
+      "id": "031c6469",
+      "kind": "file",
+      "name": "exportProject.js",
+      "parent": "cabee1ee"
+    },
+    "6da950c9": {
+      "id": "6da950c9",
+      "kind": "file",
+      "name": "edgeHelpers.js",
+      "parent": "cabee1ee"
+    },
+    "604227a5": {
+      "id": "604227a5",
+      "kind": "file",
+      "name": "conditions.js",
+      "parent": "cabee1ee"
+    },
+    "c93dda2d": {
+      "id": "c93dda2d",
+      "kind": "file",
+      "name": "useStoryState.js",
+      "parent": "981039cb"
+    },
+    "becb9ecb": {
+      "id": "becb9ecb",
+      "kind": "file",
+      "name": "usePreviewState.js",
+      "parent": "981039cb"
+    },
+    "eed6d804": {
+      "id": "eed6d804",
+      "kind": "file",
+      "name": "usePlayState.js",
+      "parent": "981039cb"
+    },
+    "58cb2631": {
+      "id": "58cb2631",
+      "kind": "file",
+      "name": "sampleStory.js",
+      "parent": "4cdb37c4"
+    },
+    "a375e470": {
+      "id": "a375e470",
+      "kind": "file",
+      "name": "HealthWidget.jsx",
+      "parent": "c5fb9922"
+    },
+    "b6b688a7": {
+      "id": "b6b688a7",
+      "kind": "file",
+      "name": "GoldWidget.jsx",
+      "parent": "c5fb9922"
+    },
+    "084e2525": {
+      "id": "084e2525",
+      "kind": "file",
+      "name": "CountdownWidget.jsx",
+      "parent": "c5fb9922"
+    },
+    "7f695f63": {
+      "id": "7f695f63",
+      "kind": "file",
+      "name": "ChatWidget.jsx",
+      "parent": "c5fb9922"
+    },
+    "4e5eea51": {
+      "id": "4e5eea51",
+      "kind": "file",
+      "name": "StoryPreview.jsx",
+      "parent": "1c5d2bbf"
+    },
+    "2158039b": {
+      "id": "2158039b",
+      "kind": "file",
+      "name": "PlayChoiceButton.jsx",
+      "parent": "1c5d2bbf"
+    },
+    "f841042d": {
+      "id": "f841042d",
+      "kind": "file",
+      "name": "ChoicePreviewList.jsx",
+      "parent": "1c5d2bbf"
+    },
+    "067c6960": {
+      "id": "067c6960",
+      "kind": "file",
+      "name": "BlockRenderer.jsx",
+      "parent": "1c5d2bbf"
+    },
+    "7af37358": {
+      "id": "7af37358",
+      "kind": "file",
+      "name": "WidgetEditor.jsx",
+      "parent": "c3864cbc"
+    },
+    "0248652b": {
+      "id": "0248652b",
+      "kind": "file",
+      "name": "VariableEditor.jsx",
+      "parent": "c3864cbc"
+    },
+    "29c018c0": {
+      "id": "29c018c0",
+      "kind": "file",
+      "name": "SidebarEditor.jsx",
+      "parent": "c3864cbc"
+    },
+    "561d514a": {
+      "id": "561d514a",
+      "kind": "file",
+      "name": "ChoicesEditor.jsx",
+      "parent": "c3864cbc"
+    },
+    "87c1ea38": {
+      "id": "87c1ea38",
+      "kind": "file",
+      "name": "ChoiceRow.jsx",
+      "parent": "c3864cbc"
+    },
+    "0b36f82a": {
+      "id": "0b36f82a",
+      "kind": "file",
+      "name": "ChoiceEffectsEditor.jsx",
+      "parent": "c3864cbc"
+    },
+    "ddec2b8b": {
+      "id": "ddec2b8b",
+      "kind": "file",
+      "name": "ChoiceEditor.jsx",
+      "parent": "c3864cbc"
+    },
+    "d7b69fee": {
+      "id": "d7b69fee",
+      "kind": "file",
+      "name": "ChoiceConditionsEditor.jsx",
+      "parent": "c3864cbc"
+    },
+    "b6508586": {
+      "id": "b6508586",
+      "kind": "file",
+      "name": "StoryNode.jsx",
+      "parent": "1c75e325"
+    },
+    "dfe82402": {
+      "id": "dfe82402",
+      "kind": "file",
+      "name": "StoryEdge.jsx",
+      "parent": "1c75e325"
+    },
+    "6be2637b": {
+      "id": "6be2637b",
+      "kind": "file",
+      "name": "StoryCanvas.jsx",
+      "parent": "1c75e325"
+    },
+    "adb277bc": {
+      "id": "adb277bc",
+      "kind": "file",
+      "name": "NodeSearchBar.jsx",
+      "parent": "1c75e325"
+    }
+  }
+}

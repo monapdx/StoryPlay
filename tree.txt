@@ -1,0 +1,48 @@
+story-builder
+├── src
+│   ├── components
+│   │   ├── preview
+│   │   │   ├── StoryPreview.jsx
+│   │   │   ├── PlayChoiceButton.jsx
+│   │   │   ├── ChoicePreviewList.jsx
+│   │   │   └── BlockRenderer.jsx
+│   │   ├── editor
+│   │   │   ├── WidgetEditor.jsx
+│   │   │   ├── VariableEditor.jsx
+│   │   │   ├── SidebarEditor.jsx
+│   │   │   ├── ChoicesEditor.jsx
+│   │   │   ├── ChoiceRow.jsx
+│   │   │   ├── ChoiceEffectsEditor.jsx
+│   │   │   ├── ChoiceEditor.jsx
+│   │   │   └── ChoiceConditionsEditor.jsx
+│   │   ├── canvas
+│   │   │   ├── StoryNode.jsx
+│   │   │   ├── StoryEdge.jsx
+│   │   │   ├── StoryCanvas.jsx
+│   │   │   └── NodeSearchBar.jsx
+│   │   └── widgets
+│   │       ├── HealthWidget.jsx
+│   │       ├── GoldWidget.jsx
+│   │       ├── CountdownWidget.jsx
+│   │       └── ChatWidget.jsx
+│   ├── hooks
+│   │   ├── useStoryState.js
+│   │   ├── usePreviewState.js
+│   │   └── usePlayState.js
+│   ├── utils
+│   │   ├── storyLogic.js
+│   │   ├── nodeHelpers.js
+│   │   ├── importProject.js
+│   │   ├── exportProject.js
+│   │   ├── effects.js
+│   │   ├── edgeHelpers.js
+│   │   └── conditions.js
+│   ├── data
+│   │   └── sampleStory.js
+│   ├── main.jsx
+│   ├── App.jsx
+│   └── style.css
+├── package.json
+├── package-lock.json
+├── vite.config.js
+└── index.html
