@@ -1,14 +1,18 @@
 import { useMemo } from "react";
 import PlayChoiceButton from "./PlayChoiceButton";
+import { evaluateConditions } from "../../utils/storyLogic";
 
 export default function StoryPreview({
   nodes,
   selectedNode,
   selectedNodeId,
   currentPlayNode,
+  history,
+  playVariables,
   startFromNode,
   resetToSelected,
   goToNode,
+  goBack,
 }) {
   const nodesById = useMemo(() => {
     const map = {};
@@ -21,10 +25,15 @@ export default function StoryPreview({
   const playNodeData = currentPlayNode?.data || null;
   const playChoices = playNodeData?.choices || [];
 
+  const visibleChoices = playChoices.filter((choice) =>
+    evaluateConditions(choice.conditions || [], playVariables || {})
+  );
+
   return (
     <div className="preview-story">
       <div className="preview-header-row">
         <h2 className="section-title">Play Preview</h2>
+
         <div className="preview-toolbar">
           <button
             className="toolbar-button"
@@ -36,11 +45,34 @@ export default function StoryPreview({
 
           <button
             className="toolbar-button"
+            onClick={goBack}
+            disabled={!history?.length}
+          >
+            Back
+          </button>
+
+          <button
+            className="toolbar-button"
             onClick={resetToSelected}
             disabled={!selectedNodeId}
           >
             Reset
           </button>
+        </div>
+      </div>
+
+      <div className="helper-box">
+        <strong>Variables</strong>
+        <div style={{ marginTop: 8 }}>
+          {Object.keys(playVariables || {}).length === 0 ? (
+            <div className="muted">No variables defined.</div>
+          ) : (
+            Object.entries(playVariables).map(([key, value]) => (
+              <div key={key}>
+                {key}: {String(value)}
+              </div>
+            ))
+          )}
         </div>
       </div>
 
@@ -61,15 +93,17 @@ export default function StoryPreview({
           </div>
 
           <div className="preview-choice-list">
-            {playChoices.length === 0 ? (
-              <div className="preview-choice">No outgoing choices yet.</div>
+            {visibleChoices.length === 0 ? (
+              <div className="preview-choice">No available choices.</div>
             ) : (
-              playChoices.map((choice) => (
+              visibleChoices.map((choice) => (
                 <PlayChoiceButton
                   key={choice.id}
                   choice={choice}
                   targetNode={nodesById[choice.targetNodeId]}
-                  onChoose={goToNode}
+                  onChoose={() =>
+                    goToNode(choice.targetNodeId, choice.effects || [])
+                  }
                 />
               ))
             )}
@@ -83,6 +117,9 @@ export default function StoryPreview({
         <br />
         <strong>Playing:</strong>{" "}
         {currentPlayNode?.data?.title || "Nothing"}
+        <br />
+        <strong>History:</strong> {history?.length || 0} step
+        {(history?.length || 0) === 1 ? "" : "s"}
       </div>
     </div>
   );
