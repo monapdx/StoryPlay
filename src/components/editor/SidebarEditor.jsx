@@ -1,4 +1,5 @@
 import ChoicesEditor from "./ChoicesEditor";
+import StoryDiagnostics from "./StoryDiagnostics";
 
 export default function SidebarEditor({
   nodes,
@@ -21,6 +22,8 @@ export default function SidebarEditor({
           story node, drag from one node handle to another to create a choice
           link, or use the search bar to jump to a block.
         </div>
+
+        <StoryDiagnostics nodes={nodes} variables={variables} />
       </div>
     );
   }
@@ -85,6 +88,8 @@ export default function SidebarEditor({
           Delete Block
         </button>
       </div>
+
+      <StoryDiagnostics nodes={nodes} variables={variables} />
     </div>
   );
 }
