@@ -1,9 +1,11 @@
 import ChoicesEditor from "./ChoicesEditor";
 import StoryDiagnostics from "./StoryDiagnostics";
+import VariableEditor from "./VariableEditor";
 
 export default function SidebarEditor({
   nodes,
   variables,
+  setVariables,
   selectedNode,
   updateSelectedNodeField,
   deleteSelectedNode,
@@ -13,15 +15,19 @@ export default function SidebarEditor({
 }) {
   if (!selectedNode) {
     return (
-      <div>
-        <h2 className="section-title">Block Editor</h2>
-        <p className="muted">Select a story block on the canvas.</p>
+      <div className="sidebar">
+        <h2>Block Editor</h2>
 
         <div className="helper-box">
-          Tip: click <span className="kbd">+ Add Block</span> to create a new
-          story node, drag from one node handle to another to create a choice
-          link, or use the search bar to jump to a block.
+          Select a story block on the canvas.
+          <br />
+          <br />
+          Tip: click + Add Block to create a new story node, drag from one node
+          handle to another to create a choice link, or use the search bar to
+          jump to a block.
         </div>
+
+        <VariableEditor variables={variables} setVariables={setVariables} />
 
         <StoryDiagnostics nodes={nodes} variables={variables} />
       </div>
@@ -32,43 +38,36 @@ export default function SidebarEditor({
     selectedNode.data || {};
 
   return (
-    <div>
-      <h2 className="section-title">Block Editor</h2>
+    <div className="sidebar">
+      <h2>Block Editor</h2>
 
-      <div className="form-group">
-        <label className="form-label">Title</label>
-        <input
-          className="form-input"
-          type="text"
-          value={title}
-          onChange={(e) => updateSelectedNodeField("title", e.target.value)}
-          placeholder="Enter block title"
-        />
-      </div>
+      <label className="field-label">Title</label>
+      <input
+        className="text-input"
+        value={title}
+        onChange={(e) => updateSelectedNodeField("title", e.target.value)}
+        placeholder="Enter block title"
+      />
 
-      <div className="form-group">
-        <label className="form-label">Block Type</label>
-        <select
-          className="form-select"
-          value={blockType}
-          onChange={(e) => updateSelectedNodeField("blockType", e.target.value)}
-        >
-          <option value="narrative">Narrative</option>
-          <option value="chat">Chat</option>
-          <option value="timed">Timed</option>
-          <option value="ending">Ending</option>
-        </select>
-      </div>
+      <label className="field-label">Block Type</label>
+      <select
+        className="select-input"
+        value={blockType}
+        onChange={(e) => updateSelectedNodeField("blockType", e.target.value)}
+      >
+        <option value="narrative">Narrative</option>
+        <option value="chat">Chat</option>
+        <option value="timed">Timed</option>
+        <option value="ending">Ending</option>
+      </select>
 
-      <div className="form-group">
-        <label className="form-label">Content</label>
-        <textarea
-          className="form-textarea"
-          value={content}
-          onChange={(e) => updateSelectedNodeField("content", e.target.value)}
-          placeholder="Write the story text for this block..."
-        />
-      </div>
+      <label className="field-label">Content</label>
+      <textarea
+        className="textarea-input"
+        value={content}
+        onChange={(e) => updateSelectedNodeField("content", e.target.value)}
+        placeholder="Write the story text for this block..."
+      />
 
       <ChoicesEditor
         selectedNode={selectedNode}
@@ -78,6 +77,8 @@ export default function SidebarEditor({
         updateChoiceOnSelectedNode={updateChoiceOnSelectedNode}
         removeChoiceFromSelectedNode={removeChoiceFromSelectedNode}
       />
+
+      <VariableEditor variables={variables} setVariables={setVariables} />
 
       <div className="helper-box">
         <strong>Selected node ID:</strong> {selectedNode.id}
