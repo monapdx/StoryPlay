@@ -6,12 +6,7 @@ import usePlayState from "./hooks/usePlayState";
 
 export default function App() {
   const story = useStoryState();
-
-  const play = usePlayState(
-    story.nodes,
-    story.selectedNodeId,
-    story.variables
-  );
+  const play = usePlayState(story.story, story.selectedNodeId);
 
   return (
     <div className="app-shell">
