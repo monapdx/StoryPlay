@@ -1,8 +1,13 @@
 import { useMemo, useState } from "react";
 import sampleStory from "../data/sampleStory";
+import { normalizeStory } from "../utils/storyModel";
 
 function makeNodeId() {
   return `node_${Math.random().toString(36).slice(2, 10)}`;
+}
+
+function makeChoiceId() {
+  return `choice_${Math.random().toString(36).slice(2, 10)}`;
 }
 
 function makeChoiceLabel(targetTitle = "Next Block") {
@@ -15,15 +20,16 @@ function buildEdgesFromNodes(nodes) {
   for (const node of nodes) {
     const choices = node?.data?.choices || [];
 
-    choices.forEach((choice, index) => {
-      if (!choice?.targetNodeId) return;
+    choices.forEach((choice) => {
+      if (!choice?.targetNodeId || !choice?.id) return;
 
       edges.push({
-        id: `${node.id}__${choice.targetNodeId}__${index}`,
+        id: `${node.id}__${choice.id}__${choice.targetNodeId}`,
         source: node.id,
         target: choice.targetNodeId,
         type: "storyEdge",
         data: {
+          choiceId: choice.id,
           label: choice.label || "",
         },
       });
@@ -33,27 +39,32 @@ function buildEdgesFromNodes(nodes) {
   return edges;
 }
 
-function normalizeInitialStory(story) {
-  const safeNodes = Array.isArray(story?.nodes) ? story.nodes : [];
-  const safeVariables =
-    story?.variables && typeof story.variables === "object"
-      ? story.variables
-      : {};
-
-  return {
-    nodes: safeNodes,
-    variables: safeVariables,
-  };
-}
-
 export default function useStoryState() {
-  const initial = normalizeInitialStory(sampleStory);
-
-  const [nodes, setNodes] = useState(initial.nodes);
-  const [variables, setVariables] = useState(initial.variables);
+  const [story, setStory] = useState(() => normalizeStory(sampleStory));
   const [selectedNodeId, setSelectedNodeId] = useState(
-    initial.nodes[0]?.id || null
+    () => sampleStory?.nodes?.[0]?.id || null
   );
+
+  const nodes = story.nodes;
+  const variables = story.variables;
+
+  function setNodes(nextNodes) {
+    setStory((prev) => ({
+      ...prev,
+      nodes:
+        typeof nextNodes === "function" ? nextNodes(prev.nodes) : nextNodes,
+    }));
+  }
+
+  function setVariables(nextVariables) {
+    setStory((prev) => ({
+      ...prev,
+      variables:
+        typeof nextVariables === "function"
+          ? nextVariables(prev.variables)
+          : nextVariables,
+    }));
+  }
 
   const selectedNode = useMemo(() => {
     return nodes.find((node) => node.id === selectedNodeId) || null;
@@ -158,6 +169,7 @@ export default function useStoryState() {
             choices: [
               ...existingChoices,
               {
+                id: makeChoiceId(),
                 label: "New Choice",
                 targetNodeId: "",
                 conditions: [],
@@ -170,22 +182,21 @@ export default function useStoryState() {
     );
   }
 
-  function updateChoiceOnSelectedNode(index, field, value) {
-    if (!selectedNodeId) return;
+  function updateChoiceOnSelectedNode(choiceId, field, value) {
+    if (!selectedNodeId || !choiceId) return;
 
     setNodes((prev) =>
       prev.map((node) => {
         if (node.id !== selectedNodeId) return node;
 
-        const nextChoices = [...(node.data?.choices || [])];
-        const currentChoice = nextChoices[index];
-
-        if (!currentChoice) return node;
-
-        nextChoices[index] = {
-          ...currentChoice,
-          [field]: value,
-        };
+        const nextChoices = (node.data?.choices || []).map((choice) =>
+          choice.id === choiceId
+            ? {
+                ...choice,
+                [field]: value,
+              }
+            : choice
+        );
 
         return {
           ...node,
@@ -198,21 +209,20 @@ export default function useStoryState() {
     );
   }
 
-  function removeChoiceFromSelectedNode(index) {
-    if (!selectedNodeId) return;
+  function removeChoiceFromSelectedNode(choiceId) {
+    if (!selectedNodeId || !choiceId) return;
 
     setNodes((prev) =>
       prev.map((node) => {
         if (node.id !== selectedNodeId) return node;
 
-        const nextChoices = [...(node.data?.choices || [])];
-        nextChoices.splice(index, 1);
-
         return {
           ...node,
           data: {
             ...node.data,
-            choices: nextChoices,
+            choices: (node.data?.choices || []).filter(
+              (choice) => choice.id !== choiceId
+            ),
           },
         };
       })
@@ -242,6 +252,7 @@ export default function useStoryState() {
         }
 
         const nextChoice = {
+          id: makeChoiceId(),
           label: makeChoiceLabel(targetTitle),
           targetNodeId: targetId,
           conditions: [],
@@ -264,9 +275,9 @@ export default function useStoryState() {
   function deleteEdge(edgeId) {
     if (!edgeId) return;
 
-    const [sourceId, targetId] = edgeId.split("__");
+    const [sourceId, choiceId, targetId] = edgeId.split("__");
 
-    if (!sourceId || !targetId) return;
+    if (!sourceId || !choiceId || !targetId) return;
 
     setNodes((prev) =>
       prev.map((node) => {
@@ -277,7 +288,7 @@ export default function useStoryState() {
           data: {
             ...node.data,
             choices: (node.data?.choices || []).filter(
-              (choice) => choice.targetNodeId !== targetId
+              (choice) => choice.id !== choiceId
             ),
           },
         };
@@ -286,6 +297,8 @@ export default function useStoryState() {
   }
 
   return {
+    story,
+    setStory,
     nodes,
     setNodes,
     edges,
