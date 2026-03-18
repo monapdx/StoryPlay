@@ -28,14 +28,18 @@ export default function SidebarEditor({
         </div>
 
         <VariableEditor variables={variables} setVariables={setVariables} />
-
         <StoryDiagnostics nodes={nodes} variables={variables} />
       </div>
     );
   }
 
-  const { title = "", content = "", blockType = "narrative" } =
-    selectedNode.data || {};
+  const {
+    title = "",
+    content = "",
+    blockType = "narrative",
+    timerSeconds = 10,
+    timeoutTargetNodeId = "",
+  } = selectedNode.data || {};
 
   return (
     <div>
@@ -66,14 +70,77 @@ export default function SidebarEditor({
       </div>
 
       <div className="form-group">
-        <label className="form-label">Content</label>
+        <label className="form-label">
+          {blockType === "chat" ? "Chat Content" : "Content"}
+        </label>
+
         <textarea
           className="form-textarea"
           value={content}
           onChange={(e) => updateSelectedNodeField("content", e.target.value)}
-          placeholder="Write the story text for this block..."
+          placeholder={
+            blockType === "chat"
+              ? "Example:\nA message appears on your screen.\nYou: Who is this?\nDon't open the door."
+              : "Write the story text for this block..."
+          }
         />
       </div>
+
+      {blockType === "chat" && (
+        <div className="helper-box">
+          Chat blocks render each line as a message bubble.
+          <br />
+          Use <strong>You:</strong> at the start of a line for outgoing messages.
+        </div>
+      )}
+
+      {blockType === "timed" && (
+        <div className="editor-section">
+          <div className="editor-section-header">
+            <h3 className="section-title" style={{ marginBottom: 0 }}>
+              Timer Settings
+            </h3>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Seconds</label>
+            <input
+              className="form-input"
+              type="number"
+              min="1"
+              value={timerSeconds}
+              onChange={(e) =>
+                updateSelectedNodeField("timerSeconds", Number(e.target.value) || 1)
+              }
+            />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Timeout Target</label>
+            <select
+              className="form-select"
+              value={timeoutTargetNodeId}
+              onChange={(e) =>
+                updateSelectedNodeField("timeoutTargetNodeId", e.target.value)
+              }
+            >
+              <option value="">Select a block...</option>
+              {nodes
+                .filter((node) => node.id !== selectedNode.id)
+                .map((node) => (
+                  <option key={node.id} value={node.id}>
+                    {node.data?.title || node.id}
+                  </option>
+                ))}
+            </select>
+          </div>
+
+          <div className="helper-box">
+            When the timer hits zero, preview automatically jumps to the selected
+            timeout block.
+          </div>
+        </div>
+      )}
 
       <ChoicesEditor
         selectedNode={selectedNode}
