@@ -28,7 +28,9 @@ const sampleStory = {
             label: "Search desk",
             targetNodeId: "3",
             conditions: [],
-            effects: [{ variable: "hasKey", action: "set", value: true }],
+            effects: [
+              { variable: "hasKey", action: "set", value: true },
+            ],
           },
           {
             id: "c3",
@@ -40,15 +42,19 @@ const sampleStory = {
             effects: [],
           },
         ],
+        enterEffects: [],
+        graphIssues: [],
       },
     },
+
     {
       id: "2",
       type: "storyNode",
       position: { x: 430, y: 60 },
       data: {
         title: "Check Phone",
-        content: "A message reads: 'The key is closer than you think.'",
+        content:
+          "Unknown Number: The key is closer than you think.\nYou: Who is this?\nUnknown Number: Don't trust the desk drawer.",
         blockType: "chat",
         choices: [
           {
@@ -58,17 +64,33 @@ const sampleStory = {
             conditions: [],
             effects: [],
           },
+          {
+            id: "c6",
+            label: "Search desk anyway",
+            targetNodeId: "3",
+            conditions: [],
+            effects: [],
+          },
         ],
+        enterEffects: [],
+        graphIssues: [],
       },
     },
+
     {
       id: "3",
       type: "storyNode",
       position: { x: 430, y: 260 },
       data: {
         title: "Search Desk",
-        content: "You find a tiny brass key inside the desk drawer.",
+        content:
+          "You search the desk while footsteps get closer in the hall.",
         blockType: "timed",
+        timerSeconds: 8,
+        timeoutTargetNodeId: "5",
+        timeoutEffects: [
+          { variable: "health", action: "subtract", value: 2 },
+        ],
         choices: [
           {
             id: "c5",
@@ -79,18 +101,45 @@ const sampleStory = {
             ],
             effects: [],
           },
+          {
+            id: "c7",
+            label: "Hide under the bed",
+            targetNodeId: "5",
+            conditions: [],
+            effects: [],
+          },
         ],
+        enterEffects: [],
+        graphIssues: [],
       },
     },
+
     {
       id: "4",
       type: "storyNode",
-      position: { x: 780, y: 160 },
+      position: { x: 780, y: 120 },
       data: {
         title: "Escape",
-        content: "The key turns. The door clicks open.",
+        content: "The key turns.\nThe door clicks open.",
         blockType: "ending",
         choices: [],
+        enterEffects: [],
+        graphIssues: [],
+      },
+    },
+
+    {
+      id: "5",
+      type: "storyNode",
+      position: { x: 780, y: 300 },
+      data: {
+        title: "Too Late",
+        content:
+          "The footsteps stop outside.\nThe handle turns before you can decide what to do.",
+        blockType: "ending",
+        choices: [],
+        enterEffects: [],
+        graphIssues: [],
       },
     },
   ],

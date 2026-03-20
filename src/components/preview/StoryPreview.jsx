@@ -70,12 +70,7 @@ export default function StoryPreview({
   }, [isChat, playNodeData?.content]);
 
   useEffect(() => {
-    if (
-      !isTimed ||
-      !currentPlayNode?.id ||
-      timerSeconds <= 0 ||
-      !timeoutTargetNodeId
-    ) {
+    if (!isTimed || !currentPlayNode?.id || timerSeconds <= 0 || !timeoutTargetNodeId) {
       setTimeLeft(null);
       return;
     }
@@ -330,9 +325,9 @@ export default function StoryPreview({
               {visibleChoices.length === 0 ? (
                 <div className="muted">No available choices.</div>
               ) : (
-                visibleChoices.map((choice) => (
+                visibleChoices.map((choice, index) => (
                   <PlayChoiceButton
-                    key={choice.id}
+                    key={`${choice.targetNodeId}-${index}`}
                     choice={choice}
                     targetNode={nodesById[choice.targetNodeId]}
                     onChoose={() =>
@@ -354,7 +349,7 @@ export default function StoryPreview({
                 <div className="chat-reply-list">
                   {visibleChoices.map((choice, index) => (
                     <button
-                      key={choice.id}
+                      key={`${choice.targetNodeId}-${index}`}
                       type="button"
                       className="chat-reply-button"
                       onClick={() => handleChatReply(choice, index)}

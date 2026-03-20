@@ -5,15 +5,6 @@ function cloneVariables(variables) {
   return { ...(variables || {}) };
 }
 
-function getStartNodeId(story, fallbackSelectedNodeId = null) {
-  return (
-    story?.metadata?.startNodeId ||
-    fallbackSelectedNodeId ||
-    story?.nodes?.[0]?.id ||
-    null
-  );
-}
-
 function getChangedKeys(previousVars = {}, nextVars = {}) {
   const keys = new Set([
     ...Object.keys(previousVars || {}),
@@ -23,24 +14,18 @@ function getChangedKeys(previousVars = {}, nextVars = {}) {
   return [...keys].filter((key) => previousVars[key] !== nextVars[key]);
 }
 
-export default function usePlayState(story, fallbackSelectedNodeId = null) {
-  const nodes = story?.nodes || [];
-  const initialVariables = story?.variables || {};
-  const startNodeId = getStartNodeId(story, fallbackSelectedNodeId);
-
-  const [currentPlayNodeId, setCurrentPlayNodeId] = useState(startNodeId);
-  const [history, setHistory] = useState([]);
-  const [playVariables, setPlayVariables] = useState(() =>
-    cloneVariables(initialVariables)
+export default function usePlayState(nodes, selectedNodeId, initialVariables = {}) {
+  const [currentPlayNodeId, setCurrentPlayNodeId] = useState(
+    selectedNodeId || nodes[0]?.id || null
   );
+  const [history, setHistory] = useState([]);
+  const [playVariables, setPlayVariables] = useState(cloneVariables(initialVariables));
   const [previousPlayVariables, setPreviousPlayVariables] = useState(
     cloneVariables(initialVariables)
   );
   const [changedVariableKeys, setChangedVariableKeys] = useState([]);
 
   useEffect(() => {
-    const validNodeIds = new Set(nodes.map((node) => node.id));
-
     if (!nodes.length) {
       setCurrentPlayNodeId(null);
       setHistory([]);
@@ -50,8 +35,12 @@ export default function usePlayState(story, fallbackSelectedNodeId = null) {
       return;
     }
 
-    if (!validNodeIds.has(currentPlayNodeId)) {
-      setCurrentPlayNodeId(startNodeId);
+    const playNodeStillExists = nodes.some(
+      (node) => node.id === currentPlayNodeId
+    );
+
+    if (!playNodeStillExists) {
+      setCurrentPlayNodeId(selectedNodeId || nodes[0]?.id || null);
       setHistory([]);
       setPlayVariables(cloneVariables(initialVariables));
       setPreviousPlayVariables(cloneVariables(initialVariables));
@@ -60,11 +49,11 @@ export default function usePlayState(story, fallbackSelectedNodeId = null) {
     }
 
     setHistory((prevHistory) =>
-      prevHistory.filter(
-        (entry) => entry && validNodeIds.has(entry.nodeId)
+      prevHistory.filter((entry) =>
+        nodes.some((node) => node.id === entry.nodeId)
       )
     );
-  }, [nodes, currentPlayNodeId, startNodeId, initialVariables]);
+  }, [nodes, currentPlayNodeId, selectedNodeId, initialVariables]);
 
   const currentPlayNode = useMemo(() => {
     return nodes.find((node) => node.id === currentPlayNodeId) || null;
@@ -74,6 +63,7 @@ export default function usePlayState(story, fallbackSelectedNodeId = null) {
     if (!nodeId) return;
 
     const resetVars = cloneVariables(initialVariables);
+
     setCurrentPlayNodeId(nodeId);
     setHistory([]);
     setPlayVariables(resetVars);
@@ -83,7 +73,8 @@ export default function usePlayState(story, fallbackSelectedNodeId = null) {
 
   function resetToSelected() {
     const resetVars = cloneVariables(initialVariables);
-    setCurrentPlayNodeId(startNodeId);
+
+    setCurrentPlayNodeId(selectedNodeId || nodes[0]?.id || null);
     setHistory([]);
     setPlayVariables(resetVars);
     setPreviousPlayVariables(resetVars);
@@ -117,7 +108,7 @@ export default function usePlayState(story, fallbackSelectedNodeId = null) {
     const previousEntry = nextHistory.pop();
 
     setHistory(nextHistory);
-    setCurrentPlayNodeId(previousEntry?.nodeId || startNodeId);
+    setCurrentPlayNodeId(previousEntry?.nodeId || null);
     setPreviousPlayVariables(cloneVariables(playVariables));
     setPlayVariables(cloneVariables(previousEntry?.variables || initialVariables));
     setChangedVariableKeys(

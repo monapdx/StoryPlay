@@ -3,7 +3,6 @@ import ChoiceRow from "./ChoiceRow";
 export default function ChoicesEditor({
   selectedNode,
   nodes,
-  variables,
   addChoiceToSelectedNode,
   updateChoiceOnSelectedNode,
   removeChoiceFromSelectedNode,
@@ -13,15 +12,8 @@ export default function ChoicesEditor({
   return (
     <div className="editor-section">
       <div className="editor-section-header">
-        <h3 className="section-title" style={{ marginBottom: 0 }}>
-          Choices
-        </h3>
-
-        <button
-          type="button"
-          className="toolbar-button"
-          onClick={addChoiceToSelectedNode}
-        >
+        <h3 className="section-title">Choices</h3>
+        <button className="toolbar-button" onClick={addChoiceToSelectedNode}>
           + Add Choice
         </button>
       </div>
@@ -35,8 +27,7 @@ export default function ChoicesEditor({
               key={choice.id}
               choice={choice}
               allNodes={nodes}
-              variables={variables}
-              currentNodeId={selectedNode?.id}
+              currentNodeId={selectedNode.id}
               onUpdate={updateChoiceOnSelectedNode}
               onRemove={removeChoiceFromSelectedNode}
             />
