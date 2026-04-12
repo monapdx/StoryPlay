@@ -4,6 +4,12 @@ StoryPlay is a **Twine-inspired visual story builder** for creating branching in
 
 <img src="https://raw.githubusercontent.com/monapdx/StoryPlay/refs/heads/main/screenshot.png">
 
+- [StoryPlay](#storyplay)
+  - [Features](#features)
+  - [Tech Stack](#tech-stack)
+  - [Running Locally](#running-locally)
+  - [Planned Features](#planned-features)
+
 ## Features
 - Node-based visual story editor
 - Branching narrative design
