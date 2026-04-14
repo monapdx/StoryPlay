@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import PlayChoiceButton from "./PlayChoiceButton";
 import { evaluateConditions } from "../../utils/storyLogic";
+import TraitPickerBlockView from "../blocks/TraitPickerBlockView";
+import PersuasionBlockView from "../blocks/PersuasionBlockView";
+import ChoiceWeightingBlockView from "../blocks/ChoiceWeightingBlockView";
 
 function renderChatLines(content = "") {
   return content
@@ -17,6 +20,14 @@ function renderChatLines(content = "") {
         text,
       };
     });
+}
+
+function variablePatchToEffects(variablePatch = {}) {
+  return Object.entries(variablePatch).map(([key, value]) => ({
+    key,
+    operation: "set",
+    value,
+  }));
 }
 
 export default function StoryPreview({
@@ -59,6 +70,9 @@ export default function StoryPreview({
   const blockType = playNodeData?.blockType || "narrative";
   const isTimed = blockType === "timed";
   const isChat = blockType === "chat";
+  const isMiniGame = ["traitPicker", "persuasion", "choiceWeighting"].includes(
+    blockType
+  );
 
   const timerSeconds = Number(playNodeData?.timerSeconds ?? 0);
   const timeoutTargetNodeId = playNodeData?.timeoutTargetNodeId || "";
@@ -169,6 +183,52 @@ export default function StoryPreview({
     }, 420);
   }
 
+  function handleMiniGameComplete(result) {
+    const effects = variablePatchToEffects(result.variablePatch || {});
+
+    if (result.nextNodeId) {
+      goToNode(result.nextNodeId, effects);
+      return;
+    }
+
+    if (currentPlayNode?.id && effects.length > 0) {
+      goToNode(currentPlayNode.id, effects);
+    }
+  }
+
+  function renderMiniGameBlock() {
+    if (!playNodeData) return null;
+
+    switch (blockType) {
+      case "traitPicker":
+        return (
+          <TraitPickerBlockView
+            block={playNodeData}
+            onComplete={handleMiniGameComplete}
+          />
+        );
+
+      case "persuasion":
+        return (
+          <PersuasionBlockView
+            block={playNodeData}
+            onComplete={handleMiniGameComplete}
+          />
+        );
+
+      case "choiceWeighting":
+        return (
+          <ChoiceWeightingBlockView
+            block={playNodeData}
+            onComplete={handleMiniGameComplete}
+          />
+        );
+
+      default:
+        return null;
+    }
+  }
+
   return (
     <div className="preview-story">
       <div className="preview-header-row">
@@ -263,7 +323,9 @@ export default function StoryPreview({
             )}
           </div>
 
-          {!isChat && (
+          {isMiniGame && renderMiniGameBlock()}
+
+          {!isMiniGame && !isChat && (
             <div className="preview-content">
               {playNodeData?.content || "No content yet."}
             </div>
@@ -320,7 +382,7 @@ export default function StoryPreview({
             Block type: {blockType}
           </div>
 
-          {!isChat && (
+          {!isChat && !isMiniGame && (
             <div className="preview-choice-list">
               {visibleChoices.length === 0 ? (
                 <div className="muted">No available choices.</div>
