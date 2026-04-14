@@ -37,8 +37,8 @@ Then open http://localhost:5173
 
 ## Planned Features
 - Node enter effects
-- Chat-style story blocks
-- Countdown timer challenges
+- ~~Chat-style story blocks~~
+- ~~Countdown timer challenges~~
 - Puzzle widgets
 - Inventory system
 - Mini‑games
