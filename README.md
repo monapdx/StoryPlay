@@ -1,5 +1,7 @@
 # StoryPlay
 
+[![Open Source Helpers](https://www.codetriage.com/monapdx/storyplay/badges/users.svg)](https://www.codetriage.com/monapdx/storyplay)
+
 StoryPlay is a **Twine-inspired visual story builder** for creating branching interactive fiction using a node-based editor, playable preview mode, variables, conditions, and choice-driven game logic.
 
 <img src="https://raw.githubusercontent.com/monapdx/StoryPlay/refs/heads/main/screenshot.png">
