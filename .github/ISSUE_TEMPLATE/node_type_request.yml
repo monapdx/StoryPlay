@@ -1,0 +1,37 @@
+name: 🧩 Node Type Request
+description: Suggest a new node/block type for StoryPlay
+title: "[Node]: "
+labels: ["node", "enhancement"]
+body:
+  - type: input
+    id: name
+    attributes:
+      label: Node Name
+      placeholder: e.g. "Timed Choice", "Chat Message", "Inventory Check"
+    validations:
+      required: true
+
+  - type: textarea
+    id: purpose
+    attributes:
+      label: Purpose
+      placeholder: What does this node do?
+    validations:
+      required: true
+
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Behavior
+      placeholder: |
+        Inputs:
+        Outputs:
+        Effects:
+    validations:
+      required: true
+
+  - type: textarea
+    id: use_case
+    attributes:
+      label: Example Use Case
+      placeholder: Show how it would be used in a story
