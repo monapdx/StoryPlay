@@ -1,0 +1,84 @@
+name: 🎮 Minigame Suggestion
+description: Suggest a new minigame to include in StoryPlay
+title: "[Minigame]: "
+labels: ["minigame", "enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Have an idea for a fun minigame inside StoryPlay? We'd love to hear it.
+        Think about how it would fit into interactive storytelling.
+
+  - type: input
+    id: name
+    attributes:
+      label: Minigame Name
+      placeholder: e.g. "Potion Mixing", "Dice Duel", "Word Scramble"
+    validations:
+      required: true
+
+  - type: textarea
+    id: concept
+    attributes:
+      label: Core Concept
+      description: What is the game about?
+      placeholder: Describe the gameplay loop in simple terms
+    validations:
+      required: true
+
+  - type: textarea
+    id: mechanics
+    attributes:
+      label: Gameplay Mechanics
+      description: How does it actually work?
+      placeholder: |
+        - Player clicks / drags / types...
+        - Win condition:
+        - Lose condition:
+    validations:
+      required: true
+
+  - type: textarea
+    id: story_integration
+    attributes:
+      label: Story Integration
+      description: How would this fit into a story?
+      placeholder: |
+        Example:
+        "Player must win this game to convince a character or unlock a path"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: skill_type
+    attributes:
+      label: Primary Skill Type
+      options:
+        - Strategy
+        - Luck
+        - Puzzle
+        - Reflex / Timing
+        - Word / Language
+        - Social / Persuasion
+    validations:
+      required: true
+
+  - type: textarea
+    id: visuals
+    attributes:
+      label: Visual Ideas (optional)
+      placeholder: Describe how it might look (UI, animations, etc.)
+
+  - type: textarea
+    id: references
+    attributes:
+      label: Similar Games (optional)
+      placeholder: Link or name similar games for inspiration
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Final Check
+      options:
+        - label: This minigame fits interactive storytelling (not just standalone gameplay)
+          required: true
