@@ -1,0 +1,293 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://storyplay.local/schemas/storyplay-export.v1.schema.json",
+  "title": "StoryPlay game export (v1)",
+  "description": "Canonical export document for a StoryPlay story. Matches in-app story state shape: variables + React Flow-style nodes. Edges are derived from node.data.choices and are not stored.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["formatVersion", "story"],
+  "properties": {
+    "formatVersion": {
+      "type": "integer",
+      "const": 1,
+      "description": "Export format revision. Importers must reject or migrate unknown versions."
+    },
+    "exportedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the file was written (optional, recommended)."
+    },
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Author-facing metadata. Does not affect engine rules unless a consumer chooses to use it.",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Human-readable story title (not necessarily any node title)."
+        },
+        "author": { "type": "string" },
+        "description": { "type": "string" },
+        "startNodeId": {
+          "type": "string",
+          "description": "Suggested entry node id. Must match a node.id. If omitted, runtimes may use nodes[0] or data.isStart as today’s app does for diagnostics only."
+        }
+      }
+    },
+    "story": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["variables", "nodes"],
+      "description": "Same shape as useStoryState / sampleStory: global variables plus the node graph.",
+      "properties": {
+        "variables": {
+          "type": "object",
+          "description": "Initial variable store. Keys are identifiers; values are JSON primitives (string, number, boolean) as used by the editor and storyLogic.",
+          "additionalProperties": {
+            "type": ["string", "number", "boolean", "null"]
+          }
+        },
+        "nodes": {
+          "type": "array",
+          "description": "Ordered list of story blocks. Each item is a React Flow-compatible node.",
+          "items": { "$ref": "#/$defs/storyNode" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "storyNode": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["id", "data"],
+      "description": "React Flow node. type and position are preserved for editor round-trip; runtimes may ignore position.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Stable unique id referenced by choices.targetNodeId, timeoutTargetNodeId, successNodeId, etc."
+        },
+        "type": {
+          "type": "string",
+          "default": "storyNode",
+          "description": "Canvas node type; app uses \"storyNode\"."
+        },
+        "position": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["x", "y"],
+          "properties": {
+            "x": { "type": "number" },
+            "y": { "type": "number" }
+          },
+          "description": "Editor canvas coordinates."
+        },
+        "data": { "$ref": "#/$defs/nodeData" }
+      }
+    },
+    "nodeData": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Block payload. blockType selects which other fields are meaningful. Unknown keys may appear for forward compatibility.",
+      "properties": {
+        "title": { "type": "string", "description": "Block heading in UI." },
+        "content": {
+          "type": "string",
+          "description": "Primary text: narrative body, chat script (lines; lines starting with \"You:\" are outgoing), or mini-game prompt stored alongside blockType."
+        },
+        "blockType": {
+          "type": "string",
+          "enum": [
+            "narrative",
+            "chat",
+            "timed",
+            "ending",
+            "traitPicker",
+            "persuasion",
+            "choiceWeighting"
+          ],
+          "description": "Discriminator for preview/runtime behavior."
+        },
+        "choices": {
+          "type": "array",
+          "description": "For narrative, chat, timed, ending: branching choices (targets + conditions + effects). For persuasion mini-games: persuasion line items (different shape); branching choices are not used in the sidebar for mini-game blocks.",
+          "items": { "$ref": "#/$defs/choice" }
+        },
+        "enterEffects": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/effect" },
+          "description": "Effects intended when entering a node (present in model and diagnostics; runtime may not apply them yet)."
+        },
+        "graphIssues": {
+          "type": "array",
+          "description": "Editor diagnostics from graph analysis. Clean exports often omit or set to [].",
+          "items": { "type": "object", "additionalProperties": true }
+        },
+        "isStart": {
+          "type": "boolean",
+          "description": "Optional hint for diagnostics / future start resolution."
+        },
+        "behavior": {
+          "type": "object",
+          "description": "Reserved for NodeBehaviorRenderer; default { kind: \"none\", config: {} }.",
+          "additionalProperties": true
+        },
+        "timerSeconds": {
+          "type": "number",
+          "description": "timed blocks: countdown length in seconds."
+        },
+        "timeoutTargetNodeId": {
+          "type": "string",
+          "description": "timed blocks: node id to jump to when timer expires."
+        },
+        "timeoutEffects": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/effect" },
+          "description": "timed blocks: effects applied on timeout navigation."
+        },
+        "minSelections": {
+          "type": "number",
+          "description": "traitPicker: minimum traits to select."
+        },
+        "maxSelections": {
+          "type": "number",
+          "description": "traitPicker: maximum traits selectable."
+        },
+        "traitListVariable": {
+          "type": "string",
+          "description": "traitPicker: variable name receiving selected trait ids (array)."
+        },
+        "options": {
+          "type": "array",
+          "description": "traitPicker / choiceWeighting: option rows (see $defs/traitOption and $defs/weightedOption).",
+          "items": { "type": "object", "additionalProperties": true }
+        },
+        "targetName": {
+          "type": "string",
+          "description": "persuasion: NPC or subject label."
+        },
+        "startScore": { "type": "number", "description": "persuasion: initial score." },
+        "minScore": { "type": "number" },
+        "maxScore": { "type": "number" },
+        "threshold": { "type": "number", "description": "persuasion: score needed to pass." },
+        "maxTurns": { "type": "number" },
+        "visibleMeter": { "type": "boolean" },
+        "scoreVariable": { "type": "string" },
+        "successVariable": { "type": "string" },
+        "successNodeId": {
+          "type": "string",
+          "description": "persuasion: node id when passed (also used at block level; lines may carry overrides in editor data)."
+        },
+        "failureNodeId": { "type": "string", "description": "persuasion: node id when failed." },
+        "autoAdvance": {
+          "type": "boolean",
+          "description": "persuasion: if true, PersuasionBlockView may finish immediately when outcome is known."
+        },
+        "totalPoints": { "type": "number", "description": "choiceWeighting: point budget." },
+        "variablePrefix": {
+          "type": "string",
+          "description": "choiceWeighting: prefix for per-option variable keys written on complete."
+        },
+        "resultVariable": {
+          "type": "string",
+          "description": "choiceWeighting: variable receiving allocation object."
+        },
+        "lockExactTotal": {
+          "type": "boolean",
+          "description": "choiceWeighting: require exact point spend to submit."
+        }
+      }
+    },
+    "choice": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Branching choice (narrative/chat/timed/ending) OR persuasion line item when blockType is persuasion — same key \"choices\" on node data; shape differs by blockType.",
+      "properties": {
+        "id": { "type": "string" },
+        "label": { "type": "string", "description": "Branching: button label." },
+        "targetNodeId": { "type": "string", "description": "Branching: destination node id." },
+        "conditions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/condition" }
+        },
+        "effects": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/effect" }
+        },
+        "text": { "type": "string", "description": "persuasion: line button text." },
+        "delta": { "type": "number", "description": "persuasion: score change." },
+        "once": { "type": "boolean" },
+        "response": { "type": "string" },
+        "successNodeId": { "type": "string", "description": "Optional per-line overrides in editor normalization (runtime uses block-level ids)." },
+        "failureNodeId": { "type": "string" }
+      }
+    },
+    "condition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["variable", "operator", "value"],
+      "properties": {
+        "variable": { "type": "string" },
+        "operator": {
+          "type": "string",
+          "enum": [
+            "equals",
+            "notEquals",
+            "greaterThan",
+            "lessThan",
+            "greaterThanOrEqual",
+            "lessThanOrEqual"
+          ]
+        },
+        "value": {
+          "description": "Compared against variables[variable]; type should match variable type for sensible results."
+        }
+      }
+    },
+    "effect": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["variable", "action"],
+      "properties": {
+        "variable": { "type": "string" },
+        "action": {
+          "type": "string",
+          "enum": ["set", "add", "subtract", "toggle"]
+        },
+        "value": {
+          "description": "Required for set/add/subtract; toggle ignores value in storyLogic."
+        }
+      }
+    },
+    "traitOption": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "id": { "type": "string" },
+        "label": { "type": "string" },
+        "value": { "type": "string" },
+        "description": { "type": "string" },
+        "effects": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Optional variable patch map applied when trait is selected (TraitPickerBlockView)."
+        }
+      }
+    },
+    "weightedOption": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "id": { "type": "string" },
+        "label": { "type": "string" },
+        "value": { "type": "number" },
+        "correct": { "type": "boolean" },
+        "min": { "type": "number" },
+        "max": { "type": "number" },
+        "effects": {
+          "type": "array",
+          "description": "Editor-normalized effects on option (if present)."
+        }
+      }
+    }
+  }
+}
