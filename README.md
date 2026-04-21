@@ -24,6 +24,7 @@
   - [Features](#features)
   - [Tech Stack](#tech-stack)
   - [Running Locally](#running-locally)
+  - [Changelog](#changelog)
   - [Planned Features](#planned-features)
 
 ## Features
@@ -44,6 +45,10 @@ npm install
 npm run dev
 
 Then open http://localhost:5173
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for release notes and notable changes.
 
 ## Planned Features
 - Node enter effects
