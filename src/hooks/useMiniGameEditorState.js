@@ -111,10 +111,7 @@ function normalizeChoiceWeighting(game) {
     },
   };
 
-  const options = Array.isArray(merged?.config?.options)
-    ? merged.config.options
-    : [];
-
+  const options = Array.isArray(merged.config.options) ? merged.config.options : [];
   merged.config.options =
     options.length > 0
       ? options.map((option) => ({
@@ -141,10 +138,7 @@ function normalizePersuasion(game) {
     },
   };
 
-  const choices = Array.isArray(merged?.config?.choices)
-    ? merged.config.choices
-    : [];
-
+  const choices = Array.isArray(merged.config.choices) ? merged.config.choices : [];
   merged.config.choices =
     choices.length > 0
       ? choices.map((choice) => ({
@@ -172,10 +166,7 @@ function normalizeTraitPicker(game) {
     },
   };
 
-  const options = Array.isArray(merged?.config?.options)
-    ? merged.config.options
-    : [];
-
+  const options = Array.isArray(merged.config.options) ? merged.config.options : [];
   merged.config.options =
     options.length > 0
       ? options.map((option) => ({
@@ -214,9 +205,7 @@ export default function useMiniGameEditorState({
     return normalizeMiniGame(game);
   }, [game]);
 
-  const [draft, setDraft] = useState(
-    normalizedGame || createDefaultMiniGame("choiceWeighting")
-  );
+  const [draft, setDraft] = useState(normalizedGame);
   const [activeTab, setActiveTab] = useState("config");
   const [selectedItemId, setSelectedItemId] = useState(null);
   const [previewState, setPreviewState] = useState(null);
@@ -225,21 +214,18 @@ export default function useMiniGameEditorState({
   useEffect(() => {
     if (!open) return;
 
-    const nextDraft = normalizeMiniGame(
-      normalizedGame || createDefaultMiniGame("choiceWeighting")
-    );
-
+    const nextDraft = normalizedGame || createDefaultMiniGame("choiceWeighting");
     setDraft(nextDraft);
     setActiveTab("config");
     setPreviewState(null);
     setAdvancedJson(JSON.stringify(nextDraft, null, 2));
 
     if (nextDraft.type === "choiceWeighting") {
-      setSelectedItemId(nextDraft?.config?.options?.[0]?.id ?? null);
+      setSelectedItemId(nextDraft.config.options?.[0]?.id ?? null);
     } else if (nextDraft.type === "persuasion") {
-      setSelectedItemId(nextDraft?.config?.choices?.[0]?.id ?? null);
+      setSelectedItemId(nextDraft.config.choices?.[0]?.id ?? null);
     } else if (nextDraft.type === "traitPicker") {
-      setSelectedItemId(nextDraft?.config?.options?.[0]?.id ?? null);
+      setSelectedItemId(nextDraft.config.options?.[0]?.id ?? null);
     } else {
       setSelectedItemId(null);
     }
@@ -255,11 +241,11 @@ export default function useMiniGameEditorState({
 
     switch (draft.type) {
       case "persuasion":
-        return draft?.config?.choices || [];
+        return draft.config.choices || [];
       case "traitPicker":
       case "choiceWeighting":
       default:
-        return draft?.config?.options || [];
+        return draft.config.options || [];
     }
   }, [draft]);
 
@@ -269,8 +255,7 @@ export default function useMiniGameEditorState({
 
   const totalAssigned = useMemo(() => {
     if (!draft || draft.type !== "choiceWeighting") return 0;
-
-    return (draft?.config?.options || []).reduce(
+    return (draft.config.options || []).reduce(
       (sum, option) => sum + Number(option.value || 0),
       0
     );
@@ -289,9 +274,9 @@ export default function useMiniGameEditorState({
     const hasPrompt = Boolean(draft.prompt?.trim());
 
     if (draft.type === "choiceWeighting") {
-      const hasEnoughItems = (draft?.config?.options?.length || 0) >= 2;
-      const exactTotalOk = draft?.config?.lockExactTotal
-        ? totalAssigned === Number(draft?.config?.totalPoints || 0)
+      const hasEnoughItems = (draft.config.options?.length || 0) >= 2;
+      const exactTotalOk = draft.config.lockExactTotal
+        ? totalAssigned === Number(draft.config.totalPoints || 0)
         : true;
 
       return {
@@ -303,7 +288,7 @@ export default function useMiniGameEditorState({
     }
 
     if (draft.type === "persuasion") {
-      const hasEnoughItems = (draft?.config?.choices?.length || 0) >= 2;
+      const hasEnoughItems = (draft.config.choices?.length || 0) >= 2;
       return {
         hasPrompt,
         hasEnoughItems,
@@ -313,7 +298,7 @@ export default function useMiniGameEditorState({
     }
 
     if (draft.type === "traitPicker") {
-      const hasEnoughItems = (draft?.config?.options?.length || 0) >= 2;
+      const hasEnoughItems = (draft.config.options?.length || 0) >= 2;
       return {
         hasPrompt,
         hasEnoughItems,
@@ -332,16 +317,16 @@ export default function useMiniGameEditorState({
 
   function updateDraft(patch) {
     setDraft((current) => ({
-      ...(current || createDefaultMiniGame("choiceWeighting")),
+      ...current,
       ...patch,
     }));
   }
 
   function updateConfig(patch) {
     setDraft((current) => ({
-      ...(current || createDefaultMiniGame("choiceWeighting")),
+      ...current,
       config: {
-        ...(current?.config || {}),
+        ...current.config,
         ...patch,
       },
     }));
@@ -349,15 +334,13 @@ export default function useMiniGameEditorState({
 
   function replaceItems(nextItems) {
     setDraft((current) => {
-      if (!current) {
-        return normalizeMiniGame(createDefaultMiniGame("choiceWeighting"));
-      }
+      if (!current) return current;
 
       if (current.type === "persuasion") {
         return {
           ...current,
           config: {
-            ...(current?.config || {}),
+            ...current.config,
             choices: nextItems,
           },
         };
@@ -366,7 +349,7 @@ export default function useMiniGameEditorState({
       return {
         ...current,
         config: {
-          ...(current?.config || {}),
+          ...current.config,
           options: nextItems,
         },
       };
@@ -380,27 +363,23 @@ export default function useMiniGameEditorState({
   }
 
   function addItem() {
-    if (!draft) return;
-
     let nextItem = null;
 
     if (draft.type === "persuasion") {
       nextItem = createPersuasionChoice();
-      replaceItems([...(draft?.config?.choices || []), nextItem]);
+      replaceItems([...(draft.config.choices || []), nextItem]);
     } else if (draft.type === "traitPicker") {
       nextItem = createTraitOption();
-      replaceItems([...(draft?.config?.options || []), nextItem]);
+      replaceItems([...(draft.config.options || []), nextItem]);
     } else {
       nextItem = createChoiceWeightingOption();
-      replaceItems([...(draft?.config?.options || []), nextItem]);
+      replaceItems([...(draft.config.options || []), nextItem]);
     }
 
     setSelectedItemId(nextItem.id);
   }
 
   function removeItem(itemId) {
-    if (!draft) return;
-
     const nextItems = items.filter((item) => item.id !== itemId);
 
     if (nextItems.length === 0) {
@@ -438,9 +417,9 @@ export default function useMiniGameEditorState({
       setDraft(normalized);
 
       if (normalized.type === "persuasion") {
-        setSelectedItemId(normalized?.config?.choices?.[0]?.id ?? null);
+        setSelectedItemId(normalized.config.choices?.[0]?.id ?? null);
       } else {
-        setSelectedItemId(normalized?.config?.options?.[0]?.id ?? null);
+        setSelectedItemId(normalized.config.options?.[0]?.id ?? null);
       }
     } catch (error) {
       console.error("Invalid mini-game JSON:", error);
@@ -452,7 +431,7 @@ export default function useMiniGameEditorState({
 
     if (draft.type === "choiceWeighting") {
       const selectedIds = payload.selectedIds || [];
-      const selectedOptions = (draft?.config?.options || []).filter((option) =>
+      const selectedOptions = (draft.config.options || []).filter((option) =>
         selectedIds.includes(option.id)
       );
 
@@ -461,8 +440,8 @@ export default function useMiniGameEditorState({
         0
       );
 
-      const totalPoints = Number(draft?.config?.totalPoints || 0);
-      const lockExactTotal = Boolean(draft?.config?.lockExactTotal);
+      const totalPoints = Number(draft.config.totalPoints || 0);
+      const lockExactTotal = Boolean(draft.config.lockExactTotal);
 
       let status = "incomplete";
       if (lockExactTotal && score === totalPoints) status = "success";
@@ -484,20 +463,20 @@ export default function useMiniGameEditorState({
 
     if (draft.type === "persuasion") {
       const selectedChoiceId = payload.selectedChoiceId || null;
-      const selectedChoice = (draft?.config?.choices || []).find(
+      const selectedChoice = (draft.config.choices || []).find(
         (choice) => choice.id === selectedChoiceId
       );
 
-      const startScore = Number(draft?.config?.startScore || 0);
+      const startScore = Number(draft.config.startScore || 0);
       const nextScore = Math.max(
-        Number(draft?.config?.minScore || 0),
+        Number(draft.config.minScore || 0),
         Math.min(
-          Number(draft?.config?.maxScore || 100),
+          Number(draft.config.maxScore || 100),
           startScore + Number(selectedChoice?.delta || 0)
         )
       );
 
-      const success = nextScore >= Number(draft?.config?.threshold || 0);
+      const success = nextScore >= Number(draft.config.threshold || 0);
 
       const result = {
         type: "persuasion",
@@ -514,19 +493,17 @@ export default function useMiniGameEditorState({
 
     if (draft.type === "traitPicker") {
       const selectedIds = payload.selectedIds || [];
-      const selectedOptions = (draft?.config?.options || []).filter((option) =>
+      const selectedOptions = (draft.config.options || []).filter((option) =>
         selectedIds.includes(option.id)
       );
 
       const result = {
         type: "traitPicker",
         selectedIds,
-        selectedValues: selectedOptions.map(
-          (option) => option.value || option.label
-        ),
+        selectedValues: selectedOptions.map((option) => option.value || option.label),
         count: selectedOptions.length,
-        minSelections: Number(draft?.config?.minSelections || 0),
-        maxSelections: Number(draft?.config?.maxSelections || 0),
+        minSelections: Number(draft.config.minSelections || 0),
+        maxSelections: Number(draft.config.maxSelections || 0),
       };
 
       setPreviewState(result);

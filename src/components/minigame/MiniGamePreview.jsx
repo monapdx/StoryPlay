@@ -5,21 +5,18 @@ export default function MiniGamePreview({ editor }) {
   const [selectedIds, setSelectedIds] = useState([]);
   const [selectedChoiceId, setSelectedChoiceId] = useState(null);
 
-  const config = draft?.config ?? {};
-  const draftType = draft?.type ?? "traitPicker";
-
   useEffect(() => {
     setSelectedIds([]);
     setSelectedChoiceId(null);
   }, [draft]);
 
   const selectedScore = useMemo(() => {
-    if (draftType !== "choiceWeighting") return 0;
+    if (draft.type !== "choiceWeighting") return 0;
 
-    return (config.options || [])
+    return (draft.config.options || [])
       .filter((option) => selectedIds.includes(option.id))
       .reduce((sum, option) => sum + Number(option.value || 0), 0);
-  }, [draftType, config.options, selectedIds]);
+  }, [draft, selectedIds]);
 
   function toggleChoiceWeightingOption(optionId) {
     setSelectedIds((current) =>
@@ -30,7 +27,7 @@ export default function MiniGamePreview({ editor }) {
   }
 
   function toggleTraitOption(optionId) {
-    const maxSelections = Number(config.maxSelections || 0);
+    const maxSelections = Number(draft.config.maxSelections || 0);
 
     setSelectedIds((current) => {
       if (current.includes(optionId)) {
@@ -46,17 +43,17 @@ export default function MiniGamePreview({ editor }) {
   }
 
   function runPreview() {
-    if (draftType === "choiceWeighting") {
+    if (draft.type === "choiceWeighting") {
       editor.runPreview({ selectedIds });
       return;
     }
 
-    if (draftType === "persuasion") {
+    if (draft.type === "persuasion") {
       editor.runPreview({ selectedChoiceId });
       return;
     }
 
-    if (draftType === "traitPicker") {
+    if (draft.type === "traitPicker") {
       editor.runPreview({ selectedIds });
     }
   }
@@ -65,7 +62,7 @@ export default function MiniGamePreview({ editor }) {
     setSelectedIds([]);
     setSelectedChoiceId(null);
     editor.runPreview(
-      draftType === "persuasion"
+      draft.type === "persuasion"
         ? { selectedChoiceId: null }
         : { selectedIds: [] }
     );
@@ -76,15 +73,15 @@ export default function MiniGamePreview({ editor }) {
       <h3 className="section-title">Live Preview</h3>
 
       <div className="preview-block">
-        <div className="preview-title">{draft?.title || "Untitled Mini-Game"}</div>
+        <div className="preview-title">{draft.title || "Untitled Mini-Game"}</div>
         <div className="preview-content">
-          {draft?.prompt || "Your mini-game prompt preview will appear here."}
+          {draft.prompt || "Your mini-game prompt preview will appear here."}
         </div>
 
-        {draftType === "choiceWeighting" && (
+        {draft.type === "choiceWeighting" && (
           <>
             <div className="minigame-preview-list">
-              {(config.options || []).map((option) => {
+              {(draft.config.options || []).map((option) => {
                 const checked = selectedIds.includes(option.id);
 
                 return (
@@ -106,14 +103,14 @@ export default function MiniGamePreview({ editor }) {
 
             <div className="helper-box">
               Selected score: <strong>{selectedScore}</strong> /{" "}
-              <strong>{Number(config.totalPoints || 0)}</strong>
+              <strong>{Number(draft.config.totalPoints || 0)}</strong>
             </div>
           </>
         )}
 
-        {draftType === "persuasion" && (
+        {draft.type === "persuasion" && (
           <div className="minigame-preview-list">
-            {(config.choices || []).map((choice) => {
+            {(draft.config.choices || []).map((choice) => {
               const selected = selectedChoiceId === choice.id;
 
               return (
@@ -134,10 +131,10 @@ export default function MiniGamePreview({ editor }) {
           </div>
         )}
 
-        {draftType === "traitPicker" && (
+        {draft.type === "traitPicker" && (
           <>
             <div className="minigame-preview-list">
-              {(config.options || []).map((option) => {
+              {(draft.config.options || []).map((option) => {
                 const checked = selectedIds.includes(option.id);
 
                 return (
@@ -159,7 +156,7 @@ export default function MiniGamePreview({ editor }) {
 
             <div className="helper-box">
               Selected: <strong>{selectedIds.length}</strong> / Max{" "}
-              <strong>{Number(config.maxSelections || 0)}</strong>
+              <strong>{Number(draft.config.maxSelections || 0)}</strong>
             </div>
           </>
         )}

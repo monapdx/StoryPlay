@@ -1,10 +1,14 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import StoryCanvas from "./components/canvas/StoryCanvas";
 import SidebarEditor from "./components/editor/SidebarEditor";
 import StoryPreview from "./components/preview/StoryPreview";
 import MiniGameEditor from "./components/minigame/MiniGameEditor";
 import useStoryState from "./hooks/useStoryState";
 import usePlayState from "./hooks/usePlayState";
+import {
+  downloadStoryPlayExportV1,
+  serializeStoryPlayExportV1,
+} from "./utils/serializeStoryPlayExport";
 
 function buildMiniGameFromSelectedNode(selectedNode) {
   if (!selectedNode) return null;
@@ -87,6 +91,39 @@ function isSupportedMiniGameBlock(node) {
 
 export default function App() {
   const story = useStoryState();
+  const storyRef = useRef(story);
+  storyRef.current = story;
+
+  useEffect(() => {
+    if (!import.meta.env.DEV) return undefined;
+
+    function getExport() {
+      const s = storyRef.current;
+      return serializeStoryPlayExportV1({
+        nodes: s.nodes,
+        variables: s.variables,
+      });
+    }
+
+    window.__storyplayLogExport = () => {
+      const payload = getExport();
+      console.log(JSON.stringify(payload, null, 2));
+      return payload;
+    };
+
+    window.__storyplayDownloadExport = () => {
+      const s = storyRef.current;
+      return downloadStoryPlayExportV1({
+        nodes: s.nodes,
+        variables: s.variables,
+      });
+    };
+
+    return () => {
+      delete window.__storyplayLogExport;
+      delete window.__storyplayDownloadExport;
+    };
+  }, []);
 
   const play = usePlayState(
     story.nodes,
@@ -223,6 +260,20 @@ export default function App() {
         </div>
 
         <div style={styles.headerActions}>
+          <button
+            type="button"
+            onClick={() =>
+              downloadStoryPlayExportV1({
+                nodes: story.nodes,
+                variables: story.variables,
+              })
+            }
+            style={styles.headerButton}
+            title="Download story as StoryPlay export JSON (v1)"
+          >
+            Export Game
+          </button>
+
           <button
             type="button"
             onClick={handleOpenMiniGameEditor}

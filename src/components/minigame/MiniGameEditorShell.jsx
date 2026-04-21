@@ -6,11 +6,6 @@ import MiniGameEditorInspector from "./MiniGameEditorInspector";
 import MiniGameEditorPreview from "./MiniGameEditorPreview";
 
 export default function MiniGameEditorShell({ editor, nodes }) {
-  // 🔒 HARD GUARD
-  if (!editor || !editor.draft || !editor.draft.config) {
-    return null;
-  }
-
   return (
     <div className="minigame-shell">
       <MiniGameEditorHeader editor={editor} />
