@@ -1,8 +1,10 @@
-export default function MiniGameEditorPreview({ game }) {
+import React from "react";
+import MiniGamePreview from "./MiniGamePreview";
+
+export default function MiniGameEditorPreview({ editor }) {
   return (
-    <div style={{ padding: 20 }}>
-      <h3>Preview</h3>
-      <pre>{JSON.stringify(game, null, 2)}</pre>
+    <div className="minigame-preview-pane">
+      <MiniGamePreview editor={editor} />
     </div>
   );
 }

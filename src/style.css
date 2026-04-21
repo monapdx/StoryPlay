@@ -1108,3 +1108,334 @@ mark {
   opacity: 0.65;
   cursor: default;
 }
+/* =========================
+   Mini-Game Editor Workspace
+   ========================= */
+
+.minigame-shell {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(circle at top left, rgba(99, 102, 241, 0.16), transparent 28%),
+    radial-gradient(circle at top right, rgba(236, 72, 153, 0.1), transparent 24%),
+    linear-gradient(180deg, #08101d 0%, #0b1220 100%);
+  color: #f8fafc;
+}
+
+.minigame-header {
+  padding: 18px 20px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(15, 23, 42, 0.86);
+  backdrop-filter: blur(10px);
+}
+
+.minigame-header__eyebrow {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #a5b4fc;
+  margin-bottom: 6px;
+}
+
+.minigame-header__title {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.minigame-header__meta {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.minigame-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(99, 102, 241, 0.18);
+  border: 1px solid rgba(129, 140, 248, 0.28);
+  color: #dbeafe;
+  font-size: 0.82rem;
+  text-transform: capitalize;
+}
+
+.minigame-toolbar {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(15, 23, 42, 0.74);
+  backdrop-filter: blur(8px);
+}
+
+.minigame-toolbar__left,
+.minigame-toolbar__right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.minigame-toolbar__center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.minigame-toolbar__status {
+  font-size: 0.84rem;
+  color: #cbd5e1;
+}
+
+.minigame-tab {
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  color: #f8fafc;
+  border-radius: 12px;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: 0.18s ease;
+}
+
+.minigame-tab:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.minigame-tab.is-active {
+  background: rgba(99, 102, 241, 0.24);
+  border-color: rgba(129, 140, 248, 0.5);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.minigame-btn {
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.18s ease;
+}
+
+.minigame-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-1px);
+}
+
+.minigame-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.minigame-btn--primary {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  border-color: rgba(167, 139, 250, 0.35);
+}
+
+.minigame-btn--primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #5b54ee, #8b45ff);
+}
+
+.minigame-shell__body {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 340px 1fr 380px;
+  gap: 16px;
+  padding: 16px;
+}
+
+.minigame-shell__left,
+.minigame-shell__center,
+.minigame-shell__right {
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+}
+
+.minigame-panel {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(17, 24, 39, 0.82);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.24);
+}
+
+.minigame-panel + .minigame-panel {
+  margin-top: 16px;
+}
+
+.minigame-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.minigame-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.minigame-grid.two-up {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.minigame-inline-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.minigame-checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  color: #e5e7eb;
+}
+
+.minigame-json {
+  min-height: 360px;
+  font-family: Consolas, Monaco, monospace;
+  font-size: 0.88rem;
+}
+
+.minigame-option-list {
+  display: grid;
+  gap: 10px;
+}
+
+.minigame-option-card {
+  width: 100%;
+  text-align: left;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(30, 41, 59, 0.7);
+  color: #fff;
+  border-radius: 14px;
+  padding: 12px;
+  cursor: pointer;
+  transition: 0.18s ease;
+}
+
+.minigame-option-card:hover {
+  background: rgba(51, 65, 85, 0.86);
+  transform: translateY(-1px);
+}
+
+.minigame-option-card.is-selected {
+  border-color: rgba(129, 140, 248, 0.7);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.14);
+  background: rgba(49, 46, 129, 0.26);
+}
+
+.minigame-option-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.minigame-option-card__bottom {
+  margin-top: 6px;
+  font-size: 0.82rem;
+  color: #cbd5e1;
+}
+
+.minigame-preview-pane {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.minigame-preview-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.minigame-preview-choice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(51, 65, 85, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.minigame-preview-choice.is-selected {
+  border-color: rgba(129, 140, 248, 0.7);
+  background: rgba(79, 70, 229, 0.18);
+}
+
+.minigame-checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.check-pass,
+.check-fail {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.check-pass {
+  background: rgba(16, 185, 129, 0.14);
+  color: #bbf7d0;
+}
+
+.check-fail {
+  background: rgba(239, 68, 68, 0.14);
+  color: #fecaca;
+}
+
+.minigame-result {
+  margin-top: 16px;
+  padding: 14px;
+  border-radius: 14px;
+  background: rgba(30, 41, 59, 0.74);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+@media (max-width: 1200px) {
+  .minigame-shell__body {
+    grid-template-columns: 1fr;
+  }
+
+  .minigame-toolbar {
+    grid-template-columns: 1fr;
+    justify-items: stretch;
+  }
+
+  .minigame-toolbar__center,
+  .minigame-toolbar__left,
+  .minigame-toolbar__right {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 700px) {
+  .minigame-grid.two-up {
+    grid-template-columns: 1fr;
+  }
+}

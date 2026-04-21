@@ -76,6 +76,15 @@ function buildMiniGameFromSelectedNode(selectedNode) {
   }
 }
 
+function isSupportedMiniGameBlock(node) {
+  const type = node?.data?.blockType;
+  return (
+    type === "traitPicker" ||
+    type === "persuasion" ||
+    type === "choiceWeighting"
+  );
+}
+
 export default function App() {
   const story = useStoryState();
 
@@ -88,11 +97,19 @@ export default function App() {
   const [isMiniGameOpen, setIsMiniGameOpen] = useState(false);
 
   const selectedMiniGame = useMemo(() => {
+    if (!story.selectedNode || !isSupportedMiniGameBlock(story.selectedNode)) {
+      return null;
+    }
+
     return buildMiniGameFromSelectedNode(story.selectedNode);
   }, [story.selectedNode]);
 
+  const canOpenMiniGameEditor =
+    Boolean(story.selectedNode) &&
+    isSupportedMiniGameBlock(story.selectedNode);
+
   function handleOpenMiniGameEditor() {
-    if (!story.selectedNode) return;
+    if (!canOpenMiniGameEditor) return;
     setIsMiniGameOpen(true);
   }
 
@@ -183,6 +200,18 @@ export default function App() {
     setIsMiniGameOpen(false);
   }
 
+  if (isMiniGameOpen && selectedMiniGame) {
+    return (
+      <MiniGameEditor
+        open={isMiniGameOpen}
+        game={selectedMiniGame}
+        nodes={story.nodes}
+        onClose={handleCloseMiniGameEditor}
+        onSave={handleSaveMiniGame}
+      />
+    );
+  }
+
   return (
     <div className="app-shell">
       <header className="app-header">
@@ -197,15 +226,17 @@ export default function App() {
           <button
             type="button"
             onClick={handleOpenMiniGameEditor}
-            disabled={!story.selectedNode}
+            disabled={!canOpenMiniGameEditor}
             style={{
               ...styles.headerButton,
-              ...(!story.selectedNode ? styles.headerButtonDisabled : null),
+              ...(!canOpenMiniGameEditor ? styles.headerButtonDisabled : null),
             }}
             title={
-              story.selectedNode
+              canOpenMiniGameEditor
                 ? "Open mini-game editor for selected block"
-                : "Select a mini-game block first"
+                : story.selectedNode
+                  ? "Selected node is not a supported mini-game block"
+                  : "Select a mini-game block first"
             }
           >
             Open Mini-Game Editor
@@ -233,14 +264,6 @@ export default function App() {
           <StoryPreview {...story} {...play} />
         </aside>
       </main>
-
-      <MiniGameEditor
-        open={isMiniGameOpen}
-        game={selectedMiniGame}
-        nodes={story.nodes}
-        onClose={handleCloseMiniGameEditor}
-        onSave={handleSaveMiniGame}
-      />
     </div>
   );
 }
@@ -250,6 +273,7 @@ const styles = {
     display: "flex",
     alignItems: "center",
     gap: "12px",
+    marginLeft: "auto",
   },
   headerButton: {
     border: "1px solid rgba(255,255,255,0.18)",
