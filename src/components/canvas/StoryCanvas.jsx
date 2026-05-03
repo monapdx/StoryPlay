@@ -27,6 +27,7 @@ export default function StoryCanvas({
   selectedNodeId,
   setSelectedNodeId,
   addNode,
+  addChoiceToSelectedNode,
   updateNodePosition,
   connectNodesFromHandle,
   deleteEdge,
@@ -82,9 +83,17 @@ export default function StoryCanvas({
         ...node.data,
         isSelected: node.id === selectedNodeId,
         playState: playStateMap[node.id] || "idle",
+        onSelectNode: (nodeId) => setSelectedNodeId?.(nodeId),
+        onAddChoice: (nodeId) => {
+          if (!nodeId) return;
+          setSelectedNodeId?.(nodeId);
+          setTimeout(() => {
+            addChoiceToSelectedNode?.();
+          }, 0);
+        },
       },
     }));
-  }, [nodes, selectedNodeId, playStateMap]);
+  }, [nodes, selectedNodeId, playStateMap, setSelectedNodeId, addChoiceToSelectedNode]);
 
   const hydratedEdges = useMemo(() => {
     return edges.map((edge) => {

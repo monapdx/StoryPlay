@@ -150,6 +150,23 @@ export default function App() {
     setIsMiniGameOpen(true);
   }
 
+  function handleDemoStoryChange(event) {
+    const storyId = event.target.value;
+    if (storyId === story.activeDemoStoryId) return;
+
+    if (
+      story.isDemoDirty &&
+      !window.confirm(
+        "Switch demo story? Your edits to the current graph and variables will be replaced."
+      )
+    ) {
+      return;
+    }
+
+    setIsMiniGameOpen(false);
+    story.loadDemoStory(storyId);
+  }
+
   function handleCloseMiniGameEditor() {
     setIsMiniGameOpen(false);
   }
@@ -257,6 +274,27 @@ export default function App() {
           <p className="app-subtitle">
             Build branching stories with interactive blocks
           </p>
+
+          <div
+            className="app-story-switcher"
+            title="Loads a built-in demo into the editor and preview. If you changed the graph or variables, you will be asked to confirm before switching."
+          >
+            <label htmlFor="demo-story-select" className="app-story-switcher-label">
+              Demo story
+            </label>
+            <select
+              id="demo-story-select"
+              className="form-select app-story-switcher-select"
+              value={story.activeDemoStoryId}
+              onChange={handleDemoStoryChange}
+            >
+              {story.demoStories.map((entry) => (
+                <option key={entry.id} value={entry.id} title={entry.blurb}>
+                  [{entry.tier}] {entry.label}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <div style={styles.headerActions}>

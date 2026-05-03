@@ -1,3 +1,5 @@
+import { useEffect, useRef, useState } from "react";
+
 const ACTIONS = [
   { value: "set", label: "set" },
   { value: "add", label: "add" },
@@ -23,6 +25,21 @@ export default function ChoiceEffectsEditor({
 }) {
   const variableKeys = Object.keys(variables || {});
   const effects = choice.effects || [];
+  const previousEffectCountRef = useRef(effects.length);
+  const [expandedEffectIndex, setExpandedEffectIndex] = useState(null);
+
+  useEffect(() => {
+    const previousCount = previousEffectCountRef.current;
+    const currentCount = effects.length;
+
+    if (currentCount > previousCount && currentCount > 0) {
+      setExpandedEffectIndex(currentCount - 1);
+    } else if (expandedEffectIndex !== null && expandedEffectIndex >= currentCount) {
+      setExpandedEffectIndex(null);
+    }
+
+    previousEffectCountRef.current = currentCount;
+  }, [effects, expandedEffectIndex]);
 
   function addEffect() {
     onUpdate("effects", [...effects, getDefaultEffect(variables)]);
@@ -147,54 +164,84 @@ export default function ChoiceEffectsEditor({
                   )
                 : ACTIONS.filter((action) => action.value !== "toggle");
 
+            const isExpanded = expandedEffectIndex === index;
+
             return (
-              <div key={index} className="choice-row">
-                <div className="form-group">
-                  <label className="form-label">Variable</label>
-                  <select
-                    className="form-select"
-                    value={effect.variable || ""}
-                    onChange={(e) =>
-                      updateEffect(index, "variable", e.target.value)
-                    }
-                  >
-                    {variableKeys.map((key) => (
-                      <option key={key} value={key}>
-                        {key}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Action</label>
-                  <select
-                    className="form-select"
-                    value={effect.action || "set"}
-                    onChange={(e) =>
-                      updateEffect(index, "action", e.target.value)
-                    }
-                  >
-                    {actionOptions.map((action) => (
-                      <option key={action.value} value={action.value}>
-                        {action.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Value</label>
-                  {renderValueInput(effect, index)}
-                </div>
-
+              <div key={index} className={`choice-row ${isExpanded ? "is-expanded" : ""}`}>
                 <button
                   type="button"
-                  className="danger-button"
-                  onClick={() => removeEffect(index)}
+                  className="collapsible-row-header"
+                  onClick={() => setExpandedEffectIndex(index)}
+                  aria-expanded={isExpanded}
                 >
-                  Remove Effect
+                  <span>
+                    <span className="collapsible-row-title">
+                      {effect.variable || "Effect"}
+                    </span>
+                    <span className="collapsible-row-meta">
+                      {effect.action || "set"}
+                      {effect.action === "toggle"
+                        ? ""
+                        : ` ${String(effect.value ?? "")}`}
+                    </span>
+                  </span>
+                  <span className={`collapsible-chevron ${isExpanded ? "is-open" : ""}`}>
+                    ▾
+                  </span>
                 </button>
+
+                {isExpanded && (
+                  <>
+                    <div className="form-group">
+                      <label className="form-label">Variable</label>
+                      <select
+                        className="form-select"
+                        value={effect.variable || ""}
+                        onFocus={() => setExpandedEffectIndex(index)}
+                        onChange={(e) =>
+                          updateEffect(index, "variable", e.target.value)
+                        }
+                      >
+                        {variableKeys.map((key) => (
+                          <option key={key} value={key}>
+                            {key}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="form-group">
+                      <label className="form-label">Action</label>
+                      <select
+                        className="form-select"
+                        value={effect.action || "set"}
+                        onFocus={() => setExpandedEffectIndex(index)}
+                        onChange={(e) =>
+                          updateEffect(index, "action", e.target.value)
+                        }
+                      >
+                        {actionOptions.map((action) => (
+                          <option key={action.value} value={action.value}>
+                            {action.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="form-group">
+                      <label className="form-label">Value</label>
+                      {renderValueInput(effect, index)}
+                    </div>
+
+                    <button
+                      type="button"
+                      className="danger-button"
+                      onClick={() => removeEffect(index)}
+                    >
+                      Remove Effect
+                    </button>
+                  </>
+                )}
               </div>
             );
           })}

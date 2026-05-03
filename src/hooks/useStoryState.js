@@ -1,5 +1,9 @@
 import { useMemo, useState } from "react";
-import sampleStory from "../data/sampleStory";
+import {
+  cloneDemoStoryById,
+  DEFAULT_DEMO_STORY_ID,
+  DEMO_STORIES,
+} from "../data/demoStoriesCatalog";
 
 function makeNodeId() {
   return `node_${Math.random().toString(36).slice(2, 10)}`;
@@ -46,14 +50,45 @@ function normalizeInitialStory(story) {
   };
 }
 
+function stableDemoSignature(nodes, variables) {
+  return JSON.stringify({ nodes, variables });
+}
+
 export default function useStoryState() {
-  const initial = normalizeInitialStory(sampleStory);
+  const [activeDemoStoryId, setActiveDemoStoryId] = useState(
+    DEFAULT_DEMO_STORY_ID
+  );
+
+  const initial = useMemo(() => {
+    return normalizeInitialStory(cloneDemoStoryById(DEFAULT_DEMO_STORY_ID));
+  }, []);
 
   const [nodes, setNodes] = useState(initial.nodes);
   const [variables, setVariables] = useState(initial.variables);
   const [selectedNodeId, setSelectedNodeId] = useState(
     initial.nodes[0]?.id || null
   );
+
+  const [demoBaselineSignature, setDemoBaselineSignature] = useState(() =>
+    stableDemoSignature(initial.nodes, initial.variables)
+  );
+
+  const isDemoDirty = useMemo(() => {
+    return stableDemoSignature(nodes, variables) !== demoBaselineSignature;
+  }, [nodes, variables, demoBaselineSignature]);
+
+  function loadDemoStory(storyId) {
+    const raw = cloneDemoStoryById(storyId);
+    if (!raw) return;
+
+    const next = normalizeInitialStory(raw);
+
+    setNodes(next.nodes);
+    setVariables(next.variables);
+    setSelectedNodeId(next.nodes[0]?.id || null);
+    setActiveDemoStoryId(storyId);
+    setDemoBaselineSignature(stableDemoSignature(next.nodes, next.variables));
+  }
 
   const selectedNode = useMemo(() => {
     return nodes.find((node) => node.id === selectedNodeId) || null;
@@ -294,6 +329,10 @@ export default function useStoryState() {
     selectedNodeId,
     setSelectedNodeId,
     selectedNode,
+    activeDemoStoryId,
+    demoStories: DEMO_STORIES,
+    loadDemoStory,
+    isDemoDirty,
     addNode,
     updateNodePosition,
     updateSelectedNodeField,

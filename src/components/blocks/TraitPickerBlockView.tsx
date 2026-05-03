@@ -62,11 +62,17 @@ export default function TraitPickerBlockView({
       }
     }
 
+    const continueNodeId =
+      typeof block.continueNodeId === "string" && block.continueNodeId.trim()
+        ? block.continueNodeId.trim()
+        : undefined;
+
     onComplete({
       type: "traitPicker",
       completed: true,
       selectedTraitIds,
       selectedTraits,
+      nextNodeId: continueNodeId,
       variablePatch: {
         ...(block.traitListVariable
           ? { [block.traitListVariable]: selectedTraitIds }

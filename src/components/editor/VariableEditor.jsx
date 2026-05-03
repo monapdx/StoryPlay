@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 function detectType(value) {
   if (typeof value === "boolean") return "boolean";
   if (typeof value === "number") return "number";
@@ -17,17 +19,28 @@ function coerceValue(type, rawValue) {
 
 export default function VariableEditor({ variables = {}, setVariables }) {
   const entries = Object.entries(variables || {});
+  const [expandedVariableKey, setExpandedVariableKey] = useState(null);
+
+  useEffect(() => {
+    if (!expandedVariableKey) return;
+    if (!(expandedVariableKey in (variables || {}))) {
+      setExpandedVariableKey(null);
+    }
+  }, [variables, expandedVariableKey]);
 
   function addVariable() {
     let name = "variable";
     let i = 1;
 
-    while (variables[name + i]) i++;
+    while (variables[name + i] !== undefined) i++;
+
+    const newKey = name + i;
 
     setVariables({
       ...variables,
-      [name + i]: ""
+      [newKey]: ""
     });
+    setExpandedVariableKey(newKey);
   }
 
   function removeVariable(key) {
@@ -40,7 +53,7 @@ export default function VariableEditor({ variables = {}, setVariables }) {
     const trimmed = newKey.trim();
 
     if (!trimmed || trimmed === oldKey) return;
-    if (variables[trimmed]) return;
+    if (variables[trimmed] !== undefined) return;
 
     const next = {};
 
@@ -50,6 +63,10 @@ export default function VariableEditor({ variables = {}, setVariables }) {
     }
 
     setVariables(next);
+
+    if (expandedVariableKey === oldKey) {
+      setExpandedVariableKey(trimmed);
+    }
   }
 
   function updateVariableValue(key, value) {
@@ -100,75 +117,98 @@ export default function VariableEditor({ variables = {}, setVariables }) {
         {entries.map(([key, value]) => {
 
           const type = detectType(value);
+          const isExpanded = expandedVariableKey === key;
 
           return (
-            <div key={key} className="choice-row">
-
-              <div className="form-group">
-                <label className="form-label">Name</label>
-
-                <input
-                  className="form-input"
-                  defaultValue={key}
-                  onBlur={(e) => renameVariable(key, e.target.value)}
-                />
-              </div>
-
-
-              <div className="form-group">
-                <label className="form-label">Type</label>
-
-                <select
-                  className="form-select"
-                  value={type}
-                  onChange={(e) => changeVariableType(key, e.target.value)}
-                >
-                  <option value="string">string</option>
-                  <option value="number">number</option>
-                  <option value="boolean">boolean</option>
-                </select>
-              </div>
-
-
-              <div className="form-group">
-                <label className="form-label">Value</label>
-
-                {type === "boolean" ? (
-                  <select
-                    className="form-select"
-                    value={String(value)}
-                    onChange={(e) =>
-                      updateVariableValue(
-                        key,
-                        coerceValue("boolean", e.target.value)
-                      )
-                    }
-                  >
-                    <option value="true">true</option>
-                    <option value="false">false</option>
-                  </select>
-                ) : (
-                  <input
-                    className="form-input"
-                    type={type === "number" ? "number" : "text"}
-                    value={value}
-                    onChange={(e) =>
-                      updateVariableValue(
-                        key,
-                        coerceValue(type, e.target.value)
-                      )
-                    }
-                  />
-                )}
-              </div>
-
+            <div key={key} className={`choice-row ${isExpanded ? "is-expanded" : ""}`}>
               <button
-                className="danger-button"
-                onClick={() => removeVariable(key)}
+                type="button"
+                className="collapsible-row-header"
+                onClick={() => setExpandedVariableKey(key)}
+                aria-expanded={isExpanded}
               >
-                Delete Variable
+                <span>
+                  <span className="collapsible-row-title">{key}</span>
+                  <span className="collapsible-row-meta">
+                    {type}: {String(value)}
+                  </span>
+                </span>
+                <span className={`collapsible-chevron ${isExpanded ? "is-open" : ""}`}>
+                  ▾
+                </span>
               </button>
 
+              {isExpanded && (
+                <>
+                  <div className="form-group">
+                    <label className="form-label">Name</label>
+
+                    <input
+                      className="form-input"
+                      defaultValue={key}
+                      onFocus={() => setExpandedVariableKey(key)}
+                      onBlur={(e) => renameVariable(key, e.target.value)}
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">Type</label>
+
+                    <select
+                      className="form-select"
+                      value={type}
+                      onFocus={() => setExpandedVariableKey(key)}
+                      onChange={(e) => changeVariableType(key, e.target.value)}
+                    >
+                      <option value="string">string</option>
+                      <option value="number">number</option>
+                      <option value="boolean">boolean</option>
+                    </select>
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">Value</label>
+
+                    {type === "boolean" ? (
+                      <select
+                        className="form-select"
+                        value={String(value)}
+                        onFocus={() => setExpandedVariableKey(key)}
+                        onChange={(e) =>
+                          updateVariableValue(
+                            key,
+                            coerceValue("boolean", e.target.value)
+                          )
+                        }
+                      >
+                        <option value="true">true</option>
+                        <option value="false">false</option>
+                      </select>
+                    ) : (
+                      <input
+                        className="form-input"
+                        type={type === "number" ? "number" : "text"}
+                        value={value}
+                        onFocus={() => setExpandedVariableKey(key)}
+                        onChange={(e) =>
+                          updateVariableValue(
+                            key,
+                            coerceValue(type, e.target.value)
+                          )
+                        }
+                      />
+                    )}
+                  </div>
+
+                  <button
+                    type="button"
+                    className="danger-button"
+                    onClick={() => removeVariable(key)}
+                  >
+                    Delete Variable
+                  </button>
+                </>
+              )}
             </div>
           );
         })}

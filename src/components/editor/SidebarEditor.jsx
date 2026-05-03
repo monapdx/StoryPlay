@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import ChoicesEditor from "./ChoicesEditor";
 import StoryDiagnostics from "./StoryDiagnostics";
 import VariableEditor from "./VariableEditor";
@@ -14,6 +15,12 @@ export default function SidebarEditor({
   removeChoiceFromSelectedNode,
   onOpenMiniGameEditor,
 }) {
+  const [isNarrativeContentOpen, setIsNarrativeContentOpen] = useState(false);
+
+  useEffect(() => {
+    setIsNarrativeContentOpen(false);
+  }, [selectedNode?.id]);
+
   if (!selectedNode) {
     return (
       <div>
@@ -131,20 +138,42 @@ export default function SidebarEditor({
         blockType === "chat" ||
         blockType === "ending") && (
         <div className="form-group">
-          <label className="form-label">
-            {blockType === "chat" ? "Chat Content" : "Content"}
-          </label>
+          <button
+            type="button"
+            className="collapsible-row-header"
+            onClick={() => setIsNarrativeContentOpen((value) => !value)}
+            aria-expanded={isNarrativeContentOpen}
+          >
+            <span>
+              <span className="collapsible-row-title">
+                {blockType === "chat" ? "Chat Content" : "Content"}
+              </span>
+              <span className="collapsible-row-meta">
+                {content?.trim()
+                  ? `${content.trim().slice(0, 80)}${content.trim().length > 80 ? "..." : ""}`
+                  : "No content yet"}
+              </span>
+            </span>
+            <span
+              className={`collapsible-chevron ${isNarrativeContentOpen ? "is-open" : ""}`}
+            >
+              ▾
+            </span>
+          </button>
 
-          <textarea
-            className="form-textarea"
-            value={content}
-            onChange={(e) => updateSelectedNodeField("content", e.target.value)}
-            placeholder={
-              blockType === "chat"
-                ? "Example:\nA message appears on your screen.\nYou: Who is this?\nDon't open the door."
-                : "Write the story text for this block..."
-            }
-          />
+          {isNarrativeContentOpen && (
+            <textarea
+              className="form-textarea"
+              value={content}
+              onFocus={() => setIsNarrativeContentOpen(true)}
+              onChange={(e) => updateSelectedNodeField("content", e.target.value)}
+              placeholder={
+                blockType === "chat"
+                  ? "Example:\nA message appears on your screen.\nYou: Who is this?\nDon't open the door."
+                  : "Write the story text for this block..."
+              }
+            />
+          )}
         </div>
       )}
 

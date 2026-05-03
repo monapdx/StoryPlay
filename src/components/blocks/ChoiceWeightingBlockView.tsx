@@ -62,12 +62,18 @@ export default function ChoiceWeightingBlockView({
       }
     }
 
+    const continueNodeId =
+      typeof block.continueNodeId === "string" && block.continueNodeId.trim()
+        ? block.continueNodeId.trim()
+        : undefined;
+
     onComplete({
       type: "choiceWeighting",
       completed: true,
       allocation,
       totalAssigned,
       pointsRemaining,
+      nextNodeId: continueNodeId,
       variablePatch: patch,
     });
   }

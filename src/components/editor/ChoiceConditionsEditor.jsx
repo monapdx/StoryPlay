@@ -1,3 +1,5 @@
+import { useEffect, useRef, useState } from "react";
+
 const OPERATORS = [
   { value: "equals", label: "==" },
   { value: "notEquals", label: "!=" },
@@ -24,6 +26,21 @@ export default function ChoiceConditionsEditor({
 }) {
   const variableKeys = Object.keys(variables || {});
   const conditions = choice.conditions || [];
+  const previousConditionCountRef = useRef(conditions.length);
+  const [expandedConditionIndex, setExpandedConditionIndex] = useState(null);
+
+  useEffect(() => {
+    const previousCount = previousConditionCountRef.current;
+    const currentCount = conditions.length;
+
+    if (currentCount > previousCount && currentCount > 0) {
+      setExpandedConditionIndex(currentCount - 1);
+    } else if (expandedConditionIndex !== null && expandedConditionIndex >= currentCount) {
+      setExpandedConditionIndex(null);
+    }
+
+    previousConditionCountRef.current = currentCount;
+  }, [conditions, expandedConditionIndex]);
 
   function addCondition() {
     onUpdate("conditions", [...conditions, getDefaultCondition(variables)]);
@@ -115,56 +132,88 @@ export default function ChoiceConditionsEditor({
         <div className="helper-box">No conditions on this choice yet.</div>
       ) : (
         <div className="choice-list">
-          {conditions.map((condition, index) => (
-            <div key={index} className="choice-row">
-              <div className="form-group">
-                <label className="form-label">Variable</label>
-                <select
-                  className="form-select"
-                  value={condition.variable || ""}
-                  onChange={(e) =>
-                    updateCondition(index, "variable", e.target.value)
-                  }
+          {conditions.map((condition, index) => {
+            const isExpanded = expandedConditionIndex === index;
+            const operatorLabel =
+              OPERATORS.find((operator) => operator.value === condition.operator)
+                ?.label || "==";
+
+            return (
+              <div key={index} className={`choice-row ${isExpanded ? "is-expanded" : ""}`}>
+                <button
+                  type="button"
+                  className="collapsible-row-header"
+                  onClick={() => setExpandedConditionIndex(index)}
+                  aria-expanded={isExpanded}
                 >
-                  {variableKeys.map((key) => (
-                    <option key={key} value={key}>
-                      {key}
-                    </option>
-                  ))}
-                </select>
-              </div>
+                  <span>
+                    <span className="collapsible-row-title">
+                      {condition.variable || "Condition"}
+                    </span>
+                    <span className="collapsible-row-meta">
+                      {operatorLabel} {String(condition.value ?? "")}
+                    </span>
+                  </span>
+                  <span className={`collapsible-chevron ${isExpanded ? "is-open" : ""}`}>
+                    ▾
+                  </span>
+                </button>
 
-              <div className="form-group">
-                <label className="form-label">Operator</label>
-                <select
-                  className="form-select"
-                  value={condition.operator || "equals"}
-                  onChange={(e) =>
-                    updateCondition(index, "operator", e.target.value)
-                  }
-                >
-                  {OPERATORS.map((operator) => (
-                    <option key={operator.value} value={operator.value}>
-                      {operator.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
+                {isExpanded && (
+                  <>
+                    <div className="form-group">
+                      <label className="form-label">Variable</label>
+                      <select
+                        className="form-select"
+                        value={condition.variable || ""}
+                        onFocus={() => setExpandedConditionIndex(index)}
+                        onChange={(e) =>
+                          updateCondition(index, "variable", e.target.value)
+                        }
+                      >
+                        {variableKeys.map((key) => (
+                          <option key={key} value={key}>
+                            {key}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
 
-              <div className="form-group">
-                <label className="form-label">Value</label>
-                {renderValueInput(condition, index)}
-              </div>
+                    <div className="form-group">
+                      <label className="form-label">Operator</label>
+                      <select
+                        className="form-select"
+                        value={condition.operator || "equals"}
+                        onFocus={() => setExpandedConditionIndex(index)}
+                        onChange={(e) =>
+                          updateCondition(index, "operator", e.target.value)
+                        }
+                      >
+                        {OPERATORS.map((operator) => (
+                          <option key={operator.value} value={operator.value}>
+                            {operator.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
 
-              <button
-                type="button"
-                className="danger-button"
-                onClick={() => removeCondition(index)}
-              >
-                Remove Condition
-              </button>
-            </div>
-          ))}
+                    <div className="form-group">
+                      <label className="form-label">Value</label>
+                      {renderValueInput(condition, index)}
+                    </div>
+
+                    <button
+                      type="button"
+                      className="danger-button"
+                      onClick={() => removeCondition(index)}
+                    >
+                      Remove Condition
+                    </button>
+                  </>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
     </div>

@@ -49,6 +49,8 @@ export default function StoryPreview({
   const [revealedChatCount, setRevealedChatCount] = useState(0);
   const [showTyping, setShowTyping] = useState(false);
   const [selectedReplyIndex, setSelectedReplyIndex] = useState(null);
+  const [showVariableDetails, setShowVariableDetails] = useState(false);
+  const [showPlayMeta, setShowPlayMeta] = useState(false);
 
   const chatTimersRef = useRef([]);
   const chatScrollRef = useRef(null);
@@ -166,6 +168,12 @@ export default function StoryPreview({
     chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
   }, [revealedChatCount, showTyping, selectedReplyIndex]);
 
+  useEffect(() => {
+    if ((changedVariableKeys?.length || 0) > 0) {
+      setShowVariableDetails(true);
+    }
+  }, [changedVariableKeys]);
+
   const revealedChatLines = isChat
     ? chatLines.slice(0, revealedChatCount)
     : [];
@@ -260,43 +268,62 @@ export default function StoryPreview({
       </div>
 
       <div className="preview-block">
-        <h3 className="preview-title">Variables</h3>
+        <button
+          type="button"
+          className="collapsible-row-header"
+          onClick={() => setShowVariableDetails((value) => !value)}
+          aria-expanded={showVariableDetails}
+        >
+          <span>
+            <span className="collapsible-row-title">Variables</span>
+            <span className="collapsible-row-meta">
+              {Object.keys(playVariables || {}).length} total
+              {(changedVariableKeys?.length || 0) > 0
+                ? `, ${changedVariableKeys.length} changed`
+                : ""}
+            </span>
+          </span>
+          <span className={`collapsible-chevron ${showVariableDetails ? "is-open" : ""}`}>
+            ▾
+          </span>
+        </button>
 
-        {Object.keys(playVariables || {}).length === 0 ? (
-          <div className="muted">No variables defined.</div>
-        ) : (
-          <div className="variable-debugger-list">
-            {Object.entries(playVariables).map(([key, value]) => {
-              const changed = changedVariableKeys?.includes?.(key);
-              const previousValue = previousPlayVariables?.[key];
+        {showVariableDetails &&
+          (Object.keys(playVariables || {}).length === 0 ? (
+            <div className="muted">No variables defined.</div>
+          ) : (
+            <div className="variable-debugger-list">
+              {Object.entries(playVariables).map(([key, value]) => {
+                const changed = changedVariableKeys?.includes?.(key);
+                const previousValue = previousPlayVariables?.[key];
 
-              return (
-                <div
-                  key={key}
-                  className={`variable-debugger-item ${changed ? "changed" : ""}`}
-                >
-                  <div className="variable-debugger-key">{key}</div>
+                return (
+                  <div
+                    key={key}
+                    className={`variable-debugger-item ${changed ? "changed" : ""}`}
+                  >
+                    <div className="variable-debugger-key">{key}</div>
 
-                  <div className="variable-debugger-value">
-                    {changed ? (
-                      <>
-                        <span className="variable-debugger-old">
-                          {String(previousValue)}
-                        </span>
-                        <span className="variable-debugger-arrow">→</span>
-                        <span className="variable-debugger-new">
-                          {String(value)}
-                        </span>
-                      </>
-                    ) : (
-                      <span>{String(value)}</span>
-                    )}
+                    <div className="variable-debugger-value">
+                      {changed ? (
+                        <>
+                          <span className="variable-debugger-old">
+                            {String(previousValue)}
+                          </span>
+                          <span className="variable-debugger-arrow">→</span>
+                          <span className="variable-debugger-new">
+                            {String(value)}
+                          </span>
+                        </>
+                      ) : (
+                        <span>{String(value)}</span>
+                      )}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
+                );
+              })}
+            </div>
+          ))}
       </div>
 
       {!currentPlayNode ? (
@@ -428,12 +455,33 @@ export default function StoryPreview({
       )}
 
       <div className="helper-box">
-        <strong>Editing:</strong> {selectedNode?.data?.title || "No block selected"}
-        <br />
-        <strong>Playing:</strong> {currentPlayNode?.data?.title || "Nothing"}
-        <br />
-        <strong>History:</strong> {history?.length || 0} step
-        {(history?.length || 0) === 1 ? "" : "s"}
+        <button
+          type="button"
+          className="collapsible-row-header"
+          onClick={() => setShowPlayMeta((value) => !value)}
+          aria-expanded={showPlayMeta}
+        >
+          <span>
+            <span className="collapsible-row-title">Play Details</span>
+            <span className="collapsible-row-meta">
+              {currentPlayNode?.data?.title || "Nothing playing"}
+            </span>
+          </span>
+          <span className={`collapsible-chevron ${showPlayMeta ? "is-open" : ""}`}>
+            ▾
+          </span>
+        </button>
+
+        {showPlayMeta && (
+          <>
+            <strong>Editing:</strong> {selectedNode?.data?.title || "No block selected"}
+            <br />
+            <strong>Playing:</strong> {currentPlayNode?.data?.title || "Nothing"}
+            <br />
+            <strong>History:</strong> {history?.length || 0} step
+            {(history?.length || 0) === 1 ? "" : "s"}
+          </>
+        )}
       </div>
     </div>
   );

@@ -17,6 +17,8 @@ export interface TraitPickerBlock extends BaseStoryBlock {
   minSelections?: number;
   maxSelections: number;
   traitListVariable?: string;
+  /** If set, preview advances to this node after confirming traits. */
+  continueNodeId?: string;
   options: TraitOption[];
 }
 
@@ -72,6 +74,8 @@ export interface ChoiceWeightingBlock extends BaseStoryBlock {
   variablePrefix?: string;
   resultVariable?: string;
   lockExactTotal?: boolean;
+  /** If set, preview advances to this node after confirming allocation. */
+  continueNodeId?: string;
 }
 
 export interface ChoiceWeightingBlockResult extends BaseBlockResult {
