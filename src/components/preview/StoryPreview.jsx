@@ -43,7 +43,10 @@ export default function StoryPreview({
   resetToSelected,
   goToNode,
   goBack,
+  /** "dock" = compact inline editor preview; default = full sidebar chrome */
+  variant = "default",
 }) {
+  const isDock = variant === "dock";
   const [timeLeft, setTimeLeft] = useState(null);
 
   const [revealedChatCount, setRevealedChatCount] = useState(0);
@@ -169,10 +172,11 @@ export default function StoryPreview({
   }, [revealedChatCount, showTyping, selectedReplyIndex]);
 
   useEffect(() => {
+    if (isDock) return;
     if ((changedVariableKeys?.length || 0) > 0) {
       setShowVariableDetails(true);
     }
-  }, [changedVariableKeys]);
+  }, [changedVariableKeys, isDock]);
 
   const revealedChatLines = isChat
     ? chatLines.slice(0, revealedChatCount)
@@ -238,10 +242,10 @@ export default function StoryPreview({
   }
 
   return (
-    <div className="preview-story">
+    <div className={`preview-story${isDock ? " preview-story--dock" : ""}`}>
       <div className="preview-header-row">
         <h2 className="section-title" style={{ marginBottom: 0 }}>
-          Play Preview
+          {isDock ? "Preview" : "Play Preview"}
         </h2>
 
         <div className="preview-toolbar">
@@ -249,8 +253,9 @@ export default function StoryPreview({
             className="toolbar-button"
             onClick={() => startFromNode(selectedNodeId)}
             disabled={!selectedNodeId}
+            title={isDock ? "Start from selected canvas block" : undefined}
           >
-            Start From Selected
+            {isDock ? "Start" : "Start From Selected"}
           </button>
 
           <button
@@ -261,7 +266,11 @@ export default function StoryPreview({
             Back
           </button>
 
-          <button className="toolbar-button" onClick={resetToSelected}>
+          <button
+            className="toolbar-button"
+            onClick={resetToSelected}
+            title={isDock ? "Reset play state to match editor selection" : undefined}
+          >
             Reset
           </button>
         </div>
@@ -405,9 +414,11 @@ export default function StoryPreview({
             </div>
           )}
 
-          <div className="helper-box" style={{ marginTop: 12 }}>
-            Block type: {blockType}
-          </div>
+          {!isDock && (
+            <div className="helper-box" style={{ marginTop: 12 }}>
+              Block type: {blockType}
+            </div>
+          )}
 
           {!isChat && !isMiniGame && (
             <div className="preview-choice-list">
@@ -454,35 +465,37 @@ export default function StoryPreview({
         </div>
       )}
 
-      <div className="helper-box">
-        <button
-          type="button"
-          className="collapsible-row-header"
-          onClick={() => setShowPlayMeta((value) => !value)}
-          aria-expanded={showPlayMeta}
-        >
-          <span>
-            <span className="collapsible-row-title">Play Details</span>
-            <span className="collapsible-row-meta">
-              {currentPlayNode?.data?.title || "Nothing playing"}
+      {!isDock && (
+        <div className="helper-box">
+          <button
+            type="button"
+            className="collapsible-row-header"
+            onClick={() => setShowPlayMeta((value) => !value)}
+            aria-expanded={showPlayMeta}
+          >
+            <span>
+              <span className="collapsible-row-title">Play Details</span>
+              <span className="collapsible-row-meta">
+                {currentPlayNode?.data?.title || "Nothing playing"}
+              </span>
             </span>
-          </span>
-          <span className={`collapsible-chevron ${showPlayMeta ? "is-open" : ""}`}>
-            ▾
-          </span>
-        </button>
+            <span className={`collapsible-chevron ${showPlayMeta ? "is-open" : ""}`}>
+              ▾
+            </span>
+          </button>
 
-        {showPlayMeta && (
-          <>
-            <strong>Editing:</strong> {selectedNode?.data?.title || "No block selected"}
-            <br />
-            <strong>Playing:</strong> {currentPlayNode?.data?.title || "Nothing"}
-            <br />
-            <strong>History:</strong> {history?.length || 0} step
-            {(history?.length || 0) === 1 ? "" : "s"}
-          </>
-        )}
-      </div>
+          {showPlayMeta && (
+            <>
+              <strong>Editing:</strong> {selectedNode?.data?.title || "No block selected"}
+              <br />
+              <strong>Playing:</strong> {currentPlayNode?.data?.title || "Nothing"}
+              <br />
+              <strong>History:</strong> {history?.length || 0} step
+              {(history?.length || 0) === 1 ? "" : "s"}
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 }

@@ -10,6 +10,13 @@ import {
   downloadStoryPlayExportV1,
   serializeStoryPlayExportV1,
 } from "./utils/serializeStoryPlayExport";
+import {
+  enableLivePreviewSyncForEditorTab,
+  isLivePreviewSyncEnabled,
+  saveCurrentStoryForPreview,
+} from "./utils/storyPreviewStorage";
+import useHashRoute from "./hooks/useHashRoute";
+import PlayerPage from "./components/player/PlayerPage";
 
 function buildMiniGameFromSelectedNode(selectedNode) {
   if (!selectedNode) return null;
@@ -90,7 +97,7 @@ function isSupportedMiniGameBlock(node) {
   );
 }
 
-export default function App() {
+function EditorApp() {
   const story = useStoryState();
   const storyRef = useRef(story);
   storyRef.current = story;
@@ -132,8 +139,27 @@ export default function App() {
     story.variables
   );
 
+  const [previewSyncTick, setPreviewSyncTick] = useState(0);
+
+  /** After first "Play in new tab", push debounced snapshot updates so open #/play tabs stay in sync. */
+  useEffect(() => {
+    if (!isLivePreviewSyncEnabled()) return undefined;
+
+    const id = window.setTimeout(() => {
+      const s = storyRef.current;
+      saveCurrentStoryForPreview({
+        nodes: s.nodes,
+        variables: s.variables,
+        selectedNodeId: s.selectedNodeId,
+      });
+    }, 1500);
+
+    return () => window.clearTimeout(id);
+  }, [story.nodes, story.variables, story.selectedNodeId, previewSyncTick]);
+
   const [isMiniGameOpen, setIsMiniGameOpen] = useState(false);
   const [activeScreen, setActiveScreen] = useState("editor");
+  const [isQuickPreviewOpen, setIsQuickPreviewOpen] = useState(false);
 
   const selectedMiniGame = useMemo(() => {
     if (!story.selectedNode || !isSupportedMiniGameBlock(story.selectedNode)) {
@@ -294,6 +320,21 @@ export default function App() {
     });
   }
 
+  function handlePlayInNewTab() {
+    enableLivePreviewSyncForEditorTab();
+    saveCurrentStoryForPreview({
+      nodes: story.nodes,
+      variables: story.variables,
+      selectedNodeId: story.selectedNodeId,
+    });
+    setPreviewSyncTick((n) => n + 1);
+    window.open(
+      `${window.location.origin}${window.location.pathname}#/play`,
+      "_blank",
+      "noopener,noreferrer"
+    );
+  }
+
   return (
     <div className="app-shell">
       {activeScreen === "variables" ? (
@@ -343,11 +384,33 @@ export default function App() {
             <div style={styles.headerActions}>
               <button
                 type="button"
+                onClick={() => setIsQuickPreviewOpen((open) => !open)}
+                style={{
+                  ...styles.headerButton,
+                  ...(isQuickPreviewOpen ? styles.headerButtonActive : null),
+                }}
+                title="Show or hide a compact play preview beside the editor (full test: Play in new tab)"
+                aria-pressed={isQuickPreviewOpen}
+              >
+                Preview
+              </button>
+
+              <button
+                type="button"
                 onClick={() => setActiveScreen("variables")}
                 style={styles.headerButton}
                 title="Open full-screen variables workspace"
               >
                 Variables
+              </button>
+
+              <button
+                type="button"
+                onClick={handlePlayInNewTab}
+                style={styles.headerButton}
+                title="Save to the browser, open #/play in a new tab, and keep that tab updated (debounced) while you edit in this tab after the first use"
+              >
+                Play in new tab
               </button>
 
               <button
@@ -374,7 +437,14 @@ export default function App() {
             </div>
           </header>
 
-          <main className="app-workspace">
+          <main
+            className={[
+              "app-workspace",
+              isQuickPreviewOpen ? "app-workspace--with-preview" : "",
+            ]
+              .filter(Boolean)
+              .join(" ")}
+          >
             <section className="panel canvas-panel">
               <StoryCanvas
                 {...story}
@@ -391,9 +461,24 @@ export default function App() {
               />
             </aside>
 
-            <aside className="panel preview-panel">
-              <StoryPreview {...story} {...play} />
-            </aside>
+            {isQuickPreviewOpen && (
+              <aside
+                className="panel preview-panel preview-panel--dock"
+                aria-label="Quick preview"
+              >
+                <div className="preview-dock-head">
+                  <span className="preview-dock-head-title">Quick preview</span>
+                  <button
+                    type="button"
+                    className="toolbar-button preview-dock-close"
+                    onClick={() => setIsQuickPreviewOpen(false)}
+                  >
+                    Close
+                  </button>
+                </div>
+                <StoryPreview {...story} {...play} variant="dock" />
+              </aside>
+            )}
           </main>
         </>
       )}
@@ -421,4 +506,17 @@ const styles = {
     opacity: 0.45,
     cursor: "not-allowed",
   },
+  headerButtonActive: {
+    borderColor: "rgba(129, 140, 248, 0.65)",
+    background: "rgba(99, 102, 241, 0.22)",
+    boxShadow: "0 0 0 2px rgba(99, 102, 241, 0.2)",
+  },
 };
+
+export default function App() {
+  const route = useHashRoute();
+  if (route === "play") {
+    return <PlayerPage />;
+  }
+  return <EditorApp />;
+}
