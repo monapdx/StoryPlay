@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
 import ChoicesEditor from "./ChoicesEditor";
 import StoryDiagnostics from "./StoryDiagnostics";
-import VariableEditor from "./VariableEditor";
 
 export default function SidebarEditor({
   nodes,
   variables,
-  setVariables,
   selectedNode,
   updateSelectedNodeField,
   deleteSelectedNode,
@@ -14,6 +12,7 @@ export default function SidebarEditor({
   updateChoiceOnSelectedNode,
   removeChoiceFromSelectedNode,
   onOpenMiniGameEditor,
+  onOpenVariables,
 }) {
   const [isNarrativeContentOpen, setIsNarrativeContentOpen] = useState(false);
 
@@ -35,7 +34,10 @@ export default function SidebarEditor({
           jump to a block.
         </div>
 
-        <VariableEditor variables={variables} setVariables={setVariables} />
+        <VariablesWorkspacePromo
+          variables={variables}
+          onOpenVariables={onOpenVariables}
+        />
         <StoryDiagnostics nodes={nodes} variables={variables} />
       </div>
     );
@@ -304,7 +306,10 @@ export default function SidebarEditor({
         />
       )}
 
-      <VariableEditor variables={variables} setVariables={setVariables} />
+      <VariablesWorkspacePromo
+        variables={variables}
+        onOpenVariables={onOpenVariables}
+      />
 
       <div className="helper-box">
         <strong>Selected node ID:</strong> {selectedNode.id}
@@ -408,6 +413,36 @@ function getMiniGameSummary({
     default:
       return [{ label: "Type", value: "Mini-Game" }];
   }
+}
+
+function VariablesWorkspacePromo({ variables, onOpenVariables }) {
+  const n = Object.keys(variables || {}).length;
+
+  return (
+    <div className="editor-section variables-workspace-promo">
+      <div className="editor-section-header">
+        <h3 className="section-title" style={{ marginBottom: 0 }}>
+          Variables
+        </h3>
+      </div>
+      <p className="variables-workspace-promo-meta">
+        {n === 0
+          ? "No variables yet."
+          : `${n} story-wide ${n === 1 ? "variable" : "variables"} (conditions, effects, preview).`}
+      </p>
+      <button
+        type="button"
+        className="toolbar-button variables-workspace-promo-button"
+        onClick={onOpenVariables}
+        disabled={!onOpenVariables}
+      >
+        Open Variables workspace
+      </button>
+      <p className="helper-box" style={{ marginTop: 10, marginBottom: 0 }}>
+        Edit names, types, and default values in a full-screen layout—same data as export and play mode.
+      </p>
+    </div>
+  );
 }
 
 const miniGameStyles = {

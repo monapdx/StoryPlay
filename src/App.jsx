@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import StoryCanvas from "./components/canvas/StoryCanvas";
 import SidebarEditor from "./components/editor/SidebarEditor";
+import VariablesScreen from "./components/editor/VariablesScreen";
 import StoryPreview from "./components/preview/StoryPreview";
 import MiniGameEditor from "./components/minigame/MiniGameEditor";
 import useStoryState from "./hooks/useStoryState";
@@ -132,6 +133,7 @@ export default function App() {
   );
 
   const [isMiniGameOpen, setIsMiniGameOpen] = useState(false);
+  const [activeScreen, setActiveScreen] = useState("editor");
 
   const selectedMiniGame = useMemo(() => {
     if (!story.selectedNode || !isSupportedMiniGameBlock(story.selectedNode)) {
@@ -145,8 +147,19 @@ export default function App() {
     Boolean(story.selectedNode) &&
     isSupportedMiniGameBlock(story.selectedNode);
 
+  const miniGameEditorTitle = useMemo(() => {
+    if (canOpenMiniGameEditor) {
+      return "Open mini-game editor for selected block";
+    }
+    if (story.selectedNode) {
+      return "Selected node is not a supported mini-game block";
+    }
+    return "Select a mini-game block first (return to the editor)";
+  }, [canOpenMiniGameEditor, story.selectedNode]);
+
   function handleOpenMiniGameEditor() {
     if (!canOpenMiniGameEditor) return;
+    setActiveScreen("editor");
     setIsMiniGameOpen(true);
   }
 
@@ -165,6 +178,14 @@ export default function App() {
 
     setIsMiniGameOpen(false);
     story.loadDemoStory(storyId);
+  }
+
+  function handleOpenVariablesWorkspace() {
+    setActiveScreen("variables");
+  }
+
+  function handleCloseVariablesWorkspace() {
+    setActiveScreen("editor");
   }
 
   function handleCloseMiniGameEditor() {
@@ -266,93 +287,116 @@ export default function App() {
     );
   }
 
+  function handleExportStory() {
+    downloadStoryPlayExportV1({
+      nodes: story.nodes,
+      variables: story.variables,
+    });
+  }
+
   return (
     <div className="app-shell">
-      <header className="app-header">
-        <div>
-          <h1>StoryPlay</h1>
-          <p className="app-subtitle">
-            Build branching stories with interactive blocks
-          </p>
+      {activeScreen === "variables" ? (
+        <VariablesScreen
+          variables={story.variables}
+          setVariables={story.setVariables}
+          onBack={handleCloseVariablesWorkspace}
+          demoStories={story.demoStories}
+          activeDemoStoryId={story.activeDemoStoryId}
+          onDemoStoryChange={handleDemoStoryChange}
+          onExport={handleExportStory}
+          onOpenMiniGameEditor={handleOpenMiniGameEditor}
+          canOpenMiniGameEditor={canOpenMiniGameEditor}
+          miniGameEditorTitle={miniGameEditorTitle}
+        />
+      ) : (
+        <>
+          <header className="app-header">
+            <div>
+              <h1>StoryPlay</h1>
+              <p className="app-subtitle">
+                Build branching stories with interactive blocks
+              </p>
 
-          <div
-            className="app-story-switcher"
-            title="Loads a built-in demo into the editor and preview. If you changed the graph or variables, you will be asked to confirm before switching."
-          >
-            <label htmlFor="demo-story-select" className="app-story-switcher-label">
-              Demo story
-            </label>
-            <select
-              id="demo-story-select"
-              className="form-select app-story-switcher-select"
-              value={story.activeDemoStoryId}
-              onChange={handleDemoStoryChange}
-            >
-              {story.demoStories.map((entry) => (
-                <option key={entry.id} value={entry.id} title={entry.blurb}>
-                  [{entry.tier}] {entry.label}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
+              <div
+                className="app-story-switcher"
+                title="Loads a built-in demo into the editor and preview. If you changed the graph or variables, you will be asked to confirm before switching."
+              >
+                <label htmlFor="demo-story-select" className="app-story-switcher-label">
+                  Demo story
+                </label>
+                <select
+                  id="demo-story-select"
+                  className="form-select app-story-switcher-select"
+                  value={story.activeDemoStoryId}
+                  onChange={handleDemoStoryChange}
+                >
+                  {story.demoStories.map((entry) => (
+                    <option key={entry.id} value={entry.id} title={entry.blurb}>
+                      [{entry.tier}] {entry.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
 
-        <div style={styles.headerActions}>
-          <button
-            type="button"
-            onClick={() =>
-              downloadStoryPlayExportV1({
-                nodes: story.nodes,
-                variables: story.variables,
-              })
-            }
-            style={styles.headerButton}
-            title="Download story as StoryPlay export JSON (v1)"
-          >
-            Export Game
-          </button>
+            <div style={styles.headerActions}>
+              <button
+                type="button"
+                onClick={() => setActiveScreen("variables")}
+                style={styles.headerButton}
+                title="Open full-screen variables workspace"
+              >
+                Variables
+              </button>
 
-          <button
-            type="button"
-            onClick={handleOpenMiniGameEditor}
-            disabled={!canOpenMiniGameEditor}
-            style={{
-              ...styles.headerButton,
-              ...(!canOpenMiniGameEditor ? styles.headerButtonDisabled : null),
-            }}
-            title={
-              canOpenMiniGameEditor
-                ? "Open mini-game editor for selected block"
-                : story.selectedNode
-                  ? "Selected node is not a supported mini-game block"
-                  : "Select a mini-game block first"
-            }
-          >
-            Open Mini-Game Editor
-          </button>
-        </div>
-      </header>
+              <button
+                type="button"
+                onClick={handleExportStory}
+                style={styles.headerButton}
+                title="Download story as StoryPlay export JSON (v1)"
+              >
+                Export Game
+              </button>
 
-      <main className="app-workspace">
-        <section className="panel canvas-panel">
-          <StoryCanvas
-            {...story}
-            currentPlayNodeId={play.currentPlayNodeId}
-            playVariables={play.playVariables}
-          />
-        </section>
+              <button
+                type="button"
+                onClick={handleOpenMiniGameEditor}
+                disabled={!canOpenMiniGameEditor}
+                style={{
+                  ...styles.headerButton,
+                  ...(!canOpenMiniGameEditor ? styles.headerButtonDisabled : null),
+                }}
+                title={miniGameEditorTitle}
+              >
+                Open Mini-Game Editor
+              </button>
+            </div>
+          </header>
 
-        <aside className="panel sidebar-panel">
-          <SidebarEditor
-            {...story}
-            onOpenMiniGameEditor={handleOpenMiniGameEditor}
-          />
-        </aside>
+          <main className="app-workspace">
+            <section className="panel canvas-panel">
+              <StoryCanvas
+                {...story}
+                currentPlayNodeId={play.currentPlayNodeId}
+                playVariables={play.playVariables}
+              />
+            </section>
 
-        <aside className="panel preview-panel">
-          <StoryPreview {...story} {...play} />
-        </aside>
-      </main>
+            <aside className="panel sidebar-panel">
+              <SidebarEditor
+                {...story}
+                onOpenMiniGameEditor={handleOpenMiniGameEditor}
+                onOpenVariables={handleOpenVariablesWorkspace}
+              />
+            </aside>
+
+            <aside className="panel preview-panel">
+              <StoryPreview {...story} {...play} />
+            </aside>
+          </main>
+        </>
+      )}
     </div>
   );
 }

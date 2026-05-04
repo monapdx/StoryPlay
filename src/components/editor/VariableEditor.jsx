@@ -17,7 +17,11 @@ function coerceValue(type, rawValue) {
   return rawValue;
 }
 
-export default function VariableEditor({ variables = {}, setVariables }) {
+export default function VariableEditor({
+  variables = {},
+  setVariables,
+  showHeading = true,
+}) {
   const entries = Object.entries(variables || {});
   const [expandedVariableKey, setExpandedVariableKey] = useState(null);
 
@@ -94,10 +98,13 @@ export default function VariableEditor({ variables = {}, setVariables }) {
   return (
     <div className="editor-section">
 
-      <div className="editor-section-header">
-        <h3>Variables</h3>
+      <div
+        className={`editor-section-header${showHeading ? "" : " editor-section-header--tools-only"}`}
+      >
+        {showHeading ? <h3>Variables</h3> : null}
 
         <button
+          type="button"
           className="toolbar-button"
           onClick={addVariable}
         >
