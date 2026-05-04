@@ -17,85 +17,10 @@ import {
 } from "./utils/storyPreviewStorage";
 import useHashRoute from "./hooks/useHashRoute";
 import PlayerPage from "./components/player/PlayerPage";
-
-function buildMiniGameFromSelectedNode(selectedNode) {
-  if (!selectedNode) return null;
-
-  const data = selectedNode.data || {};
-  const type = data.blockType || "traitPicker";
-
-  switch (type) {
-    case "traitPicker":
-      return {
-        title: data.title || "Trait Picker",
-        type,
-        prompt: data.content || "",
-        config: {
-          options: data.options || [],
-          minSelections: data.minSelections ?? 0,
-          maxSelections: data.maxSelections ?? 2,
-          traitListVariable: data.traitListVariable || "",
-        },
-      };
-
-    case "persuasion":
-      return {
-        title: data.title || "Persuasion",
-        type,
-        prompt: data.content || "",
-        config: {
-          targetName: data.targetName || "",
-          startScore: data.startScore ?? 50,
-          minScore: data.minScore ?? 0,
-          maxScore: data.maxScore ?? 100,
-          threshold: data.threshold ?? 75,
-          maxTurns: data.maxTurns ?? 3,
-          visibleMeter: data.visibleMeter ?? true,
-          scoreVariable: data.scoreVariable || "",
-          successVariable: data.successVariable || "",
-          successNodeId: data.successNodeId || "",
-          failureNodeId: data.failureNodeId || "",
-          choices: data.choices || [],
-        },
-      };
-
-    case "choiceWeighting":
-      return {
-        title: data.title || "Choice Weighting",
-        type,
-        prompt: data.content || "",
-        config: {
-          options: data.options || [],
-          totalPoints: data.totalPoints ?? 10,
-          variablePrefix: data.variablePrefix || "",
-          resultVariable: data.resultVariable || "",
-          lockExactTotal: data.lockExactTotal ?? true,
-        },
-      };
-
-    default:
-      return {
-        title: data.title || "Mini-Game",
-        type: "traitPicker",
-        prompt: data.content || "",
-        config: {
-          options: [],
-          minSelections: 0,
-          maxSelections: 2,
-          traitListVariable: "",
-        },
-      };
-  }
-}
-
-function isSupportedMiniGameBlock(node) {
-  const type = node?.data?.blockType;
-  return (
-    type === "traitPicker" ||
-    type === "persuasion" ||
-    type === "choiceWeighting"
-  );
-}
+import {
+  buildMiniGameFromSelectedNode,
+  isSupportedMiniGameBlock,
+} from "./utils/miniGameFromNode";
 
 function EditorApp() {
   const story = useStoryState();
@@ -169,9 +94,7 @@ function EditorApp() {
     return buildMiniGameFromSelectedNode(story.selectedNode);
   }, [story.selectedNode]);
 
-  const canOpenMiniGameEditor =
-    Boolean(story.selectedNode) &&
-    isSupportedMiniGameBlock(story.selectedNode);
+  const canOpenMiniGameEditor = Boolean(selectedMiniGame);
 
   const miniGameEditorTitle = useMemo(() => {
     if (canOpenMiniGameEditor) {

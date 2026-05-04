@@ -1,4 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
+import {
+  buildMiniGameFromSelectedNode,
+  isSupportedMiniGameBlock,
+} from "../utils/miniGameFromNode";
 
 function makeId(prefix = "item") {
   if (typeof crypto !== "undefined" && crypto.randomUUID) {
@@ -181,16 +185,24 @@ function normalizeTraitPicker(game) {
 }
 
 function normalizeMiniGame(game) {
-  const type = game?.type || "choiceWeighting";
+  let g = game;
+  if (g && typeof g === "object" && g.type === "storyNode") {
+    if (isSupportedMiniGameBlock(g)) {
+      const rebuilt = buildMiniGameFromSelectedNode(g);
+      if (rebuilt) g = rebuilt;
+    }
+  }
+
+  const type = g?.type || "choiceWeighting";
 
   switch (type) {
     case "traitPicker":
-      return normalizeTraitPicker(game);
+      return normalizeTraitPicker(g);
     case "persuasion":
-      return normalizePersuasion(game);
+      return normalizePersuasion(g);
     case "choiceWeighting":
     default:
-      return normalizeChoiceWeighting(game);
+      return normalizeChoiceWeighting(g);
   }
 }
 
