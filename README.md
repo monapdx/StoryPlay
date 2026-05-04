@@ -26,6 +26,7 @@
 
 - [StoryPlay](#storyplay)
   - [Block types](#block-types)
+  - [Built-in demo stories](#built-in-demo-stories)
   - [Features](#features)
   - [Export](#export)
   - [Tech stack](#tech-stack)
@@ -50,18 +51,29 @@ Edited in the sidebar summary plus a **full-screen mini-game editor** (header: *
 - **Persuasion** — Score, threshold, turns, dialogue lines with deltas; **success** / **failure** branch node ids and optional score/success variables.
 - **Choice weighting** — Distribute a fixed **point budget** across options; optional **result variable**, **variable prefix**, and exact-total lock.
 
+## Built-in demo stories
+
+The editor ships with five demo graphs you can switch from the header:
+
+- `Crossroads` (simple branch)
+- `Market Day` (variables + conditional buy)
+- `Timed Nerve` (countdown + timeout result)
+- `Escape Room` (chat + timed + key logic)
+- `Guild Audition` (trait picker -> persuasion -> choice weighting -> gated endings)
+
 ## Features
 
 - **Graph canvas** (React Flow): add nodes, drag positions, draw connections from handles to create choices, **search**, **minimap**, **controls**, background grid.
 - **Block inspector**: title, `blockType`, content (narrative / chat / ending / mini-game prompt), timed timer + timeout wiring.
 - **Choice editor**: targets, conditions (`equals`, `notEquals`, numeric compares, …), effects (`set`, `add`, `subtract`, `toggle`).
-- **Variables** panel (global defaults) and **story diagnostics** (graph health: missing targets, undefined variables in conditions/effects, etc.).
+- **Variables workspace** (full-screen global variable editor) and **story diagnostics** (graph health: missing targets, undefined variables in conditions/effects, etc.).
 - **Play Preview**: start from selected node, follow allowed choices, **Back** (history), **Reset**; supports narrative, chat (staggered reveal), timed auto-advance, and the three mini-game UIs.
+- **Play in new tab**: opens `#/play` player mode and keeps that tab in sync with debounced editor snapshot updates after first launch.
 - **Export Game** (header): downloads **StoryPlay export v1** JSON (`schemas/storyplay-export.v1.schema.json`). In **dev** only: `window.__storyplayLogExport()` and `window.__storyplayDownloadExport()` in the console.
 
 ## Export
 
-The file includes `formatVersion`, optional `exportedAt`, and `story: { variables, nodes }` (same shape as editor state). **Edges** are not stored; they are implied by each node’s `choices[].targetNodeId`. **Import**, bundled **assets**, and a standalone **player** package are not implemented yet; see [CHANGELOG.md](CHANGELOG.md) for limitations and next steps.
+The file includes `formatVersion`, optional `exportedAt`, and `story: { variables, nodes }` (same shape as editor state). **Edges** are not stored; they are implied by each node’s `choices[].targetNodeId`. **Import** and bundled/runtime distribution packaging are still planned; see [CHANGELOG.md](CHANGELOG.md) for limitations and next steps.
 
 ## Tech stack
 
@@ -72,6 +84,7 @@ React · Vite · React Flow · JavaScript · TypeScript (mini-game block views a
 ```bash
 npm install
 npm run dev
+npm run build
 ```
 
 Then open [http://localhost:5173](http://localhost:5173).
