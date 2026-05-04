@@ -557,6 +557,74 @@ select {
   overflow-y: auto;
 }
 
+.preview-panel--dock {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.preview-dock-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(15, 23, 42, 0.55);
+  flex-shrink: 0;
+}
+
+.preview-dock-head-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.preview-dock-close {
+  padding: 6px 10px;
+  font-size: 0.82rem;
+}
+
+.preview-panel--dock .preview-story {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 10px 12px 14px;
+}
+
+.preview-story--dock {
+  gap: 10px;
+}
+
+.preview-story--dock .preview-header-row {
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.preview-story--dock .preview-block {
+  padding: 12px;
+}
+
+.preview-story--dock .preview-title {
+  font-size: 0.98rem;
+}
+
+.preview-story--dock .section-title {
+  font-size: 1.02rem;
+}
+
+.preview-story--dock .preview-toolbar {
+  gap: 6px;
+}
+
+.preview-story--dock .preview-toolbar .toolbar-button {
+  font-size: 0.8rem;
+  padding: 6px 10px;
+}
+
 /* =========================
    Variable Editor
    ========================= */
@@ -955,12 +1023,27 @@ mark {
 
 @media (max-width: 1200px) {
   .app-workspace {
-    grid-template-columns: 1fr 300px;
-    grid-template-rows: 1fr 320px;
+    grid-template-columns: minmax(0, 1fr) minmax(240px, 280px);
   }
 
-  .preview-panel {
-    grid-column: 1 / -1;
+  .app-workspace--with-preview {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(280px, min(48vh, 520px)) auto minmax(200px, 34vh);
+  }
+
+  .app-workspace--with-preview .canvas-panel {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .app-workspace--with-preview .sidebar-panel {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .app-workspace--with-preview .preview-panel--dock {
+    grid-column: 1;
+    grid-row: 3;
   }
 }
 
@@ -970,13 +1053,24 @@ mark {
     flex-direction: column;
   }
 
-  .canvas-panel {
-    min-height: 420px;
+  .app-workspace--with-preview .canvas-panel,
+  .app-workspace--with-preview .sidebar-panel,
+  .app-workspace--with-preview .preview-panel--dock {
+    grid-column: unset;
+    grid-row: unset;
   }
 
-  .sidebar-panel,
-  .preview-panel {
-    min-height: 280px;
+  .canvas-panel {
+    min-height: 320px;
+  }
+
+  .sidebar-panel {
+    min-height: 220px;
+  }
+
+  .preview-panel--dock {
+    min-height: 220px;
+    max-height: 42vh;
   }
 }
 
