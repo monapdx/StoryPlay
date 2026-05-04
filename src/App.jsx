@@ -461,24 +461,28 @@ function EditorApp() {
               />
             </aside>
 
-            {isQuickPreviewOpen && (
-              <aside
-                className="panel preview-panel preview-panel--dock"
-                aria-label="Quick preview"
-              >
-                <div className="preview-dock-head">
-                  <span className="preview-dock-head-title">Quick preview</span>
-                  <button
-                    type="button"
-                    className="toolbar-button preview-dock-close"
-                    onClick={() => setIsQuickPreviewOpen(false)}
-                  >
-                    Close
-                  </button>
-                </div>
-                <StoryPreview {...story} {...play} variant="dock" />
-              </aside>
-            )}
+            <aside
+              className={[
+                "panel preview-panel preview-panel--dock",
+                isQuickPreviewOpen ? "" : "preview-panel--dock-collapsed",
+              ]
+                .filter(Boolean)
+                .join(" ")}
+              aria-label="Quick preview"
+              aria-hidden={!isQuickPreviewOpen}
+            >
+              <div className="preview-dock-head">
+                <span className="preview-dock-head-title">Quick preview</span>
+                <button
+                  type="button"
+                  className="toolbar-button preview-dock-close"
+                  onClick={() => setIsQuickPreviewOpen(false)}
+                >
+                  Close
+                </button>
+              </div>
+              <StoryPreview {...story} {...play} variant="dock" />
+            </aside>
           </main>
         </>
       )}

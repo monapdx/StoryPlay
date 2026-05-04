@@ -564,6 +564,11 @@ select {
   min-height: 0;
 }
 
+/* Mounted but hidden: keeps StoryPreview state (chat reveal, etc.) when Preview is toggled off */
+.preview-panel--dock.preview-panel--dock-collapsed {
+  display: none !important;
+}
+
 .preview-dock-head {
   display: flex;
   align-items: center;
