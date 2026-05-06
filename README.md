@@ -2,7 +2,7 @@
 
 | Logo | Description |
 |---|---|
-| <img src="product.png" width="402"> | StoryPlay is a **Twine-inspired visual story builder** for branching interactive fiction: a **node graph** editor (**React Flow**), **global variables**, **conditional choices** with effects, a **Play Preview**, three **mini-game** block types with a dedicated editor, and **JSON export** (v1) of the current story. |
+| <img src="product.png" width="402"> | StoryPlay is a visual editor for building playable narrative games. Design branching stories, track variables, and add game mechanics using a node-based interface with live preview. **Think Twine, but visual, built-in game systems, and a real play/debug mode** |
 
 [![Chrome Extension](https://img.shields.io/badge/%F0%9F%93%8CChrome%20Extension-111111?style=for-the-badge)](#)
 
