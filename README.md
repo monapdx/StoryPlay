@@ -12,7 +12,7 @@
 
 ## Screenshot
 
-<img src="https://raw.githubusercontent.com/monapdx/StoryPlay/refs/heads/main/screenshot.png" alt="StoryPlay editor screenshot">
+<img src="https://raw.githubusercontent.com/monapdx/StoryPlay/refs/heads/main/StoryPlay-main-editor.png" alt="StoryPlay editor screenshot">
 
 ## Mini-game blocks
 
