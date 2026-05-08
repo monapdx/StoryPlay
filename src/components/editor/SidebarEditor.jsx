@@ -316,7 +316,7 @@ export default function SidebarEditor({
       </div>
 
       <div style={{ marginTop: 14 }}>
-        <button className="danger-button" onClick={deleteSelectedNode}>
+        <button type="button" className="danger-button" onClick={deleteSelectedNode}>
           Delete Block
         </button>
       </div>

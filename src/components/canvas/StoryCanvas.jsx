@@ -27,6 +27,7 @@ export default function StoryCanvas({
   selectedNodeId,
   setSelectedNodeId,
   addNode,
+  deleteSelectedNode,
   addChoiceToSelectedNode,
   updateNodePosition,
   connectNodesFromHandle,
@@ -169,14 +170,45 @@ export default function StoryCanvas({
     }
   }, [rfEdges, deleteEdge]);
 
+  useEffect(() => {
+    function shouldIgnoreKeyTarget(target) {
+      if (!target) return false;
+      const tag = target.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return true;
+      if (target.isContentEditable) return true;
+      return false;
+    }
+
+    function onKeyDown(event) {
+      if (!selectedNodeId) return;
+      if (shouldIgnoreKeyTarget(event.target)) return;
+      if (event.key !== "Backspace" && event.key !== "Delete") return;
+      event.preventDefault();
+      deleteSelectedNode?.();
+    }
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [selectedNodeId, deleteSelectedNode]);
+
   return (
     <>
       <div className="canvas-toolbar">
-        <button className="toolbar-button" onClick={addNode}>
+        <button type="button" className="toolbar-button" onClick={addNode}>
           + Add Block
         </button>
 
-        <button className="toolbar-button" onClick={handleDeleteSelectedEdge}>
+        <button
+          type="button"
+          className="toolbar-button"
+          onClick={deleteSelectedNode}
+          disabled={!selectedNodeId}
+          title={!selectedNodeId ? "Select a block to delete it" : "Delete selected block"}
+        >
+          Delete Selected Block
+        </button>
+
+        <button type="button" className="toolbar-button" onClick={handleDeleteSelectedEdge}>
           Delete Selected Edge
         </button>
       </div>
