@@ -1,0 +1,27 @@
+name: "[Submit a Bug]"
+description: "If you encountered a bug or issue while using StoryPlay, please let us know about it."
+labels:
+  - "bug"
+body:
+- type: dropdown
+  id: type-of-bug
+  attributes:
+    label: "Type of bug"
+    options:
+      - "Error message"
+      - "Editor bug"
+      - "Export issue"
+      - "Other"
+  validations:
+    required: true
+- type: textarea
+  id: bug-information
+  attributes:
+    label: "Bug information"
+    placeholder: "Please be as detailed as possible about the bug you encountered."
+  validations:
+    required: true
+- type: upload
+  id: screenshot
+  attributes:
+    label: "Screenshot"
