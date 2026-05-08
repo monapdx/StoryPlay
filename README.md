@@ -79,6 +79,8 @@ The file includes `formatVersion`, optional `exportedAt`, and `story: { variable
 
 React · Vite · React Flow · JavaScript · TypeScript (mini-game block views and `src/types`)
 
+<img src="https://raw.githubusercontent.com/monapdx/StoryPlay/refs/heads/main/diagram.png">
+
 ## Running locally
 
 ```bash
