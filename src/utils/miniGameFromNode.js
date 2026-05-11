@@ -36,6 +36,7 @@ export function buildMiniGameFromSelectedNode(selectedNode) {
           minSelections: data.minSelections ?? 0,
           maxSelections: data.maxSelections ?? 2,
           traitListVariable: data.traitListVariable || "",
+          continueNodeId: data.continueNodeId || "",
         },
       };
 
@@ -71,6 +72,7 @@ export function buildMiniGameFromSelectedNode(selectedNode) {
           variablePrefix: data.variablePrefix || "",
           resultVariable: data.resultVariable || "",
           lockExactTotal: data.lockExactTotal ?? true,
+          continueNodeId: data.continueNodeId || "",
         },
       };
 

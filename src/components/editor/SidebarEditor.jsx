@@ -74,6 +74,8 @@ export default function SidebarEditor({
     resultVariable = "",
     lockExactTotal = true,
 
+    continueNodeId = "",
+
     choices = [],
   } = data;
 
@@ -102,6 +104,7 @@ export default function SidebarEditor({
     variablePrefix,
     resultVariable,
     lockExactTotal,
+    continueNodeId,
     choices,
   });
 
@@ -295,15 +298,28 @@ export default function SidebarEditor({
         </div>
       )}
 
-      {!isMiniGameBlock && (
-        <ChoicesEditor
-          selectedNode={selectedNode}
-          nodes={nodes}
-          variables={variables}
-          addChoiceToSelectedNode={addChoiceToSelectedNode}
-          updateChoiceOnSelectedNode={updateChoiceOnSelectedNode}
-          removeChoiceFromSelectedNode={removeChoiceFromSelectedNode}
-        />
+      {(blockType === "traitPicker" ||
+        blockType === "choiceWeighting" ||
+        !isMiniGameBlock) && (
+        <>
+          {(blockType === "traitPicker" || blockType === "choiceWeighting") && (
+            <div className="helper-box" style={{ marginBottom: 12 }}>
+              <strong>After the setter:</strong> this block updates variables first (trait ids,
+              per-trait effects, allocation totals). Use <strong>choices below</strong> for where the
+              story goes next, unless you set optional <strong>auto-advance</strong> in the mini-game
+              editor.
+            </div>
+          )}
+
+          <ChoicesEditor
+            selectedNode={selectedNode}
+            nodes={nodes}
+            variables={variables}
+            addChoiceToSelectedNode={addChoiceToSelectedNode}
+            updateChoiceOnSelectedNode={updateChoiceOnSelectedNode}
+            removeChoiceFromSelectedNode={removeChoiceFromSelectedNode}
+          />
+        </>
       )}
 
       <VariablesWorkspacePromo
@@ -373,6 +389,7 @@ function getMiniGameSummary({
   variablePrefix,
   resultVariable,
   lockExactTotal,
+  continueNodeId,
   choices,
 }) {
   switch (blockType) {
@@ -381,7 +398,8 @@ function getMiniGameSummary({
         { label: "Traits", value: String(options.length) },
         { label: "Min", value: String(minSelections) },
         { label: "Max", value: String(maxSelections) },
-        { label: "Variable", value: traitListVariable || "—" },
+        { label: "Inventory var", value: traitListVariable || "—" },
+        { label: "Auto-advance", value: continueNodeId || "—" },
       ];
 
     case "persuasion":
@@ -408,6 +426,7 @@ function getMiniGameSummary({
         { label: "Variable Prefix", value: variablePrefix || "—" },
         { label: "Result Variable", value: resultVariable || "—" },
         { label: "Exact Total", value: lockExactTotal ? "Yes" : "No" },
+        { label: "Auto-advance", value: continueNodeId || "—" },
       ];
 
     default:

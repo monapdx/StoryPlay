@@ -23,9 +23,9 @@ function renderChatLines(content = "") {
 }
 
 function variablePatchToEffects(variablePatch = {}) {
-  return Object.entries(variablePatch).map(([key, value]) => ({
-    key,
-    operation: "set",
+  return Object.entries(variablePatch || {}).map(([variable, value]) => ({
+    variable,
+    action: "set",
     value,
   }));
 }
@@ -54,6 +54,9 @@ export default function StoryPreview({
   const [selectedReplyIndex, setSelectedReplyIndex] = useState(null);
   const [showVariableDetails, setShowVariableDetails] = useState(false);
   const [showPlayMeta, setShowPlayMeta] = useState(false);
+  /** After trait / choice-weighting confirm without auto-advance, show branching choices. */
+  const [setterGateOpen, setSetterGateOpen] = useState(false);
+  const [previewSessionNonce, setPreviewSessionNonce] = useState(0);
 
   const chatTimersRef = useRef([]);
   const chatScrollRef = useRef(null);
@@ -78,6 +81,21 @@ export default function StoryPreview({
   const isMiniGame = ["traitPicker", "persuasion", "choiceWeighting"].includes(
     blockType
   );
+
+  const showNarrativeChoiceList =
+    !isChat &&
+    (!isMiniGame ||
+      (setterGateOpen &&
+        (blockType === "traitPicker" || blockType === "choiceWeighting")));
+
+  useEffect(() => {
+    setSetterGateOpen(false);
+  }, [currentPlayNode?.id]);
+
+  function bumpPreviewSession() {
+    setPreviewSessionNonce((n) => n + 1);
+    setSetterGateOpen(false);
+  }
 
   const timerSeconds = Number(playNodeData?.timerSeconds ?? 0);
   const timeoutTargetNodeId = playNodeData?.timeoutTargetNodeId || "";
@@ -198,13 +216,22 @@ export default function StoryPreview({
   function handleMiniGameComplete(result) {
     const effects = variablePatchToEffects(result.variablePatch || {});
 
-    if (result.nextNodeId) {
-      goToNode(result.nextNodeId, effects);
+    const nextNodeId = result.nextNodeId || null;
+
+    if (nextNodeId) {
+      goToNode(nextNodeId, effects);
       return;
     }
 
     if (currentPlayNode?.id && effects.length > 0) {
       goToNode(currentPlayNode.id, effects);
+    }
+
+    if (
+      (result.type === "traitPicker" || result.type === "choiceWeighting") &&
+      !nextNodeId
+    ) {
+      setSetterGateOpen(true);
     }
   }
 
@@ -216,6 +243,7 @@ export default function StoryPreview({
         return (
           <TraitPickerBlockView
             block={playNodeData}
+            previewSessionNonce={previewSessionNonce}
             onComplete={handleMiniGameComplete}
           />
         );
@@ -232,6 +260,7 @@ export default function StoryPreview({
         return (
           <ChoiceWeightingBlockView
             block={playNodeData}
+            previewSessionNonce={previewSessionNonce}
             onComplete={handleMiniGameComplete}
           />
         );
@@ -251,7 +280,10 @@ export default function StoryPreview({
         <div className="preview-toolbar">
           <button
             className="toolbar-button"
-            onClick={() => startFromNode(selectedNodeId)}
+            onClick={() => {
+              bumpPreviewSession();
+              startFromNode(selectedNodeId);
+            }}
             disabled={!selectedNodeId}
             title={isDock ? "Start from selected canvas block" : undefined}
           >
@@ -268,7 +300,10 @@ export default function StoryPreview({
 
           <button
             className="toolbar-button"
-            onClick={resetToSelected}
+            onClick={() => {
+              bumpPreviewSession();
+              resetToSelected();
+            }}
             title={isDock ? "Reset play state to match editor selection" : undefined}
           >
             Reset
@@ -361,6 +396,18 @@ export default function StoryPreview({
 
           {isMiniGame && renderMiniGameBlock()}
 
+          {isMiniGame &&
+            (blockType === "traitPicker" || blockType === "choiceWeighting") &&
+            !String(playNodeData?.continueNodeId || "").trim() &&
+            !setterGateOpen && (
+              <div className="helper-box" style={{ marginTop: 12 }}>
+                This block is a <strong>variable setter</strong> (selected ids, allocation map,
+                per-option effects). After confirm, pick a <strong>choice below</strong> to continue
+                the story—or set <strong>optional auto-advance</strong> in the mini-game editor to
+                skip that step.
+              </div>
+            )}
+
           {!isMiniGame && !isChat && (
             <div className="preview-content">
               {playNodeData?.content || "No content yet."}
@@ -420,7 +467,7 @@ export default function StoryPreview({
             </div>
           )}
 
-          {!isChat && !isMiniGame && (
+          {showNarrativeChoiceList && (
             <div className="preview-choice-list">
               {visibleChoices.length === 0 ? (
                 <div className="muted">No available choices.</div>

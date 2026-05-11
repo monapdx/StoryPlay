@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import type {
   ChoiceWeightingBlock,
   ChoiceWeightingBlockResult,
@@ -8,6 +8,7 @@ import type { VariablePatch } from "../../types/storyBlocks";
 
 interface ChoiceWeightingBlockViewProps {
   block: ChoiceWeightingBlock;
+  previewSessionNonce?: number;
   onComplete: (result: ChoiceWeightingBlockResult) => void;
 }
 
@@ -19,6 +20,7 @@ function buildInitialAllocation(options: WeightedOption[]) {
 
 export default function ChoiceWeightingBlockView({
   block,
+  previewSessionNonce = 0,
   onComplete,
 }: ChoiceWeightingBlockViewProps) {
   const options: WeightedOption[] = Array.isArray(block.options) ? block.options : [];
@@ -29,6 +31,12 @@ export default function ChoiceWeightingBlockView({
   const [allocation, setAllocation] = useState<Record<string, number>>(() =>
     buildInitialAllocation(options)
   );
+  const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+    setAllocation(buildInitialAllocation(options));
+    setSubmitted(false);
+  }, [previewSessionNonce]);
 
   const totalAssigned = useMemo(() => {
     return Object.values(allocation).reduce((sum, value) => sum + value, 0);
@@ -38,6 +46,8 @@ export default function ChoiceWeightingBlockView({
   const canSubmit = lockExactTotal ? pointsRemaining === 0 : pointsRemaining >= 0;
 
   function updateOption(optionId: string, nextValue: number) {
+    if (submitted) return;
+
     const option = options.find((item) => item.id === optionId);
     if (!option) return;
 
@@ -52,6 +62,9 @@ export default function ChoiceWeightingBlockView({
   }
 
   function finish() {
+    if (submitted) return;
+    if (!canSubmit || options.length === 0) return;
+
     const patch: VariablePatch = {
       ...(block.resultVariable ? { [block.resultVariable]: allocation } : {}),
     };
@@ -76,6 +89,8 @@ export default function ChoiceWeightingBlockView({
       nextNodeId: continueNodeId,
       variablePatch: patch,
     });
+
+    setSubmitted(true);
   }
 
   return (
@@ -108,6 +123,7 @@ export default function ChoiceWeightingBlockView({
                   min={min}
                   max={max}
                   value={value}
+                  disabled={submitted}
                   onChange={(event) =>
                     updateOption(option.id, Number(event.target.value))
                   }
@@ -121,10 +137,10 @@ export default function ChoiceWeightingBlockView({
       <div style={{ marginTop: "16px" }}>
         <button
           type="button"
-          disabled={!canSubmit || options.length === 0}
+          disabled={submitted || !canSubmit || options.length === 0}
           onClick={finish}
         >
-          {block.submitLabel ?? "Confirm Allocation"}
+          {submitted ? "Confirmed" : block.submitLabel ?? "Confirm Allocation"}
         </button>
       </div>
     </div>

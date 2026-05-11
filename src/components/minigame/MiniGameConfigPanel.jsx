@@ -1,10 +1,18 @@
 import React from "react";
 
-export default function MiniGameConfigPanel({ editor }) {
+export default function MiniGameConfigPanel({ editor, nodes = [] }) {
   const { draft } = editor;
 
   return (
     <div className="minigame-panel">
+      <datalist id="minigame-config-node-ids">
+        {nodes.map((node) => (
+          <option key={node.id} value={node.id}>
+            {node?.data?.title || node.id}
+          </option>
+        ))}
+      </datalist>
+
       <h3 className="section-title">Mini-Game Settings</h3>
 
       <div className="form-group">
@@ -76,6 +84,24 @@ export default function MiniGameConfigPanel({ editor }) {
             />
             <span>Require exact total</span>
           </label>
+
+          <div className="form-group">
+            <label className="form-label">Optional: auto-advance node ID</label>
+            <input
+              className="form-input"
+              type="text"
+              list="minigame-config-node-ids"
+              value={draft.config.continueNodeId || ""}
+              onChange={(event) =>
+                editor.updateConfig({ continueNodeId: event.target.value })
+              }
+              placeholder="Leave blank to use branching choices on this block instead"
+            />
+            <div className="helper-box" style={{ marginTop: 8 }}>
+              If set, preview jumps here after confirm. Otherwise use <strong>choices</strong> on this
+              block for the next beat.
+            </div>
+          </div>
 
           <div className="helper-box">
             Assigned total: <strong>{editor.totalAssigned}</strong>
@@ -253,7 +279,7 @@ export default function MiniGameConfigPanel({ editor }) {
           </div>
 
           <div className="form-group">
-            <label className="form-label">Trait List Variable</label>
+            <label className="form-label">Trait list variable (inventory)</label>
             <input
               className="form-input"
               type="text"
@@ -261,7 +287,32 @@ export default function MiniGameConfigPanel({ editor }) {
               onChange={(event) =>
                 editor.updateConfig({ traitListVariable: event.target.value })
               }
+              placeholder="e.g. buildFocus — stores selected trait ids (array)"
             />
+            <div className="helper-box" style={{ marginTop: 8 }}>
+              On confirm, StoryPlay writes the <strong>selected trait ids</strong> here (like an
+              inventory list). Use per-trait <strong>effects</strong> in the item inspector for extra
+              variable bumps (stats, tags, etc.).
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Optional: auto-advance node ID</label>
+            <input
+              className="form-input"
+              type="text"
+              list="minigame-config-node-ids"
+              value={draft.config.continueNodeId || ""}
+              onChange={(event) =>
+                editor.updateConfig({ continueNodeId: event.target.value })
+              }
+              placeholder="Leave blank to use branching choices on this block instead"
+            />
+            <div className="helper-box" style={{ marginTop: 8 }}>
+              If set, preview jumps here immediately after confirm. If empty, add{" "}
+              <strong>choices</strong> on this block in the sidebar for “where next” (often gated by
+              variables set above).
+            </div>
           </div>
         </>
       )}

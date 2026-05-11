@@ -2,7 +2,7 @@ import React from "react";
 import MiniGameConfigPanel from "./MiniGameConfigPanel";
 import MiniGameLogicPanel from "./MiniGameLogicPanel";
 
-export default function MiniGameEditorSidebar({ editor }) {
+export default function MiniGameEditorSidebar({ editor, nodes = [] }) {
   const draft = editor?.draft;
   const activeTab = editor?.activeTab || "config";
 
@@ -48,7 +48,7 @@ export default function MiniGameEditorSidebar({ editor }) {
 
   return (
     <div className="minigame-sidebar">
-      <MiniGameConfigPanel editor={editor} />
+      <MiniGameConfigPanel editor={editor} nodes={nodes} />
 
       {activeTab === "logic" && <MiniGameLogicPanel editor={editor} />}
     </div>

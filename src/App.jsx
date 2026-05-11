@@ -168,6 +168,10 @@ function EditorApp() {
           "traitListVariable",
           config.traitListVariable || ""
         );
+        story.updateSelectedNodeField(
+          "continueNodeId",
+          config.continueNodeId || ""
+        );
         break;
 
       case "persuasion":
@@ -214,6 +218,10 @@ function EditorApp() {
         story.updateSelectedNodeField(
           "lockExactTotal",
           config.lockExactTotal ?? true
+        );
+        story.updateSelectedNodeField(
+          "continueNodeId",
+          config.continueNodeId || ""
         );
         break;
 

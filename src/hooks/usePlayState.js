@@ -82,10 +82,28 @@ export default function usePlayState(nodes, selectedNodeId, initialVariables = {
   }
 
   function goToNode(nodeId, effects = []) {
-    if (!nodeId || nodeId === currentPlayNodeId) return;
+    if (!nodeId) return;
 
+    const safeEffects = effects || [];
     const beforeVars = cloneVariables(playVariables);
-    const afterVars = applyEffects(effects || [], beforeVars);
+    const afterVars = applyEffects(safeEffects, beforeVars);
+
+    if (nodeId === currentPlayNodeId) {
+      if (!safeEffects.length) return;
+
+      setHistory((prev) => [
+        ...prev,
+        {
+          nodeId: currentPlayNodeId,
+          variables: beforeVars,
+        },
+      ]);
+
+      setPreviousPlayVariables(beforeVars);
+      setPlayVariables(afterVars);
+      setChangedVariableKeys(getChangedKeys(beforeVars, afterVars));
+      return;
+    }
 
     setHistory((prev) => [
       ...prev,

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import type {
   TraitPickerBlock,
   TraitPickerBlockResult,
@@ -8,14 +8,23 @@ import type { VariablePatch } from "../../types/storyBlocks";
 
 interface PersuasionBlockViewProps {
   block: TraitPickerBlock;
+  /** Bumps when preview Start/Reset runs so the picker clears between sessions. */
+  previewSessionNonce?: number;
   onComplete: (result: TraitPickerBlockResult) => void;
 }
 
 export default function TraitPickerBlockView({
   block,
+  previewSessionNonce = 0,
   onComplete,
 }: PersuasionBlockViewProps) {
   const [selectedTraitIds, setSelectedTraitIds] = useState<string[]>([]);
+  const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+    setSelectedTraitIds([]);
+    setSubmitted(false);
+  }, [previewSessionNonce]);
 
   const minSelections = block.minSelections ?? 0;
   const maxSelections = block.maxSelections ?? 1;
@@ -32,6 +41,8 @@ export default function TraitPickerBlockView({
     selectedTraitIds.length <= maxSelections;
 
   function toggleTrait(traitId: string) {
+    if (submitted) return;
+
     setSelectedTraitIds((current) => {
       if (current.includes(traitId)) {
         return current.filter((id) => id !== traitId);
@@ -46,6 +57,9 @@ export default function TraitPickerBlockView({
   }
 
   function finish() {
+    if (submitted) return;
+    if (!canSubmit || options.length === 0) return;
+
     const effectsPatch: VariablePatch = {};
 
     for (const trait of selectedTraits) {
@@ -80,6 +94,8 @@ export default function TraitPickerBlockView({
         ...effectsPatch,
       },
     });
+
+    setSubmitted(true);
   }
 
   return (
@@ -109,6 +125,7 @@ export default function TraitPickerBlockView({
                 key={option.id || option.label}
                 type="button"
                 onClick={() => toggleTrait(option.id)}
+                disabled={submitted}
                 aria-pressed={selected}
                 style={{
                   textAlign: "left",
@@ -132,8 +149,12 @@ export default function TraitPickerBlockView({
       )}
 
       <div style={{ marginTop: "16px" }}>
-        <button type="button" disabled={!canSubmit || options.length === 0} onClick={finish}>
-          {block.submitLabel ?? "Confirm Traits"}
+        <button
+          type="button"
+          disabled={submitted || !canSubmit || options.length === 0}
+          onClick={finish}
+        >
+          {submitted ? "Confirmed" : block.submitLabel ?? "Confirm Traits"}
         </button>
       </div>
     </div>

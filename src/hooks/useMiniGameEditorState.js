@@ -54,6 +54,7 @@ export function createDefaultMiniGame(type = "choiceWeighting") {
           minSelections: 0,
           maxSelections: 2,
           traitListVariable: "",
+          continueNodeId: "",
         },
       };
 
@@ -90,6 +91,7 @@ export function createDefaultMiniGame(type = "choiceWeighting") {
           variablePrefix: "",
           resultVariable: "",
           lockExactTotal: true,
+          continueNodeId: "",
         },
       };
   }
@@ -126,6 +128,11 @@ function normalizeChoiceWeighting(game) {
           effects: Array.isArray(option.effects) ? option.effects : [],
         }))
       : [createChoiceWeightingOption(), createChoiceWeightingOption()];
+
+  merged.config.continueNodeId =
+    typeof merged.config.continueNodeId === "string"
+      ? merged.config.continueNodeId
+      : "";
 
   return merged;
 }
@@ -180,6 +187,11 @@ function normalizeTraitPicker(game) {
           description: option.description ?? "",
         }))
       : [createTraitOption(), createTraitOption()];
+
+  merged.config.continueNodeId =
+    typeof merged.config.continueNodeId === "string"
+      ? merged.config.continueNodeId
+      : "";
 
   return merged;
 }

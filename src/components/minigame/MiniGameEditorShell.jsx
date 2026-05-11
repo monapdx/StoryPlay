@@ -13,7 +13,7 @@ export default function MiniGameEditorShell({ editor, nodes }) {
 
       <div className="minigame-shell__body">
         <aside className="minigame-shell__left">
-          <MiniGameEditorSidebar editor={editor} />
+          <MiniGameEditorSidebar editor={editor} nodes={nodes} />
         </aside>
 
         <main className="minigame-shell__center">
