@@ -380,6 +380,7 @@ export default function StoryPreview({
             "preview-block",
             isChat ? "preview-block-chat" : "",
             isTimed ? "preview-block-timed" : "",
+            isMiniGame ? "preview-block-minigame" : "",
           ]
             .filter(Boolean)
             .join(" ")}

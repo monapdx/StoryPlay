@@ -6,7 +6,7 @@ import type {
 } from "../../types/minigames";
 import type { VariablePatch } from "../../types/storyBlocks";
 
-interface PersuasionBlockViewProps {
+interface TraitPickerBlockViewProps {
   block: TraitPickerBlock;
   /** Bumps when preview Start/Reset runs so the picker clears between sessions. */
   previewSessionNonce?: number;
@@ -17,7 +17,7 @@ export default function TraitPickerBlockView({
   block,
   previewSessionNonce = 0,
   onComplete,
-}: PersuasionBlockViewProps) {
+}: TraitPickerBlockViewProps) {
   const [selectedTraitIds, setSelectedTraitIds] = useState<string[]>([]);
   const [submitted, setSubmitted] = useState(false);
 
@@ -99,24 +99,24 @@ export default function TraitPickerBlockView({
   }
 
   return (
-    <div className="storyplay-block trait-picker-block">
-      {block.title && <h3>{block.title}</h3>}
-      {prompt && <p>{prompt}</p>}
+    <div className="storyplay-block trait-picker-block minigame-play">
+      {block.title && <h3 className="minigame-play-heading">{block.title}</h3>}
+      {prompt && <p className="minigame-play-prompt">{prompt}</p>}
 
-      <p>
-        Selected: {selectedTraitIds.length} / {maxSelections}
+      <p className="minigame-play-status">
+        Selected: <strong>{selectedTraitIds.length}</strong> / {maxSelections}
+        {minSelections > 0 && (
+          <>
+            {" "}
+            (minimum <strong>{minSelections}</strong>)
+          </>
+        )}
       </p>
 
       {options.length === 0 ? (
         <div className="muted">No traits configured for this block yet.</div>
       ) : (
-        <div
-          style={{
-            display: "grid",
-            gap: "12px",
-            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-          }}
-        >
+        <div className="minigame-play-grid">
           {options.map((option) => {
             const selected = selectedTraitIds.includes(option.id);
 
@@ -124,23 +124,16 @@ export default function TraitPickerBlockView({
               <button
                 key={option.id || option.label}
                 type="button"
+                className="minigame-play-card"
                 onClick={() => toggleTrait(option.id)}
                 disabled={submitted}
                 aria-pressed={selected}
-                style={{
-                  textAlign: "left",
-                  padding: "12px",
-                  borderRadius: "10px",
-                  border: selected ? "2px solid #333" : "1px solid #ccc",
-                  background: selected ? "#f3f3f3" : "#fff",
-                  cursor: "pointer",
-                }}
               >
-                <strong>{option.label || "Untitled trait"}</strong>
+                <span className="minigame-play-card__label">
+                  {option.label || "Untitled trait"}
+                </span>
                 {option.description && (
-                  <div style={{ marginTop: "6px", fontSize: "0.95rem" }}>
-                    {option.description}
-                  </div>
+                  <span className="minigame-play-card__desc">{option.description}</span>
                 )}
               </button>
             );
@@ -148,9 +141,10 @@ export default function TraitPickerBlockView({
         </div>
       )}
 
-      <div style={{ marginTop: "16px" }}>
+      <div className="minigame-play-actions">
         <button
           type="button"
+          className="minigame-play-submit"
           disabled={submitted || !canSubmit || options.length === 0}
           onClick={finish}
         >

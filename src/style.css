@@ -1386,6 +1386,240 @@ mark {
     linear-gradient(180deg, rgba(15, 23, 42, 0.92), rgba(10, 25, 45, 0.96));
 }
 
+.preview-block-minigame {
+  border-color: rgba(129, 140, 248, 0.22);
+  background:
+    linear-gradient(180deg, rgba(15, 23, 42, 0.92), rgba(17, 16, 35, 0.96));
+}
+
+/* Playable mini-game blocks (Trait Picker, Persuasion, Choice Weighting) */
+.minigame-play {
+  margin-top: 4px;
+}
+
+.minigame-play-heading {
+  margin: 0 0 10px;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+
+.minigame-play-prompt {
+  margin: 0 0 12px;
+  white-space: pre-wrap;
+  color: #e5e7eb;
+  line-height: 1.5;
+}
+
+.minigame-play-target {
+  margin: 0 0 12px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 0.92rem;
+  color: #e5e7eb;
+}
+
+.minigame-play-target__label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+  color: #a5b4fc;
+  border: 1px solid rgba(129, 140, 248, 0.35);
+  background: rgba(79, 70, 229, 0.12);
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+
+.minigame-play-status {
+  margin: 0 0 12px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 0.86rem;
+  color: #cbd5e1;
+  background: rgba(30, 41, 59, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.minigame-play-status strong {
+  color: #f8fafc;
+}
+
+.minigame-play-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.minigame-play-card {
+  text-align: left;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(55, 65, 81, 0.78);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  transition: 0.15s ease;
+  font: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.minigame-play-card:hover:not(:disabled) {
+  background: rgba(79, 70, 229, 0.28);
+  border-color: rgba(129, 140, 248, 0.7);
+  transform: translateY(-1px);
+}
+
+.minigame-play-card:disabled {
+  opacity: 0.65;
+  cursor: default;
+  transform: none;
+}
+
+.minigame-play-card[aria-pressed="true"] {
+  background: rgba(79, 70, 229, 0.38);
+  border-color: rgba(165, 180, 252, 0.95);
+  box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.22);
+}
+
+.minigame-play-card__label {
+  font-weight: 700;
+}
+
+.minigame-play-card__desc {
+  font-size: 0.88rem;
+  color: #cbd5e1;
+  line-height: 1.4;
+}
+
+.minigame-play-choice-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.minigame-play-persuasion-choice {
+  width: 100%;
+}
+
+.minigame-play-meter {
+  margin-bottom: 12px;
+}
+
+.minigame-play-meter__label {
+  display: block;
+  font-size: 0.86rem;
+  color: #cbd5e1;
+  margin-bottom: 6px;
+}
+
+.minigame-play-meter__value {
+  color: #e9d5ff;
+  font-weight: 700;
+}
+
+.minigame-play-progress {
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(15, 23, 42, 0.9);
+  accent-color: #818cf8;
+}
+
+.minigame-play-progress::-webkit-progress-bar {
+  background: rgba(15, 23, 42, 0.9);
+  border-radius: 999px;
+}
+
+.minigame-play-progress::-webkit-progress-value {
+  background: linear-gradient(90deg, #6366f1, #a78bfa);
+  border-radius: 999px;
+}
+
+.minigame-play-progress::-moz-progress-bar {
+  background: linear-gradient(90deg, #6366f1, #a78bfa);
+  border-radius: 999px;
+}
+
+.minigame-play-response {
+  margin-top: 12px;
+}
+
+.minigame-play-slider-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.minigame-play-slider-row__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.minigame-play-slider-row__value {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #e9d5ff;
+  min-width: 2ch;
+  text-align: right;
+}
+
+.minigame-play-range {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  accent-color: #818cf8;
+  cursor: pointer;
+}
+
+.minigame-play-range:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.minigame-play-actions {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.minigame-play-submit {
+  appearance: none;
+  border: 1px solid rgba(129, 140, 248, 0.5);
+  background: linear-gradient(180deg, rgba(79, 70, 229, 0.95), rgba(67, 56, 202, 0.98));
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 12px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.15s ease;
+}
+
+.minigame-play-submit:hover:not(:disabled) {
+  filter: brightness(1.06);
+  border-color: rgba(165, 180, 252, 0.75);
+  transform: translateY(-1px);
+}
+
+.minigame-play-submit:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  filter: none;
+}
+
 .chat-thread {
   display: flex;
   flex-direction: column;

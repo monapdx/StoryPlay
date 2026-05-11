@@ -82,45 +82,59 @@ export default function PersuasionBlockView({
   }
 
   return (
-    <div className="storyplay-block persuasion-block">
-      {block.title && <h3>{block.title}</h3>}
-      {block.prompt && <p>{block.prompt}</p>}
+    <div className="storyplay-block persuasion-block minigame-play">
+      {block.title && <h3 className="minigame-play-heading">{block.title}</h3>}
+      {block.prompt && <p className="minigame-play-prompt">{block.prompt}</p>}
       {block.targetName && (
-        <p>
-          <strong>Target:</strong> {block.targetName}
+        <p className="minigame-play-target">
+          <span className="minigame-play-target__label">Target</span>
+          {block.targetName}
         </p>
       )}
 
       {block.visibleMeter && (
-        <div style={{ marginBottom: "12px" }}>
-          <label htmlFor="persuasion-meter">
-            Persuasion: {score} / {block.threshold}
+        <div className="minigame-play-meter">
+          <label className="minigame-play-meter__label" htmlFor="persuasion-meter">
+            Persuasion <span className="minigame-play-meter__value">{score}</span> /{" "}
+            {block.threshold}
           </label>
-          <br />
-          <progress id="persuasion-meter" value={score} max={maxScore} />
+          <progress
+            id="persuasion-meter"
+            className="minigame-play-progress"
+            value={score}
+            max={maxScore}
+          />
         </div>
       )}
 
-      {remainingTurns !== undefined && <p>Turns remaining: {remainingTurns}</p>}
+      {remainingTurns !== undefined && (
+        <p className="minigame-play-status">Turns remaining: {remainingTurns}</p>
+      )}
 
-      <div style={{ display: "grid", gap: "10px" }}>
+      <div className="minigame-play-choice-stack">
         {availableChoices.map((choice) => (
           <button
             key={choice.id}
             type="button"
+            className="preview-choice-button minigame-play-persuasion-choice"
             onClick={() => applyChoice(choice)}
             disabled={isFinished}
-            style={{ textAlign: "left", padding: "10px" }}
           >
-            {choice.text}
+            <span>{choice.text}</span>
+            <span className="preview-choice-target">
+              {Number(choice.delta || 0) >= 0 ? "+" : ""}
+              {Number(choice.delta || 0)} to score
+            </span>
           </button>
         ))}
       </div>
 
-      {lastResponse && <p style={{ marginTop: "12px" }}>{lastResponse}</p>}
+      {lastResponse && (
+        <div className="minigame-play-response helper-box">{lastResponse}</div>
+      )}
 
-      <div style={{ marginTop: "16px" }}>
-        <button type="button" onClick={() => finish()}>
+      <div className="minigame-play-actions">
+        <button type="button" className="minigame-play-submit" onClick={() => finish()}>
           {block.submitLabel ?? "Submit"}
         </button>
       </div>

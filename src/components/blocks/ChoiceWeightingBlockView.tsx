@@ -94,32 +94,36 @@ export default function ChoiceWeightingBlockView({
   }
 
   return (
-    <div className="storyplay-block choice-weighting-block">
-      {block.title && <h3>{block.title}</h3>}
-      {prompt && <p>{prompt}</p>}
+    <div className="storyplay-block choice-weighting-block minigame-play">
+      {block.title && <h3 className="minigame-play-heading">{block.title}</h3>}
+      {prompt && <p className="minigame-play-prompt">{prompt}</p>}
 
-      <p>
+      <p className="minigame-play-status">
         Points remaining: <strong>{pointsRemaining}</strong>
+        {lockExactTotal && <span className="muted"> (exact total required)</span>}
       </p>
 
       {options.length === 0 ? (
         <div className="muted">No weighting options configured for this block yet.</div>
       ) : (
-        <div style={{ display: "grid", gap: "14px" }}>
+        <div className="minigame-play-slider-list">
           {options.map((option) => {
             const value = allocation[option.id] ?? 0;
             const min = option.min ?? 0;
             const max = option.max ?? totalPoints;
 
             return (
-              <div key={option.id || option.label}>
-                <label htmlFor={option.id}>
-                  {option.label || "Untitled option"}: {value}
-                </label>
-                <br />
+              <div key={option.id || option.label} className="minigame-play-slider-row">
+                <div className="minigame-play-slider-row__head">
+                  <label className="form-label" htmlFor={option.id}>
+                    {option.label || "Untitled option"}
+                  </label>
+                  <span className="minigame-play-slider-row__value">{value}</span>
+                </div>
                 <input
                   id={option.id}
                   type="range"
+                  className="minigame-play-range"
                   min={min}
                   max={max}
                   value={value}
@@ -134,9 +138,10 @@ export default function ChoiceWeightingBlockView({
         </div>
       )}
 
-      <div style={{ marginTop: "16px" }}>
+      <div className="minigame-play-actions">
         <button
           type="button"
+          className="minigame-play-submit"
           disabled={submitted || !canSubmit || options.length === 0}
           onClick={finish}
         >
