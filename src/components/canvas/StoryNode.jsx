@@ -1,4 +1,5 @@
 import { Handle, Position } from "reactflow";
+import { renderStoryText } from "../../utils/storyReferences";
 
 const BLOCK_TYPE_ICONS = {
   narrative: "◻",
@@ -88,8 +89,9 @@ function summarizeGraphIssues(issues = []) {
 }
 
 export default function StoryNode({ id, data, selected }) {
-  const title = data?.title || "Untitled Block";
-  const content = data?.content || "";
+  const renderContext = { characters: data?.characters || [] };
+  const title = renderStoryText(data?.title || "Untitled Block", renderContext);
+  const content = renderStoryText(data?.content || "", renderContext);
   const blockType = data?.blockType || "narrative";
   const choices = data?.choices || [];
   const icon = BLOCK_TYPE_ICONS[blockType] || "◻";
@@ -199,7 +201,7 @@ export default function StoryNode({ id, data, selected }) {
                 title={buildChoiceTitle(choice)}
                 type="button"
               >
-                {choice.label || "Untitled choice"}
+                {renderStoryText(choice.label || "Untitled choice", renderContext)}
               </button>
             ))}
 

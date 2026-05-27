@@ -3,6 +3,9 @@
  * @see schemas/storyplay-export.v1.schema.json
  */
 
+import { normalizeCharacters } from "./storyEntities";
+import { resolveNodesTextForExport } from "./storyReferences";
+
 export const STORYPLAY_EXPORT_FORMAT_VERSION = 1;
 
 function cloneJson(value) {
@@ -41,38 +44,49 @@ function cloneNodeForExport(node, { cleanGraphIssues }) {
  * @param {object} params
  * @param {object[]} [params.nodes] - React Flow nodes from useStoryState
  * @param {Record<string, unknown>} [params.variables] - variables map from useStoryState
+ * @param {object[]} [params.characters] - character registry from useStoryState
  * @param {object} [params.meta] - Optional envelope metadata (title, author, description, startNodeId)
  * @param {boolean} [params.includeExportedAt=true] - Set ISO `exportedAt` on the document
  * @param {boolean} [params.cleanGraphIssues=true] - Omit `data.graphIssues` from each node (editor-only)
+ * @param {boolean} [params.resolveReferences=true] - Resolve {{character:…}} tokens in exported text fields
  * @returns {{
  *   formatVersion: number,
  *   exportedAt?: string,
  *   meta?: object,
- *   story: { variables: Record<string, unknown>, nodes: unknown[] }
+ *   story: { variables: Record<string, unknown>, characters: object[], nodes: unknown[] }
  * }}
  */
 export function serializeStoryPlayExportV1({
   nodes = [],
   variables = {},
+  characters = [],
   meta,
   includeExportedAt = true,
   cleanGraphIssues = true,
+  resolveReferences = true,
 } = {}) {
   const safeNodes = Array.isArray(nodes) ? nodes : [];
   const safeVariables =
     variables && typeof variables === "object" && !Array.isArray(variables)
       ? variables
       : {};
+  const safeCharacters = normalizeCharacters(characters);
 
-  const storyNodes = safeNodes.map((node) =>
-    cloneNodeForExport(node, { cleanGraphIssues })
-  );
+  let storyNodes = safeNodes.map((node) => cloneNodeForExport(node, { cleanGraphIssues }));
+
+  if (resolveReferences) {
+    storyNodes = resolveNodesTextForExport(storyNodes, {
+      characters: safeCharacters,
+      variables: safeVariables,
+    });
+  }
 
   /** @type {Record<string, unknown>} */
   const doc = {
     formatVersion: STORYPLAY_EXPORT_FORMAT_VERSION,
     story: {
       variables: cloneJson(safeVariables),
+      characters: cloneJson(safeCharacters),
       nodes: storyNodes,
     },
   };

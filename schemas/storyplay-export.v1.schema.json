@@ -47,6 +47,24 @@
             "type": ["string", "number", "boolean", "null"]
           }
         },
+        "characters": {
+          "type": "array",
+          "description": "Reusable character registry for {{character:id.name}} reference tokens in node and choice text.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "name"],
+            "properties": {
+              "id": { "type": "string" },
+              "name": { "type": "string" },
+              "description": { "type": "string" },
+              "aliases": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            }
+          }
+        },
         "nodes": {
           "type": "array",
           "description": "Ordered list of story blocks. Each item is a React Flow-compatible node.",

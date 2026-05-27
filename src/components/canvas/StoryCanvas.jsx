@@ -24,6 +24,7 @@ const edgeTypes = {
 export default function StoryCanvas({
   nodes = [],
   edges = [],
+  characters = [],
   selectedNodeId,
   setSelectedNodeId,
   addNode,
@@ -82,6 +83,7 @@ export default function StoryCanvas({
       selected: node.id === selectedNodeId,
       data: {
         ...node.data,
+        characters,
         isSelected: node.id === selectedNodeId,
         playState: playStateMap[node.id] || "idle",
         onSelectNode: (nodeId) => setSelectedNodeId?.(nodeId),
@@ -94,7 +96,7 @@ export default function StoryCanvas({
         },
       },
     }));
-  }, [nodes, selectedNodeId, playStateMap, setSelectedNodeId, addChoiceToSelectedNode]);
+  }, [nodes, characters, selectedNodeId, playStateMap, setSelectedNodeId, addChoiceToSelectedNode]);
 
   const hydratedEdges = useMemo(() => {
     return edges.map((edge) => {
@@ -194,7 +196,12 @@ export default function StoryCanvas({
   return (
     <>
       <div className="canvas-toolbar">
-        <button type="button" className="toolbar-button" onClick={addNode}>
+        <button
+          type="button"
+          className="toolbar-button"
+          data-onboarding="add-block"
+          onClick={addNode}
+        >
           + Add Block
         </button>
 

@@ -40,11 +40,17 @@ export function isLivePreviewSyncEnabled() {
  * Persist current graph + variables for the standalone hash player tab.
  * Does not change the in-memory story model—only serializes it.
  */
-export function saveCurrentStoryForPreview({ nodes, variables, selectedNodeId }) {
+export function saveCurrentStoryForPreview({
+  nodes,
+  variables,
+  characters,
+  selectedNodeId,
+}) {
   const payload = {
     nodes,
     variables:
       variables && typeof variables === "object" ? variables : {},
+    characters: Array.isArray(characters) ? characters : [],
     selectedNodeId: selectedNodeId ?? null,
     savedAt: new Date().toISOString(),
   };
@@ -65,11 +71,13 @@ export function loadStoryForPreview() {
       data.variables && typeof data.variables === "object" && !Array.isArray(data.variables)
         ? data.variables
         : {};
+    const characters = Array.isArray(data.characters) ? data.characters : [];
     const selectedNodeId =
       typeof data.selectedNodeId === "string" ? data.selectedNodeId : null;
     return {
       nodes: data.nodes,
       variables,
+      characters,
       selectedNodeId,
       savedAt: typeof data.savedAt === "string" ? data.savedAt : undefined,
     };

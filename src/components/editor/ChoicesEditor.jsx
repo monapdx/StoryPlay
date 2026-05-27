@@ -5,6 +5,7 @@ export default function ChoicesEditor({
   selectedNode,
   nodes,
   variables,
+  characters = [],
   addChoiceToSelectedNode,
   updateChoiceOnSelectedNode,
   removeChoiceFromSelectedNode,
@@ -51,6 +52,7 @@ export default function ChoicesEditor({
               choice={choice}
               allNodes={nodes}
               variables={variables}
+              characters={characters}
               currentNodeId={selectedNode.id}
               isExpanded={expandedChoiceIndex === index}
               onExpand={() => setExpandedChoiceIndex(index)}

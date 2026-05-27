@@ -1,9 +1,8 @@
 import { useMemo, useState } from "react";
-import {
-  cloneDemoStoryById,
-  DEFAULT_DEMO_STORY_ID,
-  DEMO_STORIES,
-} from "../data/demoStoriesCatalog";
+import { cloneDemoStoryById, DEMO_STORIES } from "../data/demoStoriesCatalog";
+import { createBlankStory } from "../utils/blankStory";
+import { createCharacter, normalizeCharacters } from "../utils/storyEntities";
+import { renderStoryText } from "../utils/storyReferences";
 
 function makeNodeId() {
   return `node_${Math.random().toString(36).slice(2, 10)}`;
@@ -13,7 +12,8 @@ function makeChoiceLabel(targetTitle = "Next Block") {
   return `Go to ${targetTitle}`;
 }
 
-function buildEdgesFromNodes(nodes) {
+function buildEdgesFromNodes(nodes, characters = []) {
+  const renderContext = { characters };
   const edges = [];
 
   for (const node of nodes) {
@@ -22,13 +22,14 @@ function buildEdgesFromNodes(nodes) {
     choices.forEach((choice, index) => {
       if (!choice?.targetNodeId) return;
 
+      const rawLabel = choice.label || "";
       edges.push({
         id: `${node.id}__${choice.targetNodeId}__${index}`,
         source: node.id,
         target: choice.targetNodeId,
         type: "storyEdge",
         data: {
-          label: choice.label || "",
+          label: renderStoryText(rawLabel, renderContext),
         },
       });
     });
@@ -47,35 +48,39 @@ function normalizeInitialStory(story) {
   return {
     nodes: safeNodes,
     variables: safeVariables,
+    characters: normalizeCharacters(story?.characters),
   };
 }
 
-function stableDemoSignature(nodes, variables) {
-  return JSON.stringify({ nodes, variables });
+function stableDemoSignature(nodes, variables, characters) {
+  return JSON.stringify({ nodes, variables, characters });
 }
 
 export default function useStoryState() {
-  const [activeDemoStoryId, setActiveDemoStoryId] = useState(
-    DEFAULT_DEMO_STORY_ID
-  );
+  /** `null` = blank project; otherwise id of the loaded starter template. */
+  const [activeDemoStoryId, setActiveDemoStoryId] = useState(null);
 
-  const initial = useMemo(() => {
-    return normalizeInitialStory(cloneDemoStoryById(DEFAULT_DEMO_STORY_ID));
-  }, []);
+  const initial = useMemo(() => normalizeInitialStory(createBlankStory()), []);
 
   const [nodes, setNodes] = useState(initial.nodes);
   const [variables, setVariables] = useState(initial.variables);
-  const [selectedNodeId, setSelectedNodeId] = useState(
-    initial.nodes[0]?.id || null
+  const [characters, setCharacters] = useState(initial.characters);
+  const [selectedNodeId, setSelectedNodeId] = useState(null);
+
+  const [storyBaselineSignature, setStoryBaselineSignature] = useState(() =>
+    stableDemoSignature(initial.nodes, initial.variables, initial.characters)
   );
 
-  const [demoBaselineSignature, setDemoBaselineSignature] = useState(() =>
-    stableDemoSignature(initial.nodes, initial.variables)
-  );
+  const isStoryDirty = useMemo(() => {
+    return (
+      stableDemoSignature(nodes, variables, characters) !== storyBaselineSignature
+    );
+  }, [nodes, variables, characters, storyBaselineSignature]);
 
-  const isDemoDirty = useMemo(() => {
-    return stableDemoSignature(nodes, variables) !== demoBaselineSignature;
-  }, [nodes, variables, demoBaselineSignature]);
+  const isBlankProject = nodes.length === 0 && activeDemoStoryId == null;
+
+  /** @deprecated use isStoryDirty */
+  const isDemoDirty = isStoryDirty;
 
   function loadDemoStory(storyId) {
     const raw = cloneDemoStoryById(storyId);
@@ -85,9 +90,57 @@ export default function useStoryState() {
 
     setNodes(next.nodes);
     setVariables(next.variables);
+    setCharacters(next.characters);
     setSelectedNodeId(next.nodes[0]?.id || null);
     setActiveDemoStoryId(storyId);
-    setDemoBaselineSignature(stableDemoSignature(next.nodes, next.variables));
+    setStoryBaselineSignature(
+      stableDemoSignature(next.nodes, next.variables, next.characters)
+    );
+  }
+
+  function resetToBlankStory() {
+    const next = normalizeInitialStory(createBlankStory());
+    setNodes(next.nodes);
+    setVariables(next.variables);
+    setCharacters(next.characters);
+    setSelectedNodeId(null);
+    setActiveDemoStoryId(null);
+    setStoryBaselineSignature(
+      stableDemoSignature(next.nodes, next.variables, next.characters)
+    );
+  }
+
+  function addCharacter() {
+    const next = createCharacter();
+    setCharacters((prev) => [...prev, next]);
+    return next.id;
+  }
+
+  function updateCharacter(characterId, patch) {
+    if (!characterId) return;
+    setCharacters((prev) =>
+      prev.map((character) =>
+        character.id === characterId
+          ? {
+              ...character,
+              ...(typeof patch.name === "string" ? { name: patch.name } : {}),
+              ...(typeof patch.description === "string"
+                ? { description: patch.description }
+                : {}),
+              ...(Array.isArray(patch.aliases)
+                ? {
+                    aliases: patch.aliases.filter((item) => typeof item === "string"),
+                  }
+                : {}),
+            }
+          : character
+      )
+    );
+  }
+
+  function deleteCharacter(characterId) {
+    if (!characterId) return;
+    setCharacters((prev) => prev.filter((character) => character.id !== characterId));
   }
 
   const selectedNode = useMemo(() => {
@@ -95,8 +148,8 @@ export default function useStoryState() {
   }, [nodes, selectedNodeId]);
 
   const edges = useMemo(() => {
-    return buildEdgesFromNodes(nodes);
-  }, [nodes]);
+    return buildEdgesFromNodes(nodes, characters);
+  }, [nodes, characters]);
 
   function addNode() {
     const nextId = makeNodeId();
@@ -326,12 +379,20 @@ export default function useStoryState() {
     edges,
     variables,
     setVariables,
+    characters,
+    setCharacters,
+    addCharacter,
+    updateCharacter,
+    deleteCharacter,
     selectedNodeId,
     setSelectedNodeId,
     selectedNode,
     activeDemoStoryId,
     demoStories: DEMO_STORIES,
     loadDemoStory,
+    resetToBlankStory,
+    isBlankProject,
+    isStoryDirty,
     isDemoDirty,
     addNode,
     updateNodePosition,

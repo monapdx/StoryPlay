@@ -2,10 +2,15 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import StoryCanvas from "./components/canvas/StoryCanvas";
 import SidebarEditor from "./components/editor/SidebarEditor";
 import VariablesScreen from "./components/editor/VariablesScreen";
+import CharactersScreen from "./components/entities/CharactersScreen";
 import StoryPreview from "./components/preview/StoryPreview";
 import MiniGameEditor from "./components/minigame/MiniGameEditor";
+import EditorEmptyState from "./components/onboarding/EditorEmptyState";
+import OnboardingTour from "./components/onboarding/OnboardingTour";
+import StarterTemplateModal from "./components/onboarding/StarterTemplateModal";
 import useStoryState from "./hooks/useStoryState";
 import usePlayState from "./hooks/usePlayState";
+import useOnboarding from "./hooks/useOnboarding";
 import {
   downloadStoryPlayExportV1,
   serializeStoryPlayExportV1,
@@ -35,6 +40,7 @@ function EditorApp() {
       return serializeStoryPlayExportV1({
         nodes: s.nodes,
         variables: s.variables,
+        characters: s.characters,
       });
     }
 
@@ -49,6 +55,7 @@ function EditorApp() {
       return downloadStoryPlayExportV1({
         nodes: s.nodes,
         variables: s.variables,
+        characters: s.characters,
       });
     };
 
@@ -75,16 +82,31 @@ function EditorApp() {
       saveCurrentStoryForPreview({
         nodes: s.nodes,
         variables: s.variables,
+        characters: s.characters,
         selectedNodeId: s.selectedNodeId,
       });
     }, 1500);
 
     return () => window.clearTimeout(id);
-  }, [story.nodes, story.variables, story.selectedNodeId, previewSyncTick]);
+  }, [story.nodes, story.variables, story.characters, story.selectedNodeId, previewSyncTick]);
 
   const [isMiniGameOpen, setIsMiniGameOpen] = useState(false);
   const [activeScreen, setActiveScreen] = useState("editor");
   const [isQuickPreviewOpen, setIsQuickPreviewOpen] = useState(false);
+  const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
+
+  const onboarding = useOnboarding();
+  const onboardingAutoStartedRef = useRef(false);
+
+  useEffect(() => {
+    if (onboardingAutoStartedRef.current) return;
+    if (!onboarding.shouldAutoStart) return;
+    if (activeScreen !== "editor") return;
+
+    onboardingAutoStartedRef.current = true;
+    const timerId = window.setTimeout(() => onboarding.start(), 500);
+    return () => window.clearTimeout(timerId);
+  }, [activeScreen, onboarding.shouldAutoStart, onboarding.start]);
 
   const selectedMiniGame = useMemo(() => {
     if (!story.selectedNode || !isSupportedMiniGameBlock(story.selectedNode)) {
@@ -112,14 +134,26 @@ function EditorApp() {
     setIsMiniGameOpen(true);
   }
 
-  function handleDemoStoryChange(event) {
-    const storyId = event.target.value;
-    if (storyId === story.activeDemoStoryId) return;
+  function storyHasContent() {
+    return (
+      story.nodes.length > 0 ||
+      Object.keys(story.variables || {}).length > 0 ||
+      (story.characters || []).length > 0
+    );
+  }
+
+  function requestLoadTemplate(storyId) {
+    if (!storyId) return;
+
+    if (storyId === story.activeDemoStoryId) {
+      setIsTemplateModalOpen(false);
+      return;
+    }
 
     if (
-      story.isDemoDirty &&
+      storyHasContent() &&
       !window.confirm(
-        "Switch demo story? Your edits to the current graph and variables will be replaced."
+        "Load this example story? Your current project will be replaced."
       )
     ) {
       return;
@@ -127,6 +161,11 @@ function EditorApp() {
 
     setIsMiniGameOpen(false);
     story.loadDemoStory(storyId);
+    setIsTemplateModalOpen(false);
+  }
+
+  function handleOpenTemplates() {
+    setIsTemplateModalOpen(true);
   }
 
   function handleOpenVariablesWorkspace() {
@@ -134,6 +173,14 @@ function EditorApp() {
   }
 
   function handleCloseVariablesWorkspace() {
+    setActiveScreen("editor");
+  }
+
+  function handleOpenCharactersWorkspace() {
+    setActiveScreen("characters");
+  }
+
+  function handleCloseCharactersWorkspace() {
     setActiveScreen("editor");
   }
 
@@ -248,6 +295,7 @@ function EditorApp() {
     downloadStoryPlayExportV1({
       nodes: story.nodes,
       variables: story.variables,
+      characters: story.characters,
     });
   }
 
@@ -256,6 +304,7 @@ function EditorApp() {
     saveCurrentStoryForPreview({
       nodes: story.nodes,
       variables: story.variables,
+      characters: story.characters,
       selectedNodeId: story.selectedNodeId,
     });
     setPreviewSyncTick((n) => n + 1);
@@ -268,18 +317,36 @@ function EditorApp() {
 
   return (
     <div className="app-shell">
+      <StarterTemplateModal
+        open={isTemplateModalOpen}
+        demoStories={story.demoStories}
+        activeTemplateId={story.activeDemoStoryId}
+        onClose={() => setIsTemplateModalOpen(false)}
+        onSelectTemplate={requestLoadTemplate}
+      />
+
       {activeScreen === "variables" ? (
         <VariablesScreen
           variables={story.variables}
           setVariables={story.setVariables}
           onBack={handleCloseVariablesWorkspace}
-          demoStories={story.demoStories}
-          activeDemoStoryId={story.activeDemoStoryId}
-          onDemoStoryChange={handleDemoStoryChange}
+          activeTemplateLabel={getActiveTemplateLabel(story)}
+          onOpenTemplates={handleOpenTemplates}
           onExport={handleExportStory}
           onOpenMiniGameEditor={handleOpenMiniGameEditor}
           canOpenMiniGameEditor={canOpenMiniGameEditor}
           miniGameEditorTitle={miniGameEditorTitle}
+        />
+      ) : activeScreen === "characters" ? (
+        <CharactersScreen
+          characters={story.characters}
+          nodes={story.nodes}
+          onBack={handleCloseCharactersWorkspace}
+          onAddCharacter={story.addCharacter}
+          onUpdateCharacter={story.updateCharacter}
+          onDeleteCharacter={story.deleteCharacter}
+          onOpenTemplates={handleOpenTemplates}
+          activeTemplateLabel={getActiveTemplateLabel(story)}
         />
       ) : (
         <>
@@ -290,31 +357,37 @@ function EditorApp() {
                 Build branching stories with interactive blocks
               </p>
 
-              <div
-                className="app-story-switcher"
-                title="Loads a built-in demo into the editor and preview. If you changed the graph or variables, you will be asked to confirm before switching."
-              >
-                <label htmlFor="demo-story-select" className="app-story-switcher-label">
-                  Demo story
-                </label>
-                <select
-                  id="demo-story-select"
-                  className="form-select app-story-switcher-select"
-                  value={story.activeDemoStoryId}
-                  onChange={handleDemoStoryChange}
-                >
-                  {story.demoStories.map((entry) => (
-                    <option key={entry.id} value={entry.id} title={entry.blurb}>
-                      [{entry.tier}] {entry.label}
-                    </option>
-                  ))}
-                </select>
+              <div className="app-project-status">
+                <span className="app-project-status__label">Project</span>
+                <span className="app-project-status__value">
+                  {getActiveTemplateLabel(story)}
+                </span>
               </div>
             </div>
 
             <div style={styles.headerActions}>
               <button
                 type="button"
+                className="header-help-button"
+                onClick={onboarding.restart}
+                title="Replay the guided tour"
+              >
+                Tutorial
+              </button>
+
+              <button
+                type="button"
+                data-onboarding="templates"
+                onClick={handleOpenTemplates}
+                style={styles.headerButton}
+                title="Browse starter example stories"
+              >
+                Example stories
+              </button>
+
+              <button
+                type="button"
+                data-onboarding="preview"
                 onClick={() => setIsQuickPreviewOpen((open) => !open)}
                 style={{
                   ...styles.headerButton,
@@ -328,6 +401,16 @@ function EditorApp() {
 
               <button
                 type="button"
+                onClick={handleOpenCharactersWorkspace}
+                style={styles.headerButton}
+                title="Manage reusable character names and references"
+              >
+                Characters
+              </button>
+
+              <button
+                type="button"
+                data-onboarding="variables"
                 onClick={() => setActiveScreen("variables")}
                 style={styles.headerButton}
                 title="Open full-screen variables workspace"
@@ -346,6 +429,7 @@ function EditorApp() {
 
               <button
                 type="button"
+                data-onboarding="export"
                 onClick={handleExportStory}
                 style={styles.headerButton}
                 title="Download story as StoryPlay export JSON (v1)"
@@ -376,15 +460,22 @@ function EditorApp() {
               .filter(Boolean)
               .join(" ")}
           >
-            <section className="panel canvas-panel">
+            <section className="panel canvas-panel" data-onboarding="canvas">
               <StoryCanvas
                 {...story}
                 currentPlayNodeId={play.currentPlayNodeId}
                 playVariables={play.playVariables}
               />
+              {story.isBlankProject && (
+                <EditorEmptyState
+                  onAddNode={story.addNode}
+                  onOpenTutorial={onboarding.restart}
+                  onOpenTemplates={handleOpenTemplates}
+                />
+              )}
             </section>
 
-            <aside className="panel sidebar-panel">
+            <aside className="panel sidebar-panel custom-scrollbar" data-onboarding="sidebar">
               <SidebarEditor
                 {...story}
                 onOpenMiniGameEditor={handleOpenMiniGameEditor}
@@ -394,7 +485,7 @@ function EditorApp() {
 
             <aside
               className={[
-                "panel preview-panel preview-panel--dock",
+                "panel preview-panel preview-panel--dock custom-scrollbar",
                 isQuickPreviewOpen ? "" : "preview-panel--dock-collapsed",
               ]
                 .filter(Boolean)
@@ -415,10 +506,31 @@ function EditorApp() {
               <StoryPreview {...story} {...play} variant="dock" />
             </aside>
           </main>
+
+          {onboarding.isActive && activeScreen === "editor" && (
+            <OnboardingTour
+              step={onboarding.step}
+              stepIndex={onboarding.stepIndex}
+              stepCount={onboarding.stepCount}
+              isLastStep={onboarding.isLastStep}
+              onNext={onboarding.next}
+              onBack={onboarding.back}
+              onSkip={onboarding.skip}
+            />
+          )}
         </>
       )}
     </div>
   );
+}
+
+function getActiveTemplateLabel(story) {
+  if (!story.activeDemoStoryId) {
+    return story.isBlankProject ? "Blank project" : "Custom project";
+  }
+
+  const entry = story.demoStories.find((item) => item.id === story.activeDemoStoryId);
+  return entry ? entry.label : "Example story";
 }
 
 const styles = {

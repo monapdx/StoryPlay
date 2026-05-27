@@ -8,9 +8,8 @@ export default function VariablesScreen({
   variables,
   setVariables,
   onBack,
-  demoStories = [],
-  activeDemoStoryId,
-  onDemoStoryChange,
+  activeTemplateLabel = "Blank project",
+  onOpenTemplates,
   onExport,
   onOpenMiniGameEditor,
   canOpenMiniGameEditor,
@@ -34,28 +33,18 @@ export default function VariablesScreen({
           </span>
         </div>
 
-        <div
-          className="variables-screen-topbar-demo"
-          title="Loads a built-in demo into the editor and preview. If you changed the graph or variables, you will be asked to confirm before switching."
-        >
-          <label
-            htmlFor="variables-screen-demo-select"
-            className="variables-screen-demo-label"
+        <div className="variables-screen-topbar-demo">
+          <span className="variables-screen-demo-label">Project</span>
+          <span className="variables-screen-demo-value">{activeTemplateLabel}</span>
+          <button
+            type="button"
+            className="variables-screen-action-btn"
+            data-onboarding="templates"
+            onClick={onOpenTemplates}
+            title="Browse starter example stories"
           >
-            Demo story
-          </label>
-          <select
-            id="variables-screen-demo-select"
-            className="form-select variables-screen-demo-select"
-            value={activeDemoStoryId}
-            onChange={onDemoStoryChange}
-          >
-            {demoStories.map((entry) => (
-              <option key={entry.id} value={entry.id} title={entry.blurb}>
-                [{entry.tier}] {entry.label}
-              </option>
-            ))}
-          </select>
+            Example stories
+          </button>
         </div>
 
         <div className="variables-screen-topbar-actions">
@@ -87,7 +76,7 @@ export default function VariablesScreen({
         </p>
       </header>
 
-      <div className="variables-screen-body">
+      <div className="variables-screen-body custom-scrollbar">
         <aside className="variables-screen-aside" aria-label="How variables work">
           <div className="variables-screen-panel">
             <h2 className="variables-screen-panel-title">What lives here</h2>

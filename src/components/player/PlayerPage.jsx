@@ -31,6 +31,7 @@ export default function PlayerPage() {
 
   const nodes = snapshot?.nodes ?? [];
   const variables = snapshot?.variables ?? {};
+  const characters = snapshot?.characters ?? [];
   const selectedNodeId = useMemo(() => {
     if (!snapshot?.nodes?.length) return null;
     const id = snapshot.selectedNodeId;
@@ -75,10 +76,11 @@ export default function PlayerPage() {
           </button>
         </div>
       ) : (
-        <div className="player-page-body">
+        <div className="player-page-body custom-scrollbar">
           <StoryPreview
             {...play}
             nodes={nodes}
+            characters={characters}
             selectedNode={selectedNode}
             selectedNodeId={selectedNodeId}
           />

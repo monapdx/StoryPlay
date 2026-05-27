@@ -1,17 +1,23 @@
 import ChoiceConditionsEditor from "./ChoiceConditionsEditor";
 import ChoiceEffectsEditor from "./ChoiceEffectsEditor";
+import ReferenceTextarea from "./ReferenceTextarea";
+import { renderStoryText } from "../../utils/storyReferences";
 
 export default function ChoiceRow({
   choiceIndex,
   choice,
   allNodes,
   variables,
+  characters = [],
   currentNodeId,
   isExpanded,
   onExpand,
   onUpdate,
   onRemove,
 }) {
+  const storyState = { characters };
+  const displayLabel =
+    renderStoryText(choice.label, storyState)?.trim() || "Untitled choice";
   const availableTargets = allNodes.filter((node) => node.id !== currentNodeId);
   const targetLabel = availableTargets.find(
     (node) => node.id === choice.targetNodeId
@@ -26,9 +32,7 @@ export default function ChoiceRow({
         aria-expanded={isExpanded}
       >
         <span>
-          <span className="collapsible-row-title">
-            {choice.label?.trim() || "Untitled choice"}
-          </span>
+          <span className="collapsible-row-title">{displayLabel}</span>
           <span className="collapsible-row-meta">
             {targetLabel || choice.targetNodeId || "No target selected"}
           </span>
@@ -42,12 +46,13 @@ export default function ChoiceRow({
         <>
           <div className="form-group">
             <label className="form-label">Choice Label</label>
-            <input
-              className="form-input"
-              type="text"
-              value={choice.label}
-              onChange={(e) => onUpdate(choiceIndex, "label", e.target.value)}
+            <ReferenceTextarea
+              className="form-textarea choice-row__label-field"
+              value={choice.label || ""}
+              characters={characters}
+              onChange={(nextValue) => onUpdate(choiceIndex, "label", nextValue)}
               placeholder="Enter choice text"
+              insertLabel="Insert character"
             />
           </div>
 

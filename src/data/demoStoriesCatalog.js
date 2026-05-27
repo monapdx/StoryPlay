@@ -45,8 +45,6 @@ export const DEMO_STORIES = [
   },
 ];
 
-export const DEFAULT_DEMO_STORY_ID = "escape-room";
-
 export function getDemoStoryEntry(storyId) {
   return DEMO_STORIES.find((entry) => entry.id === storyId) || null;
 }

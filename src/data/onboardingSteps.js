@@ -1,0 +1,59 @@
+/** Guided tour steps — `target` is a CSS selector for `[data-onboarding="…"]` hooks. */
+export const ONBOARDING_STEPS = [
+  {
+    id: "canvas",
+    target: '[data-onboarding="canvas"]',
+    title: "Your story map",
+    body: "Each block is a scene. Lines between blocks are player choices. Pan and zoom to explore.",
+    placement: "bottom",
+  },
+  {
+    id: "add-block",
+    target: '[data-onboarding="add-block"]',
+    title: "Add your first scene",
+    body: "Click Add Block to place a new scene on the map. You can add as many as you need.",
+    placement: "bottom",
+  },
+  {
+    id: "sidebar",
+    target: '[data-onboarding="sidebar"]',
+    title: "Edit a scene",
+    body: "Select a block to edit its title, story text, and block type in this panel.",
+    placement: "left",
+  },
+  {
+    id: "choices",
+    target: '[data-onboarding="choices"]',
+    title: "Branch the story",
+    body: "Add choices here, or drag from one block’s handle to another to link scenes.",
+    placement: "left",
+  },
+  {
+    id: "preview",
+    target: '[data-onboarding="preview"]',
+    title: "Try it as a player",
+    body: "Open Quick Preview to play through your story, or use Play in new tab for a full window.",
+    placement: "bottom",
+  },
+  {
+    id: "variables",
+    target: '[data-onboarding="variables"]',
+    title: "Story variables",
+    body: "Track health, coins, flags, and more. Conditions and effects on choices can read and update them.",
+    placement: "bottom",
+  },
+  {
+    id: "export",
+    target: '[data-onboarding="export"]',
+    title: "Save your work",
+    body: "Export Game downloads a JSON file you can keep or share. Re-import is coming soon.",
+    placement: "bottom",
+  },
+  {
+    id: "templates",
+    target: '[data-onboarding="templates"]',
+    title: "Example stories",
+    body: "Load a starter template anytime to study branching, chat, timers, and mini-games.",
+    placement: "bottom",
+  },
+];

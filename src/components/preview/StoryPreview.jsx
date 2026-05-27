@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import PlayChoiceButton from "./PlayChoiceButton";
 import { evaluateConditions } from "../../utils/storyLogic";
+import { renderStoryText } from "../../utils/storyReferences";
 import TraitPickerBlockView from "../blocks/TraitPickerBlockView";
 import PersuasionBlockView from "../blocks/PersuasionBlockView";
 import ChoiceWeightingBlockView from "../blocks/ChoiceWeightingBlockView";
 
-function renderChatLines(content = "") {
+function renderChatLines(content = "", storyState = {}) {
   return content
     .split("\n")
     .map((line) => line.trim())
@@ -17,7 +18,7 @@ function renderChatLines(content = "") {
       return {
         id: `${index}-${text}`,
         side: isYou ? "outgoing" : "incoming",
-        text,
+        text: renderStoryText(text, storyState),
       };
     });
 }
@@ -32,6 +33,7 @@ function variablePatchToEffects(variablePatch = {}) {
 
 export default function StoryPreview({
   nodes,
+  characters = [],
   selectedNode,
   selectedNodeId,
   currentPlayNode,
@@ -70,6 +72,33 @@ export default function StoryPreview({
   }, [nodes]);
 
   const playNodeData = currentPlayNode?.data || null;
+
+  const storyRenderState = useMemo(
+    () => ({ characters, variables: playVariables }),
+    [characters, playVariables]
+  );
+
+  const resolvedPlayNodeData = useMemo(() => {
+    if (!playNodeData) return null;
+
+    return {
+      ...playNodeData,
+      title: renderStoryText(playNodeData.title, storyRenderState),
+      content: renderStoryText(playNodeData.content, storyRenderState),
+      prompt: renderStoryText(playNodeData.prompt, storyRenderState),
+      options: (playNodeData.options || []).map((option) => ({
+        ...option,
+        label: renderStoryText(option.label, storyRenderState),
+        description: renderStoryText(option.description, storyRenderState),
+      })),
+      choices: (playNodeData.choices || []).map((choice) => ({
+        ...choice,
+        text: renderStoryText(choice.text, storyRenderState),
+        response: renderStoryText(choice.response, storyRenderState),
+      })),
+    };
+  }, [playNodeData, storyRenderState]);
+
   const playChoices = playNodeData?.choices || [];
   const visibleChoices = playChoices.filter((choice) =>
     evaluateConditions(choice.conditions || [], playVariables || {})
@@ -103,8 +132,8 @@ export default function StoryPreview({
 
   const chatLines = useMemo(() => {
     if (!isChat) return [];
-    return renderChatLines(playNodeData?.content || "");
-  }, [isChat, playNodeData?.content]);
+    return renderChatLines(playNodeData?.content || "", storyRenderState);
+  }, [isChat, playNodeData?.content, storyRenderState]);
 
   useEffect(() => {
     if (!isTimed || !currentPlayNode?.id || timerSeconds <= 0 || !timeoutTargetNodeId) {
@@ -236,13 +265,13 @@ export default function StoryPreview({
   }
 
   function renderMiniGameBlock() {
-    if (!playNodeData) return null;
+    if (!resolvedPlayNodeData) return null;
 
     switch (blockType) {
       case "traitPicker":
         return (
           <TraitPickerBlockView
-            block={playNodeData}
+            block={resolvedPlayNodeData}
             previewSessionNonce={previewSessionNonce}
             onComplete={handleMiniGameComplete}
           />
@@ -251,7 +280,7 @@ export default function StoryPreview({
       case "persuasion":
         return (
           <PersuasionBlockView
-            block={playNodeData}
+            block={resolvedPlayNodeData}
             onComplete={handleMiniGameComplete}
           />
         );
@@ -259,7 +288,7 @@ export default function StoryPreview({
       case "choiceWeighting":
         return (
           <ChoiceWeightingBlockView
-            block={playNodeData}
+            block={resolvedPlayNodeData}
             previewSessionNonce={previewSessionNonce}
             onComplete={handleMiniGameComplete}
           />
@@ -387,7 +416,9 @@ export default function StoryPreview({
         >
           <div className="preview-block-topline">
             <h3 className="preview-title">
-              {playNodeData?.title || "Untitled Block"}
+              {resolvedPlayNodeData?.title ||
+                renderStoryText(playNodeData?.title, storyRenderState) ||
+                "Untitled Block"}
             </h3>
 
             {isTimed && timeLeft !== null && (
@@ -411,7 +442,9 @@ export default function StoryPreview({
 
           {!isMiniGame && !isChat && (
             <div className="preview-content">
-              {playNodeData?.content || "No content yet."}
+              {resolvedPlayNodeData?.content ||
+                renderStoryText(playNodeData?.content, storyRenderState) ||
+                "No content yet."}
             </div>
           )}
 
@@ -446,7 +479,10 @@ export default function StoryPreview({
                 visibleChoices[selectedReplyIndex] && (
                   <div className="chat-row chat-row-outgoing">
                     <div className="chat-bubble chat-bubble-outgoing">
-                      {visibleChoices[selectedReplyIndex].label || "Reply"}
+                      {renderStoryText(
+                        visibleChoices[selectedReplyIndex].label,
+                        storyRenderState
+                      ) || "Reply"}
                     </div>
                   </div>
                 )}
@@ -457,7 +493,10 @@ export default function StoryPreview({
             <div className="helper-box" style={{ marginTop: 12 }}>
               If time runs out, this block automatically goes to:{" "}
               <strong>
-                {nodesById[timeoutTargetNodeId]?.data?.title || timeoutTargetNodeId}
+                {renderStoryText(
+                  nodesById[timeoutTargetNodeId]?.data?.title,
+                  storyRenderState
+                ) || timeoutTargetNodeId}
               </strong>
             </div>
           )}
@@ -477,6 +516,7 @@ export default function StoryPreview({
                   <PlayChoiceButton
                     key={`${choice.targetNodeId}-${index}`}
                     choice={choice}
+                    characters={characters}
                     targetNode={nodesById[choice.targetNodeId]}
                     onChoose={() =>
                       goToNode(choice.targetNodeId, choice.effects || [])
@@ -503,7 +543,7 @@ export default function StoryPreview({
                       onClick={() => handleChatReply(choice, index)}
                       disabled={selectedReplyIndex !== null}
                     >
-                      {choice.label || "Reply"}
+                      {renderStoryText(choice.label, storyRenderState) || "Reply"}
                     </button>
                   ))}
                 </div>

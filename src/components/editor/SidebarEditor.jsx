@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import ChoicesEditor from "./ChoicesEditor";
 import StoryDiagnostics from "./StoryDiagnostics";
+import ReferenceTextarea from "./ReferenceTextarea";
 
 export default function SidebarEditor({
   nodes,
   variables,
+  characters = [],
   selectedNode,
   updateSelectedNodeField,
   deleteSelectedNode,
@@ -25,13 +27,12 @@ export default function SidebarEditor({
       <div>
         <h2 className="section-title">Block Editor</h2>
 
-        <div className="helper-box">
+        <div className="helper-box" data-onboarding="choices">
           Select a story block on the canvas.
           <br />
           <br />
-          Tip: click + Add Block to create a new story node, drag from one node
-          handle to another to create a choice link, or use the search bar to
-          jump to a block.
+          Tip: click + Add Block to create a new scene, then add choices here or
+          drag from one block’s handle to another to branch the story.
         </div>
 
         <VariablesWorkspacePromo
@@ -167,11 +168,10 @@ export default function SidebarEditor({
           </button>
 
           {isNarrativeContentOpen && (
-            <textarea
-              className="form-textarea"
+            <ReferenceTextarea
               value={content}
-              onFocus={() => setIsNarrativeContentOpen(true)}
-              onChange={(e) => updateSelectedNodeField("content", e.target.value)}
+              characters={characters}
+              onChange={(nextValue) => updateSelectedNodeField("content", nextValue)}
               placeholder={
                 blockType === "chat"
                   ? "Example:\nA message appears on your screen.\nYou: Who is this?\nDon't open the door."
@@ -311,14 +311,17 @@ export default function SidebarEditor({
             </div>
           )}
 
-          <ChoicesEditor
-            selectedNode={selectedNode}
-            nodes={nodes}
-            variables={variables}
-            addChoiceToSelectedNode={addChoiceToSelectedNode}
-            updateChoiceOnSelectedNode={updateChoiceOnSelectedNode}
-            removeChoiceFromSelectedNode={removeChoiceFromSelectedNode}
-          />
+          <div data-onboarding="choices">
+            <ChoicesEditor
+              selectedNode={selectedNode}
+              nodes={nodes}
+              variables={variables}
+              characters={characters}
+              addChoiceToSelectedNode={addChoiceToSelectedNode}
+              updateChoiceOnSelectedNode={updateChoiceOnSelectedNode}
+              removeChoiceFromSelectedNode={removeChoiceFromSelectedNode}
+            />
+          </div>
         </>
       )}
 
