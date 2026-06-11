@@ -1868,10 +1868,37 @@ mark {
   margin-top: 14px;
 }
 
+.chat-reply-panel--active {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.chat-reply-prompt {
+  margin: 0 0 8px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #94a3b8;
+}
+
 .chat-reply-list {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.chat-reply-list--two-up {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+@media (max-width: 520px) {
+  .chat-reply-list--two-up {
+    grid-template-columns: 1fr;
+  }
 }
 
 .chat-reply-button {
@@ -1885,6 +1912,12 @@ mark {
   cursor: pointer;
   transition: 0.18s ease;
   font: inherit;
+  line-height: 1.35;
+}
+
+.chat-reply-list--two-up .chat-reply-button {
+  text-align: center;
+  min-height: 44px;
 }
 
 .chat-reply-button:hover:not(:disabled) {

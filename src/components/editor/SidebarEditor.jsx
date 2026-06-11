@@ -184,9 +184,14 @@ export default function SidebarEditor({
 
       {blockType === "chat" && (
         <div className="helper-box">
-          Chat blocks render each line as a message bubble.
+          Chat blocks show incoming lines as bubbles, then pause for the player to pick a
+          reply from <strong>Choices</strong> below (usually two options).
           <br />
-          Use <strong>You:</strong> at the start of a line for outgoing messages.
+          <br />
+          Put NPC lines in content (e.g. <strong>Merchant: Hello!</strong>). Player replies
+          come from choice labels—not from <strong>You:</strong> lines in content.
+          <br />
+          Lines after the first <strong>You:</strong> line are skipped once choices exist.
         </div>
       )}
 

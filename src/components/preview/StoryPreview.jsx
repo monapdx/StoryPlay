@@ -2,26 +2,11 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import PlayChoiceButton from "./PlayChoiceButton";
 import { evaluateConditions } from "../../utils/storyLogic";
 import { renderStoryText } from "../../utils/storyReferences";
+import { getChatPrefaceLines, parseChatLines } from "../../utils/chatPlay";
+import ChatReplyPicker from "./ChatReplyPicker";
 import TraitPickerBlockView from "../blocks/TraitPickerBlockView";
 import PersuasionBlockView from "../blocks/PersuasionBlockView";
 import ChoiceWeightingBlockView from "../blocks/ChoiceWeightingBlockView";
-
-function renderChatLines(content = "", storyState = {}) {
-  return content
-    .split("\n")
-    .map((line) => line.trim())
-    .filter(Boolean)
-    .map((line, index) => {
-      const isYou = line.startsWith("You:");
-      const text = isYou ? line.replace(/^You:\s*/, "") : line;
-
-      return {
-        id: `${index}-${text}`,
-        side: isYou ? "outgoing" : "incoming",
-        text: renderStoryText(text, storyState),
-      };
-    });
-}
 
 function variablePatchToEffects(variablePatch = {}) {
   return Object.entries(variablePatch || {}).map(([variable, value]) => ({
@@ -132,8 +117,15 @@ export default function StoryPreview({
 
   const chatLines = useMemo(() => {
     if (!isChat) return [];
-    return renderChatLines(playNodeData?.content || "", storyRenderState);
+    return parseChatLines(playNodeData?.content || "", storyRenderState);
   }, [isChat, playNodeData?.content, storyRenderState]);
+
+  const hasChatReplyChoices = isChat && visibleChoices.length > 0;
+
+  const chatLinesToAnimate = useMemo(() => {
+    if (!isChat) return [];
+    return getChatPrefaceLines(chatLines, hasChatReplyChoices);
+  }, [isChat, chatLines, hasChatReplyChoices]);
 
   useEffect(() => {
     if (!isTimed || !currentPlayNode?.id || timerSeconds <= 0 || !timeoutTargetNodeId) {
@@ -172,7 +164,7 @@ export default function StoryPreview({
       return;
     }
 
-    if (chatLines.length === 0) {
+    if (chatLinesToAnimate.length === 0) {
       setRevealedChatCount(0);
       setShowTyping(false);
       return;
@@ -183,7 +175,7 @@ export default function StoryPreview({
 
     let cumulativeDelay = 450;
 
-    chatLines.forEach((line, index) => {
+    chatLinesToAnimate.forEach((line, index) => {
       const typingStartId = window.setTimeout(() => {
         setShowTyping(true);
       }, cumulativeDelay);
@@ -194,7 +186,7 @@ export default function StoryPreview({
 
       const revealId = window.setTimeout(() => {
         setRevealedChatCount(index + 1);
-        setShowTyping(index < chatLines.length - 1);
+        setShowTyping(index < chatLinesToAnimate.length - 1);
       }, cumulativeDelay + revealDelay);
 
       chatTimersRef.current.push(revealId);
@@ -211,12 +203,12 @@ export default function StoryPreview({
       chatTimersRef.current.forEach((timerId) => window.clearTimeout(timerId));
       chatTimersRef.current = [];
     };
-  }, [isChat, currentPlayNode?.id, chatLines]);
+  }, [isChat, currentPlayNode?.id, chatLinesToAnimate]);
 
   useEffect(() => {
     if (!chatScrollRef.current) return;
     chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
-  }, [revealedChatCount, showTyping, selectedReplyIndex]);
+  }, [revealedChatCount, showTyping, selectedReplyIndex, chatAwaitingReply]);
 
   useEffect(() => {
     if (isDock) return;
@@ -226,11 +218,17 @@ export default function StoryPreview({
   }, [changedVariableKeys, isDock]);
 
   const revealedChatLines = isChat
-    ? chatLines.slice(0, revealedChatCount)
+    ? chatLinesToAnimate.slice(0, revealedChatCount)
     : [];
 
-  const chatSequenceComplete =
-    !isChat || (revealedChatCount >= chatLines.length && !showTyping);
+  const incomingSequenceComplete =
+    !isChat ||
+    (chatLinesToAnimate.length === 0
+      ? true
+      : revealedChatCount >= chatLinesToAnimate.length && !showTyping);
+
+  const chatAwaitingReply =
+    hasChatReplyChoices && incomingSequenceComplete && selectedReplyIndex === null;
 
   function handleChatReply(choice, index) {
     if (selectedReplyIndex !== null) return;
@@ -450,7 +448,9 @@ export default function StoryPreview({
 
           {isChat && (
             <div className="chat-thread chat-thread-playable" ref={chatScrollRef}>
-              {revealedChatLines.length === 0 && !showTyping && (
+              {revealedChatLines.length === 0 &&
+                !showTyping &&
+                !chatAwaitingReply && (
                 <div className="muted">No chat messages yet.</div>
               )}
 
@@ -475,6 +475,15 @@ export default function StoryPreview({
                 </div>
               )}
 
+              {chatAwaitingReply && (
+                <ChatReplyPicker
+                  choices={visibleChoices}
+                  characters={characters}
+                  selectedReplyIndex={selectedReplyIndex}
+                  onSelect={handleChatReply}
+                />
+              )}
+
               {selectedReplyIndex !== null &&
                 visibleChoices[selectedReplyIndex] && (
                   <div className="chat-row chat-row-outgoing">
@@ -486,6 +495,14 @@ export default function StoryPreview({
                     </div>
                   </div>
                 )}
+            </div>
+          )}
+
+          {isChat && incomingSequenceComplete && visibleChoices.length === 0 && (
+            <div className="helper-box" style={{ marginTop: 12 }}>
+              {playChoices.length === 0
+                ? "No reply choices configured for this chat block."
+                : "No replies available right now (choice conditions not met)."}
             </div>
           )}
 
@@ -527,29 +544,6 @@ export default function StoryPreview({
             </div>
           )}
 
-          {isChat && (
-            <div className="chat-reply-panel">
-              {!chatSequenceComplete ? (
-                <div className="muted">Waiting for messages…</div>
-              ) : visibleChoices.length === 0 ? (
-                <div className="muted">No available replies.</div>
-              ) : (
-                <div className="chat-reply-list">
-                  {visibleChoices.map((choice, index) => (
-                    <button
-                      key={`${choice.targetNodeId}-${index}`}
-                      type="button"
-                      className="chat-reply-button"
-                      onClick={() => handleChatReply(choice, index)}
-                      disabled={selectedReplyIndex !== null}
-                    >
-                      {renderStoryText(choice.label, storyRenderState) || "Reply"}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
         </div>
       )}
 

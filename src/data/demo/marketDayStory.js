@@ -41,8 +41,7 @@ const marketDayStory = {
       position: { x: 420, y: 100 },
       data: {
         title: "Fruit Stall",
-        content:
-          "Merchant: Best apples in the district!\nYou: How much for one?\nMerchant: Three coins, friend. Crisp as autumn.",
+        content: "Merchant: Best apples in the district!",
         blockType: "chat",
         choices: [
           {

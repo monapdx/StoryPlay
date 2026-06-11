@@ -54,19 +54,48 @@ const sampleStory = {
       data: {
         title: "Check Phone",
         content:
-          "Unknown Number: The key is closer than you think.\nYou: Who is this?\nUnknown Number: Don't trust the desk drawer.",
+          "Unknown Number: The key is closer than you think.",
         blockType: "chat",
         choices: [
           {
             id: "c4",
-            label: "Go back",
-            targetNodeId: "1",
+            label: "Who is this?",
+            targetNodeId: "2b",
             conditions: [],
             effects: [],
           },
           {
             id: "c6",
             label: "Search desk anyway",
+            targetNodeId: "3",
+            conditions: [],
+            effects: [],
+          },
+        ],
+        enterEffects: [],
+        graphIssues: [],
+      },
+    },
+
+    {
+      id: "2b",
+      type: "storyNode",
+      position: { x: 620, y: 60 },
+      data: {
+        title: "Unknown Reply",
+        content: "Unknown Number: Don't trust the desk drawer.",
+        blockType: "narrative",
+        choices: [
+          {
+            id: "c4b",
+            label: "Go back to the room",
+            targetNodeId: "1",
+            conditions: [],
+            effects: [],
+          },
+          {
+            id: "c4c",
+            label: "Search the desk",
             targetNodeId: "3",
             conditions: [],
             effects: [],
