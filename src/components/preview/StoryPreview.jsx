@@ -205,18 +205,6 @@ export default function StoryPreview({
     };
   }, [isChat, currentPlayNode?.id, chatLinesToAnimate]);
 
-  useEffect(() => {
-    if (!chatScrollRef.current) return;
-    chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
-  }, [revealedChatCount, showTyping, selectedReplyIndex, chatAwaitingReply]);
-
-  useEffect(() => {
-    if (isDock) return;
-    if ((changedVariableKeys?.length || 0) > 0) {
-      setShowVariableDetails(true);
-    }
-  }, [changedVariableKeys, isDock]);
-
   const revealedChatLines = isChat
     ? chatLinesToAnimate.slice(0, revealedChatCount)
     : [];
@@ -229,6 +217,18 @@ export default function StoryPreview({
 
   const chatAwaitingReply =
     hasChatReplyChoices && incomingSequenceComplete && selectedReplyIndex === null;
+
+  useEffect(() => {
+    if (!chatScrollRef.current) return;
+    chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
+  }, [revealedChatCount, showTyping, selectedReplyIndex, chatAwaitingReply]);
+
+  useEffect(() => {
+    if (isDock) return;
+    if ((changedVariableKeys?.length || 0) > 0) {
+      setShowVariableDetails(true);
+    }
+  }, [changedVariableKeys, isDock]);
 
   function handleChatReply(choice, index) {
     if (selectedReplyIndex !== null) return;
