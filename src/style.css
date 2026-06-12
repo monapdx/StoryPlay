@@ -257,6 +257,66 @@ body {
   margin-bottom: 10px;
 }
 
+.chat-turn-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.chat-turn-fields__intro {
+  margin: 0;
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.chat-turn-fields__side {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(2, 6, 23, 0.35);
+}
+
+.chat-turn-fields__side--player {
+  border-color: rgba(96, 165, 250, 0.22);
+}
+
+.chat-turn-fields__side--npc {
+  border-color: rgba(167, 139, 250, 0.22);
+}
+
+.chat-turn-fields__badge {
+  display: inline-flex;
+  align-self: flex-start;
+  margin-bottom: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #e2e8f0;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.chat-turn-fields__side--player .chat-turn-fields__badge {
+  color: #bfdbfe;
+  background: rgba(59, 130, 246, 0.18);
+}
+
+.chat-turn-fields__side--npc .chat-turn-fields__badge {
+  color: #ddd6fe;
+  background: rgba(139, 92, 246, 0.18);
+}
+
+.form-label-hint {
+  font-weight: 500;
+  color: #94a3b8;
+}
+
 .collapsible-chevron {
   flex: 0 0 auto;
   color: #94a3b8;

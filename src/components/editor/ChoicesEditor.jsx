@@ -45,9 +45,10 @@ export default function ChoicesEditor({
 
       {isChatBlock && (
         <div className="helper-box" style={{ marginBottom: 12 }}>
-          <strong>Chat reply</strong> choices appear as player messages inside the
-          thread. <strong>Go to block</strong> choices leave the chat and jump to
-          another scene.
+          <strong>Chat reply</strong> choices run a conversation turn: the player
+          sends a message, then the NPC responds. Set both sides in each choice.
+          Use <strong>Go to block</strong> when the player should leave the chat
+          for another scene.
         </div>
       )}
 

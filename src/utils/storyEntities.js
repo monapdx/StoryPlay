@@ -44,6 +44,7 @@ export function normalizeCharacters(characters) {
  * @returns {StoryCharacter | undefined}
  */
 export function getCharacterById(characters, characterId) {
-  if (!characterId) return undefined;
-  return (characters || []).find((character) => character.id === characterId);
+  const normalizedId = String(characterId || "").trim();
+  if (!normalizedId) return undefined;
+  return (characters || []).find((character) => character.id === normalizedId);
 }

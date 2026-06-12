@@ -190,9 +190,10 @@ export default function SidebarEditor({
           scene.
           <br />
           <br />
-          Each chat reply can include a <strong>Character Response</strong> (more{" "}
-          <strong>Name: message</strong> lines). Leave &quot;After Reply, Go To&quot; empty to
-          keep talking in the same block.
+          Each <strong>chat reply</strong> choice sets a <strong>player message</strong> and a
+          separate <strong>NPC response</strong> (<strong>Name: message</strong> lines, or
+          character tokens). Leave &quot;After Reply, Go To&quot; empty to keep talking in the
+          same block.
         </div>
       )}
 

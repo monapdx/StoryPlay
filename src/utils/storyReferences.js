@@ -1,8 +1,8 @@
 import { getCharacterById } from "./storyEntities";
 
-/** Matches {{type:id.field}} — extensible for location, item, variable, etc. */
+/** Matches {{type:id.field}} — optional whitespace tolerated (e.g. {{character: char_001.name}}). */
 export const STORY_REFERENCE_TOKEN_REGEX =
-  /\{\{([a-z][a-z0-9_]*):([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)\}\}/g;
+  /\{\{\s*([a-z][a-z0-9_]*)\s*:\s*([a-zA-Z0-9_]+)\s*\.\s*([a-zA-Z0-9_]+)\s*\}\}/g;
 
 export const MISSING_CHARACTER_LABEL = "[Missing character]";
 
@@ -39,39 +39,46 @@ export function getStoryRenderContext(storyState = {}) {
  */
 export function resolveReferenceToken(type, id, field, storyState) {
   const ctx = getStoryRenderContext(storyState);
+  const normalizedType = String(type || "").trim();
+  const normalizedId = String(id || "").trim();
+  const normalizedField = String(field || "").trim();
 
-  if (type === "character") {
-    if (field === "name") {
-      const character = getCharacterById(ctx.characters, id);
+  if (normalizedType === "character") {
+    if (normalizedField === "name") {
+      const character = getCharacterById(ctx.characters, normalizedId);
       if (!character) return MISSING_CHARACTER_LABEL;
       const name = String(character.name || "").trim();
       return name || MISSING_CHARACTER_LABEL;
     }
-    if (field === "description") {
-      const character = getCharacterById(ctx.characters, id);
+    if (normalizedField === "description") {
+      const character = getCharacterById(ctx.characters, normalizedId);
       if (!character) return MISSING_CHARACTER_LABEL;
       return String(character.description || "").trim() || MISSING_CHARACTER_LABEL;
     }
     return MISSING_CHARACTER_LABEL;
   }
 
-  if (type === "variable" && field) {
-    const value = ctx.variables[id];
+  if (normalizedType === "variable" && normalizedField) {
+    const value = ctx.variables[normalizedId];
     if (value === undefined || value === null) return `[Missing variable]`;
     return String(value);
   }
 
-  if (type === "location" || type === "item" || type === "faction") {
-    return `[Missing ${type}]`;
+  if (
+    normalizedType === "location" ||
+    normalizedType === "item" ||
+    normalizedType === "faction"
+  ) {
+    return `[Missing ${normalizedType}]`;
   }
 
-  if (type === "player" && field === "name") {
+  if (normalizedType === "player" && normalizedField === "name") {
     const value = ctx.variables.playerName ?? ctx.variables.player_name;
     if (value === undefined || value === null) return "[Player]";
     return String(value);
   }
 
-  return `{{${type}:${id}.${field}}}`;
+  return `{{${normalizedType}:${normalizedId}.${normalizedField}}}`;
 }
 
 /**
@@ -136,6 +143,8 @@ export function countCharacterReferencesById(nodes = []) {
     }
     for (const choice of data.choices || []) {
       scanText(choice?.label);
+      scanText(choice?.playerMessage);
+      scanText(choice?.npcResponse);
       scanText(choice?.text);
       scanText(choice?.response);
     }
@@ -183,6 +192,14 @@ export function resolveNodesTextForExport(nodes = [], storyState = {}) {
           typeof choice?.label === "string"
             ? renderStoryText(choice.label, ctx)
             : choice?.label,
+        playerMessage:
+          typeof choice?.playerMessage === "string"
+            ? renderStoryText(choice.playerMessage, ctx)
+            : choice?.playerMessage,
+        npcResponse:
+          typeof choice?.npcResponse === "string"
+            ? renderStoryText(choice.npcResponse, ctx)
+            : choice?.npcResponse,
         text:
           typeof choice?.text === "string"
             ? renderStoryText(choice.text, ctx)

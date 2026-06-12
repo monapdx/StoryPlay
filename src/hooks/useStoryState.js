@@ -250,6 +250,7 @@ export default function useStoryState() {
               {
                 label: isChatBlock ? "New reply" : "New Choice",
                 choiceKind: isChatBlock ? "chatReply" : "goTo",
+                playerMessage: "",
                 npcResponse: "",
                 targetNodeId: "",
                 conditions: [],

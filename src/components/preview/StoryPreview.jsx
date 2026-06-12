@@ -55,6 +55,11 @@ export default function StoryPreview({
   const chatTimersRef = useRef([]);
   const chatScrollRef = useRef(null);
 
+  function clearChatTimers() {
+    chatTimersRef.current.forEach((timerId) => window.clearTimeout(timerId));
+    chatTimersRef.current = [];
+  }
+
   const nodesById = useMemo(() => {
     const map = {};
     nodes.forEach((node) => {
@@ -124,8 +129,8 @@ export default function StoryPreview({
 
   const chatLines = useMemo(() => {
     if (!isChat) return [];
-    return parseChatLines(playNodeData?.content || "", storyRenderState);
-  }, [isChat, playNodeData?.content, storyRenderState]);
+    return parseChatLines(playNodeData?.content || "");
+  }, [isChat, playNodeData?.content]);
 
   const chatReplyChoices = useMemo(
     () => visibleChoices.filter((choice) => isChatReplyChoice(choice, blockType)),
@@ -138,11 +143,6 @@ export default function StoryPreview({
   );
 
   const hasChatReplyChoices = isChat && chatReplyChoices.length > 0;
-
-  const chatLinesToAnimate = useMemo(() => {
-    if (!isChat) return [];
-    return getChatPrefaceLines(chatLines, hasChatReplyChoices);
-  }, [isChat, chatLines, hasChatReplyChoices]);
 
   useEffect(() => {
     if (!isTimed || !currentPlayNode?.id || timerSeconds <= 0 || !timeoutTargetNodeId) {
@@ -170,8 +170,7 @@ export default function StoryPreview({
   }, [isTimed, timeLeft, timeoutTargetNodeId, timeoutEffects, goToNode]);
 
   useEffect(() => {
-    chatTimersRef.current.forEach((timerId) => window.clearTimeout(timerId));
-    chatTimersRef.current = [];
+    clearChatTimers();
 
     setChatThreadLines([]);
     setChatTurnReady(false);
@@ -182,7 +181,9 @@ export default function StoryPreview({
       return;
     }
 
-    if (chatLinesToAnimate.length === 0) {
+    const prefaceLines = getChatPrefaceLines(chatLines, hasChatReplyChoices);
+
+    if (prefaceLines.length === 0) {
       setChatTurnReady(true);
       return;
     }
@@ -190,7 +191,7 @@ export default function StoryPreview({
     setChatBusy(true);
 
     const cleanup = runChatLineRevealSequence({
-      lines: chatLinesToAnimate,
+      lines: prefaceLines,
       timers: chatTimersRef.current,
       onTyping: setShowTyping,
       onReveal: (line) => {
@@ -204,10 +205,11 @@ export default function StoryPreview({
 
     return () => {
       cleanup();
-      chatTimersRef.current.forEach((timerId) => window.clearTimeout(timerId));
-      chatTimersRef.current = [];
+      clearChatTimers();
     };
-  }, [isChat, currentPlayNode?.id, chatLinesToAnimate]);
+    // Only restart the chat thread when entering a chat block or resetting preview —
+    // not when variables/content re-render mid-conversation (that was cancelling NPC replies).
+  }, [isChat, currentPlayNode?.id, previewSessionNonce]);
 
   const chatAwaitingReply =
     hasChatReplyChoices && chatTurnReady && !chatBusy;
@@ -240,6 +242,12 @@ export default function StoryPreview({
     setChatTurnReady(true);
   }
 
+  function applyChatChoiceEffects(choice) {
+    if ((choice.effects || []).length > 0 && currentPlayNode?.id) {
+      goToNode(currentPlayNode.id, choice.effects || []);
+    }
+  }
+
   function handleChatReply(choice) {
     if (!chatTurnReady || chatBusy) return;
 
@@ -248,24 +256,22 @@ export default function StoryPreview({
       side: "outgoing",
       speaker: "You",
       message:
-        renderStoryText(choice.label, storyRenderState)?.trim() || "Reply",
+        String(choice?.playerMessage || choice?.label || "").trim() || "Reply",
     };
 
     setChatThreadLines((prev) => [...prev, outgoingLine]);
     setChatTurnReady(false);
     setChatBusy(true);
 
-    if ((choice.effects || []).length > 0 && currentPlayNode?.id) {
-      goToNode(currentPlayNode.id, choice.effects || []);
-    }
+    const responseLines = parseChatLines(choice.npcResponse || "");
 
-    const responseLines = parseChatLines(
-      choice.npcResponse || "",
-      storyRenderState
-    );
+    const completeChatReplyTurn = () => {
+      applyChatChoiceEffects(choice);
+      finishChatReplyTurn(choice);
+    };
 
     if (responseLines.length === 0) {
-      finishChatReplyTurn(choice);
+      completeChatReplyTurn();
       return;
     }
 
@@ -276,7 +282,7 @@ export default function StoryPreview({
       onReveal: (line) => {
         setChatThreadLines((prev) => [...prev, line]);
       },
-      onDone: () => finishChatReplyTurn(choice),
+      onDone: completeChatReplyTurn,
     });
   }
 
@@ -503,6 +509,7 @@ export default function StoryPreview({
                     <ChatBubbleContent
                       speaker={line.speaker}
                       message={line.message}
+                      storyState={storyRenderState}
                     />
                   </div>
                 </div>

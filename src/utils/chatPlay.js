@@ -1,6 +1,50 @@
 import { renderStoryText } from "./storyReferences";
 
 /**
+ * Text shown in the player's outgoing chat bubble for a chat-reply choice.
+ * Falls back to the reply button label when no dedicated player message is set.
+ *
+ * @param {object} choice
+ * @param {object} [storyState]
+ * @returns {string}
+ */
+export function getChatReplyPlayerText(choice, storyState = {}) {
+  const raw = String(choice?.playerMessage || choice?.label || "").trim();
+  return renderStoryText(raw, storyState) || "Reply";
+}
+
+/**
+ * Index of the colon that separates "Speaker" from "message", ignoring colons inside
+ * {{reference:tokens}} (e.g. {{character:char_abc.name}}).
+ *
+ * @param {string} line
+ * @returns {number}
+ */
+export function findSpeakerMessageColonIndex(line) {
+  let inReferenceToken = false;
+
+  for (let index = 0; index < line.length; index += 1) {
+    if (line[index] === "{" && line[index + 1] === "{") {
+      inReferenceToken = true;
+      index += 1;
+      continue;
+    }
+
+    if (inReferenceToken && line[index] === "}" && line[index + 1] === "}") {
+      inReferenceToken = false;
+      index += 1;
+      continue;
+    }
+
+    if (!inReferenceToken && line[index] === ":") {
+      return index;
+    }
+  }
+
+  return -1;
+}
+
+/**
  * Split "Speaker: message" into parts. Outgoing lines use the fixed speaker "You".
  *
  * @param {string} line
@@ -15,7 +59,7 @@ export function splitChatLine(line, isYou = false) {
     };
   }
 
-  const colonIndex = line.indexOf(":");
+  const colonIndex = findSpeakerMessageColonIndex(line);
   if (colonIndex === -1) {
     return { speaker: null, message: line.trim() };
   }
@@ -35,10 +79,9 @@ export function splitChatLine(line, isYou = false) {
  * Incoming lines use the first colon to separate speaker name from message.
  *
  * @param {string} content
- * @param {object} [storyState]
  * @returns {{ id: string, side: "incoming" | "outgoing", speaker: string | null, message: string }[]}
  */
-export function parseChatLines(content = "", storyState = {}) {
+export function parseChatLines(content = "") {
   return content
     .split("\n")
     .map((line) => line.trim())
@@ -50,8 +93,8 @@ export function parseChatLines(content = "", storyState = {}) {
       return {
         id: `${index}-${speaker || "msg"}-${message}`,
         side: isYou ? "outgoing" : "incoming",
-        speaker: speaker ? renderStoryText(speaker, storyState) : null,
-        message: renderStoryText(message, storyState),
+        speaker: speaker || null,
+        message,
       };
     });
 }

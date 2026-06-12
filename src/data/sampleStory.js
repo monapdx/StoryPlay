@@ -61,6 +61,7 @@ const sampleStory = {
             id: "c4",
             choiceKind: "chatReply",
             label: "Who is this?",
+            playerMessage: "Who is this? Identify yourself.",
             npcResponse: "Unknown Number: Don't trust the desk drawer.",
             targetNodeId: "",
             conditions: [],

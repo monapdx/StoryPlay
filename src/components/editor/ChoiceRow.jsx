@@ -22,21 +22,38 @@ export default function ChoiceRow({
   onRemove,
 }) {
   const storyState = { characters };
+  const isChatBlock = blockType === "chat";
+  const choiceKind = getChoiceKind(choice, blockType);
+  const isReply = isChatReplyChoice(choice, blockType);
   const displayLabel =
     renderStoryText(choice.label, storyState)?.trim() || "Untitled choice";
+  const playerPreview = renderStoryText(
+    choice.playerMessage || choice.label,
+    storyState
+  )?.trim();
+  const npcPreview = renderStoryText(
+    String(choice.npcResponse || "")
+      .split("\n")
+      .map((line) => line.trim())
+      .find(Boolean) || "",
+    storyState
+  )?.trim();
   const availableTargets = allNodes.filter((node) => node.id !== currentNodeId);
   const targetLabel = availableTargets.find(
     (node) => node.id === choice.targetNodeId
   )?.data?.title;
-  const isChatBlock = blockType === "chat";
-  const choiceKind = getChoiceKind(choice, blockType);
-  const isReply = isChatReplyChoice(choice, blockType);
 
   const metaLabel = isChatBlock
     ? isReply
-      ? choice.targetNodeId
-        ? `Chat reply → ${targetLabel || choice.targetNodeId}`
-        : "Chat reply (stays in block)"
+      ? [
+          playerPreview ? `You: ${playerPreview}` : null,
+          npcPreview ? `NPC: ${npcPreview}` : "NPC: (no response yet)",
+          choice.targetNodeId
+            ? `→ ${targetLabel || choice.targetNodeId}`
+            : null,
+        ]
+          .filter(Boolean)
+          .join(" · ")
       : targetLabel || choice.targetNodeId || "Go to block (no target)"
     : targetLabel || choice.targetNodeId || "No target selected";
 
@@ -75,33 +92,75 @@ export default function ChoiceRow({
             </div>
           )}
 
-          <div className="form-group">
-            <label className="form-label">
-              {isReply ? "Your Reply" : "Choice Label"}
-            </label>
-            <ReferenceTextarea
-              className="form-textarea choice-row__label-field"
-              value={choice.label || ""}
-              characters={characters}
-              onChange={(nextValue) => onUpdate(choiceIndex, "label", nextValue)}
-              placeholder={
-                isReply ? "What the player says in the chat" : "Enter choice text"
-              }
-              insertLabel="Insert character"
-            />
-          </div>
+          {isReply ? (
+            <div className="chat-turn-fields">
+              <p className="chat-turn-fields__intro muted">
+                Set what the player says and what the character says back. Use one
+                line per message; NPC lines use <strong>Name: message</strong> or
+                character tokens.
+              </p>
 
-          {isReply && (
+              <div className="chat-turn-fields__side chat-turn-fields__side--player">
+                <span className="chat-turn-fields__badge">Player</span>
+                <div className="form-group">
+                  <label className="form-label">Reply button</label>
+                  <ReferenceTextarea
+                    className="form-textarea choice-row__label-field"
+                    value={choice.label || ""}
+                    characters={characters}
+                    onChange={(nextValue) =>
+                      onUpdate(choiceIndex, "label", nextValue)
+                    }
+                    placeholder="Short label shown on the reply button"
+                    insertLabel="Insert character"
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">
+                    Message in chat{" "}
+                    <span className="form-label-hint">(optional)</span>
+                  </label>
+                  <ReferenceTextarea
+                    className="form-textarea"
+                    value={choice.playerMessage || ""}
+                    characters={characters}
+                    onChange={(nextValue) =>
+                      onUpdate(choiceIndex, "playerMessage", nextValue)
+                    }
+                    placeholder="What appears in the player's chat bubble. Leave empty to use the reply button text."
+                    insertLabel="Insert character"
+                  />
+                </div>
+              </div>
+
+              <div className="chat-turn-fields__side chat-turn-fields__side--npc">
+                <span className="chat-turn-fields__badge">NPC</span>
+                <div className="form-group">
+                  <label className="form-label">Character response</label>
+                  <ReferenceTextarea
+                    className="form-textarea"
+                    value={choice.npcResponse || ""}
+                    characters={characters}
+                    onChange={(nextValue) =>
+                      onUpdate(choiceIndex, "npcResponse", nextValue)
+                    }
+                    placeholder={
+                      "{{character:char_merchant.name}}: That'll be three coins.\n{{character:char_merchant.name}}: Pleasure doing business!"
+                    }
+                    insertLabel="Insert character"
+                  />
+                </div>
+              </div>
+            </div>
+          ) : (
             <div className="form-group">
-              <label className="form-label">Character Response</label>
+              <label className="form-label">Choice Label</label>
               <ReferenceTextarea
-                className="form-textarea"
-                value={choice.npcResponse || ""}
+                className="form-textarea choice-row__label-field"
+                value={choice.label || ""}
                 characters={characters}
-                onChange={(nextValue) =>
-                  onUpdate(choiceIndex, "npcResponse", nextValue)
-                }
-                placeholder={"Merchant: That'll be three coins.\nMerchant: Pleasure doing business!"}
+                onChange={(nextValue) => onUpdate(choiceIndex, "label", nextValue)}
+                placeholder="Enter choice text"
                 insertLabel="Insert character"
               />
             </div>

@@ -221,7 +221,20 @@
       "description": "Branching choice (narrative/chat/timed/ending) OR persuasion line item when blockType is persuasion — same key \"choices\" on node data; shape differs by blockType.",
       "properties": {
         "id": { "type": "string" },
-        "label": { "type": "string", "description": "Branching: button label." },
+        "label": { "type": "string", "description": "Branching: button label. Chat reply: reply button text." },
+        "choiceKind": {
+          "type": "string",
+          "enum": ["chatReply", "goTo"],
+          "description": "Chat blocks: chatReply runs a player/NPC turn; goTo leaves the chat."
+        },
+        "playerMessage": {
+          "type": "string",
+          "description": "Chat reply: optional player bubble text. Falls back to label when empty."
+        },
+        "npcResponse": {
+          "type": "string",
+          "description": "Chat reply: NPC lines after the player speaks (Name: message format)."
+        },
         "targetNodeId": { "type": "string", "description": "Branching: destination node id." },
         "conditions": {
           "type": "array",
