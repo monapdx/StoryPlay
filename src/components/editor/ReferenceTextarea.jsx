@@ -58,7 +58,7 @@ export default function ReferenceTextarea({
           ))}
         </select>
         {characters.length === 0 && (
-          <span className="reference-textarea__hint muted">Add characters in the Characters workspace.</span>
+          <span className="reference-textarea__hint muted">No characters yet.</span>
         )}
       </div>
 

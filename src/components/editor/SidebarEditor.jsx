@@ -27,13 +27,9 @@ export default function SidebarEditor({
       <div>
         <h2 className="section-title">Block Editor</h2>
 
-        <div className="helper-box" data-onboarding="choices">
-          Select a story block on the canvas.
-          <br />
-          <br />
-          Tip: click + Add Block to create a new scene, then add choices here or
-          drag from one block’s handle to another to branch the story.
-        </div>
+        <p className="sidebar-hint" data-onboarding="choices">
+          Select a block on the canvas to edit it.
+        </p>
 
         <VariablesWorkspacePromo
           variables={variables}
@@ -174,26 +170,11 @@ export default function SidebarEditor({
               onChange={(nextValue) => updateSelectedNodeField("content", nextValue)}
               placeholder={
                 blockType === "chat"
-                  ? "Example:\nA message appears on your screen.\nYou: Who is this?\nDon't open the door."
+                  ? "Name: Opening line\nYou: Player line (optional script)"
                   : "Write the story text for this block..."
               }
             />
           )}
-        </div>
-      )}
-
-      {blockType === "chat" && (
-        <div className="helper-box">
-          Put opening NPC lines in content as <strong>Name: message</strong>. Then add{" "}
-          <strong>Chat reply</strong> choices for back-and-forth conversation in this block,
-          and <strong>Go to block</strong> choices when the player should leave for another
-          scene.
-          <br />
-          <br />
-          Each <strong>chat reply</strong> choice sets a <strong>player message</strong> and a
-          separate <strong>NPC response</strong> (<strong>Name: message</strong> lines, or
-          character tokens). Leave &quot;After Reply, Go To&quot; empty to keep talking in the
-          same block.
         </div>
       )}
 
@@ -237,11 +218,6 @@ export default function SidebarEditor({
                 ))}
             </select>
           </div>
-
-          <div className="helper-box">
-            When the timer hits zero, preview automatically jumps to the selected
-            timeout block.
-          </div>
         </div>
       )}
 
@@ -270,8 +246,7 @@ export default function SidebarEditor({
                   {getMiniGameDisplayName(blockType)}
                 </div>
                 <div style={miniGameStyles.meta}>
-                  Open the dedicated workspace for options, balance, logic, and
-                  live testing.
+                  Options, balance, logic, and live testing.
                 </div>
               </div>
             </div>
@@ -297,11 +272,6 @@ export default function SidebarEditor({
               Open Mini-Game Editor
             </button>
           </div>
-
-          <div className="helper-box">
-            Mini-game editing has been moved out of the sidebar so the main
-            StoryPlay editor stays readable.
-          </div>
         </div>
       )}
 
@@ -310,12 +280,9 @@ export default function SidebarEditor({
         !isMiniGameBlock) && (
         <>
           {(blockType === "traitPicker" || blockType === "choiceWeighting") && (
-            <div className="helper-box" style={{ marginBottom: 12 }}>
-              <strong>After the setter:</strong> this block updates variables first (trait ids,
-              per-trait effects, allocation totals). Use <strong>choices below</strong> for where the
-              story goes next, unless you set optional <strong>auto-advance</strong> in the mini-game
-              editor.
-            </div>
+            <p className="sidebar-hint" style={{ marginBottom: 12 }}>
+              After confirm, use choices below (or auto-advance in mini-game editor).
+            </p>
           )}
 
           <div data-onboarding="choices">
@@ -337,15 +304,13 @@ export default function SidebarEditor({
         onOpenVariables={onOpenVariables}
       />
 
-      <div className="helper-box">
-        <strong>Selected node ID:</strong> {selectedNode.id}
-      </div>
-
       <div style={{ marginTop: 14 }}>
         <button type="button" className="danger-button" onClick={deleteSelectedNode}>
           Delete Block
         </button>
       </div>
+
+      <p className="sidebar-meta-id">ID: {selectedNode.id}</p>
 
       <StoryDiagnostics nodes={nodes} variables={variables} />
     </div>
@@ -455,9 +420,7 @@ function VariablesWorkspacePromo({ variables, onOpenVariables }) {
         </h3>
       </div>
       <p className="variables-workspace-promo-meta">
-        {n === 0
-          ? "No variables yet."
-          : `${n} story-wide ${n === 1 ? "variable" : "variables"} (conditions, effects, preview).`}
+        {n === 0 ? "No variables yet." : `${n} variable${n === 1 ? "" : "s"}.`}
       </p>
       <button
         type="button"
@@ -467,9 +430,6 @@ function VariablesWorkspacePromo({ variables, onOpenVariables }) {
       >
         Open Variables workspace
       </button>
-      <p className="helper-box" style={{ marginTop: 10, marginBottom: 0 }}>
-        Edit names, types, and default values in a full-screen layout—same data as export and play mode.
-      </p>
     </div>
   );
 }

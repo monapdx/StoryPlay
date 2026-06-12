@@ -264,12 +264,6 @@ body {
   margin-bottom: 4px;
 }
 
-.chat-turn-fields__intro {
-  margin: 0;
-  font-size: 0.86rem;
-  line-height: 1.45;
-}
-
 .chat-turn-fields__side {
   display: flex;
   flex-direction: column;
@@ -319,14 +313,41 @@ body {
 
 .collapsible-chevron {
   flex: 0 0 auto;
-  color: #94a3b8;
-  font-size: 0.86rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.4rem;
+  height: 1.4rem;
+  color: #38bdf8;
+  font-size: 1.05rem;
+  font-weight: 700;
   line-height: 1;
-  transition: transform 0.15s ease;
+  border-radius: 7px;
+  background: rgba(56, 189, 248, 0.16);
+  transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.collapsible-row-header:hover .collapsible-chevron {
+  color: #7dd3fc;
+  background: rgba(56, 189, 248, 0.28);
 }
 
 .collapsible-chevron.is-open {
   transform: rotate(180deg);
+}
+
+.sidebar-hint {
+  margin: 0;
+  font-size: 0.86rem;
+  color: #94a3b8;
+  line-height: 1.45;
+}
+
+.sidebar-meta-id {
+  margin: 10px 0 0;
+  font-size: 0.75rem;
+  color: #64748b;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
 .danger-button {

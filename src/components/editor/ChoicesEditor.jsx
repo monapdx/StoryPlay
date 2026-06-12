@@ -12,7 +12,6 @@ export default function ChoicesEditor({
 }) {
   const choices = selectedNode?.data?.choices || [];
   const blockType = selectedNode?.data?.blockType || "narrative";
-  const isChatBlock = blockType === "chat";
   const previousChoiceCountRef = useRef(choices.length);
   const [expandedChoiceIndex, setExpandedChoiceIndex] = useState(null);
 
@@ -43,17 +42,8 @@ export default function ChoicesEditor({
         </button>
       </div>
 
-      {isChatBlock && (
-        <div className="helper-box" style={{ marginBottom: 12 }}>
-          <strong>Chat reply</strong> choices run a conversation turn: the player
-          sends a message, then the NPC responds. Set both sides in each choice.
-          Use <strong>Go to block</strong> when the player should leave the chat
-          for another scene.
-        </div>
-      )}
-
       {choices.length === 0 ? (
-        <div className="helper-box">No choices yet for this block.</div>
+        <p className="sidebar-hint">No choices yet.</p>
       ) : (
         <div className="choice-list">
           {choices.map((choice, index) => (

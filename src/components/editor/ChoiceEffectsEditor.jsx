@@ -96,7 +96,7 @@ export default function ChoiceEffectsEditor({
     const hidesValue = effect.action === "toggle";
 
     if (hidesValue) {
-      return <div className="helper-box">Toggle does not need a value.</div>;
+      return <p className="sidebar-hint">Toggle needs no value.</p>;
     }
 
     if (selectedType === "boolean") {
@@ -148,11 +148,9 @@ export default function ChoiceEffectsEditor({
       </div>
 
       {variableKeys.length === 0 ? (
-        <div className="helper-box">
-          Add at least one variable first to create effects.
-        </div>
+        <p className="sidebar-hint">Add a variable first.</p>
       ) : effects.length === 0 ? (
-        <div className="helper-box">No effects on this choice yet.</div>
+        <p className="sidebar-hint">No effects.</p>
       ) : (
         <div className="choice-list">
           {effects.map((effect, index) => {

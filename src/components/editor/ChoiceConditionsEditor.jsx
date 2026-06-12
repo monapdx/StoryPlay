@@ -125,11 +125,9 @@ export default function ChoiceConditionsEditor({
       </div>
 
       {variableKeys.length === 0 ? (
-        <div className="helper-box">
-          Add at least one variable first to create conditions.
-        </div>
+        <p className="sidebar-hint">Add a variable first.</p>
       ) : conditions.length === 0 ? (
-        <div className="helper-box">No conditions on this choice yet.</div>
+        <p className="sidebar-hint">No conditions.</p>
       ) : (
         <div className="choice-list">
           {conditions.map((condition, index) => {

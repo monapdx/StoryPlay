@@ -94,12 +94,6 @@ export default function ChoiceRow({
 
           {isReply ? (
             <div className="chat-turn-fields">
-              <p className="chat-turn-fields__intro muted">
-                Set what the player says and what the character says back. Use one
-                line per message; NPC lines use <strong>Name: message</strong> or
-                character tokens.
-              </p>
-
               <div className="chat-turn-fields__side chat-turn-fields__side--player">
                 <span className="chat-turn-fields__badge">Player</span>
                 <div className="form-group">
@@ -111,7 +105,7 @@ export default function ChoiceRow({
                     onChange={(nextValue) =>
                       onUpdate(choiceIndex, "label", nextValue)
                     }
-                    placeholder="Short label shown on the reply button"
+                    placeholder="Reply button label"
                     insertLabel="Insert character"
                   />
                 </div>
@@ -127,7 +121,7 @@ export default function ChoiceRow({
                     onChange={(nextValue) =>
                       onUpdate(choiceIndex, "playerMessage", nextValue)
                     }
-                    placeholder="What appears in the player's chat bubble. Leave empty to use the reply button text."
+                    placeholder="Player bubble text (defaults to button label)"
                     insertLabel="Insert character"
                   />
                 </div>
@@ -144,9 +138,7 @@ export default function ChoiceRow({
                     onChange={(nextValue) =>
                       onUpdate(choiceIndex, "npcResponse", nextValue)
                     }
-                    placeholder={
-                      "{{character:char_merchant.name}}: That'll be three coins.\n{{character:char_merchant.name}}: Pleasure doing business!"
-                    }
+                    placeholder={"{{character:id.name}}: Response line"}
                     insertLabel="Insert character"
                   />
                 </div>
