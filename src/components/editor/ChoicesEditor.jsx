@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import ChoiceRow from "./ChoiceRow";
 
 export default function ChoicesEditor({
@@ -12,26 +12,22 @@ export default function ChoicesEditor({
 }) {
   const choices = selectedNode?.data?.choices || [];
   const blockType = selectedNode?.data?.blockType || "narrative";
-  const previousChoiceCountRef = useRef(choices.length);
+  const selectedNodeId = selectedNode?.id;
   const [expandedChoiceIndex, setExpandedChoiceIndex] = useState(null);
 
   useEffect(() => {
-    const previousChoiceCount = previousChoiceCountRef.current;
-    const currentChoiceCount = choices.length;
-
-    if (currentChoiceCount > previousChoiceCount && currentChoiceCount > 0) {
-      setExpandedChoiceIndex(currentChoiceCount - 1);
-    }
-
-    previousChoiceCountRef.current = currentChoiceCount;
-  }, [choices]);
+    setExpandedChoiceIndex(null);
+  }, [selectedNodeId, blockType]);
 
   useEffect(() => {
-    if (expandedChoiceIndex === null) return;
-    if (expandedChoiceIndex >= choices.length) {
+    if (expandedChoiceIndex !== null && expandedChoiceIndex >= choices.length) {
       setExpandedChoiceIndex(null);
     }
-  }, [choices, expandedChoiceIndex]);
+  }, [choices.length, expandedChoiceIndex]);
+
+  function handleChoiceExpand(index) {
+    setExpandedChoiceIndex((current) => (current === index ? null : index));
+  }
 
   return (
     <div className="editor-section">
@@ -57,7 +53,7 @@ export default function ChoicesEditor({
               characters={characters}
               currentNodeId={selectedNode.id}
               isExpanded={expandedChoiceIndex === index}
-              onExpand={() => setExpandedChoiceIndex(index)}
+              onExpand={() => handleChoiceExpand(index)}
               onUpdate={updateChoiceOnSelectedNode}
               onRemove={removeChoiceFromSelectedNode}
             />
