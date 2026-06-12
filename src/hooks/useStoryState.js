@@ -238,6 +238,8 @@ export default function useStoryState() {
         if (node.id !== selectedNodeId) return node;
 
         const existingChoices = node.data?.choices || [];
+        const blockType = node.data?.blockType || "narrative";
+        const isChatBlock = blockType === "chat";
 
         return {
           ...node,
@@ -246,7 +248,9 @@ export default function useStoryState() {
             choices: [
               ...existingChoices,
               {
-                label: "New Choice",
+                label: isChatBlock ? "New reply" : "New Choice",
+                choiceKind: isChatBlock ? "chatReply" : "goTo",
+                npcResponse: "",
                 targetNodeId: "",
                 conditions: [],
                 effects: [],

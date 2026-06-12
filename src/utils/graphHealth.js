@@ -1,3 +1,5 @@
+import { getChoiceKind, CHOICE_KIND } from "./choiceKinds";
+
 export function analyzeStoryGraph(nodes = [], variables = {}) {
   const issues = [];
 
@@ -42,21 +44,38 @@ export function analyzeStoryGraph(nodes = [], variables = {}) {
 
   for (const node of nodes) {
     const choices = node.data?.choices || [];
+    const blockType = node.data?.blockType || "narrative";
 
     for (const choice of choices) {
+      const choiceKind = getChoiceKind(choice, blockType);
+      const choiceLabel = choice.label || "Untitled choice";
+
+      if (choiceKind === CHOICE_KIND.CHAT_REPLY) {
+        if (!String(choice.npcResponse || "").trim()) {
+          issues.push({
+            severity: "warning",
+            nodeId: node.id,
+            code: "missing-chat-response",
+            message: `Chat reply "${choiceLabel}" has no character response.`,
+          });
+        }
+      }
+
       if (!choice.targetNodeId) {
-        issues.push({
-          severity: "warning",
-          nodeId: node.id,
-          code: "missing-target",
-          message: `Choice "${choice.label || "Untitled choice"}" has no target.`,
-        });
+        if (choiceKind === CHOICE_KIND.GO_TO) {
+          issues.push({
+            severity: "warning",
+            nodeId: node.id,
+            code: "missing-target",
+            message: `Choice "${choiceLabel}" has no target.`,
+          });
+        }
       } else if (!nodeMap.has(choice.targetNodeId)) {
         issues.push({
           severity: "error",
           nodeId: node.id,
           code: "missing-node",
-          message: `Choice "${choice.label || "Untitled choice"}" points to a missing node.`,
+          message: `Choice "${choiceLabel}" points to a missing node.`,
         });
       } else {
         incomingCounts.set(

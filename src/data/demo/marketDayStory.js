@@ -45,7 +45,26 @@ const marketDayStory = {
         blockType: "chat",
         choices: [
           {
+            id: "mk-c2a",
+            choiceKind: "chatReply",
+            label: "How much for an apple?",
+            npcResponse: "Merchant: Three coins, friend. Firm price.",
+            targetNodeId: "",
+            conditions: [],
+            effects: [],
+          },
+          {
+            id: "mk-c2b",
+            choiceKind: "chatReply",
+            label: "They look delicious.",
+            npcResponse: "Merchant: Fresh picked this morning!",
+            targetNodeId: "",
+            conditions: [],
+            effects: [],
+          },
+          {
             id: "mk-c3",
+            choiceKind: "goTo",
             label: "Buy an apple (3 coins)",
             targetNodeId: "mk-after-buy",
             conditions: [
@@ -58,6 +77,7 @@ const marketDayStory = {
           },
           {
             id: "mk-c4",
+            choiceKind: "goTo",
             label: "Politely decline",
             targetNodeId: "mk-decline",
             conditions: [],

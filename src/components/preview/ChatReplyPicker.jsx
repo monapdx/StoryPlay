@@ -3,7 +3,7 @@ import { renderStoryText } from "../../utils/storyReferences";
 export default function ChatReplyPicker({
   choices,
   characters = [],
-  selectedReplyIndex,
+  disabled = false,
   onSelect,
 }) {
   if (choices.length === 0) return null;
@@ -24,11 +24,11 @@ export default function ChatReplyPicker({
       >
         {choices.map((choice, index) => (
           <button
-            key={`${choice.targetNodeId}-${index}`}
+            key={`${choice.id || choice.label}-${index}`}
             type="button"
             className="chat-reply-button"
-            onClick={() => onSelect(choice, index)}
-            disabled={selectedReplyIndex !== null}
+            onClick={() => onSelect(choice)}
+            disabled={disabled}
           >
             {renderStoryText(choice.label, storyState) || "Reply"}
           </button>

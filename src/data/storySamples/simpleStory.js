@@ -49,21 +49,31 @@ const sampleStory = {
       position: { x: 430, y: 60 },
       data: {
         title: "Chat",
-        content:
-          "Unknown Number: This is an incoming text message.\nYou: Who is this?\nUnknown Number: You tell me!",
+        content: "Unknown Number: This is an incoming text message.",
         blockType: "chat",
         choices: [
           {
             id: "c4",
-            label: "Go back",
-            targetNodeId: "1",
+            choiceKind: "chatReply",
+            label: "Who is this?",
+            npcResponse: "Unknown Number: You tell me!",
+            targetNodeId: "",
             conditions: [],
             effects: [],
           },
           {
             id: "c6",
+            choiceKind: "goTo",
             label: "Search desk anyway",
             targetNodeId: "3",
+            conditions: [],
+            effects: [],
+          },
+          {
+            id: "c4b",
+            choiceKind: "goTo",
+            label: "Go back",
+            targetNodeId: "1",
             conditions: [],
             effects: [],
           },

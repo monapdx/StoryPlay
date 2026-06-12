@@ -11,6 +11,8 @@ export default function ChoicesEditor({
   removeChoiceFromSelectedNode,
 }) {
   const choices = selectedNode?.data?.choices || [];
+  const blockType = selectedNode?.data?.blockType || "narrative";
+  const isChatBlock = blockType === "chat";
   const previousChoiceCountRef = useRef(choices.length);
   const [expandedChoiceIndex, setExpandedChoiceIndex] = useState(null);
 
@@ -41,6 +43,14 @@ export default function ChoicesEditor({
         </button>
       </div>
 
+      {isChatBlock && (
+        <div className="helper-box" style={{ marginBottom: 12 }}>
+          <strong>Chat reply</strong> choices appear as player messages inside the
+          thread. <strong>Go to block</strong> choices leave the chat and jump to
+          another scene.
+        </div>
+      )}
+
       {choices.length === 0 ? (
         <div className="helper-box">No choices yet for this block.</div>
       ) : (
@@ -50,6 +60,7 @@ export default function ChoicesEditor({
               key={`${selectedNode.id}-choice-${index}`}
               choiceIndex={index}
               choice={choice}
+              blockType={blockType}
               allNodes={nodes}
               variables={variables}
               characters={characters}

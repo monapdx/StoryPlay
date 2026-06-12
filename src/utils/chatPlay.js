@@ -1,12 +1,42 @@
 import { renderStoryText } from "./storyReferences";
 
 /**
+ * Split "Speaker: message" into parts. Outgoing lines use the fixed speaker "You".
+ *
+ * @param {string} line
+ * @param {boolean} isYou
+ * @returns {{ speaker: string | null, message: string }}
+ */
+export function splitChatLine(line, isYou = false) {
+  if (isYou) {
+    return {
+      speaker: "You",
+      message: line.replace(/^You:\s*/, "").trim(),
+    };
+  }
+
+  const colonIndex = line.indexOf(":");
+  if (colonIndex === -1) {
+    return { speaker: null, message: line.trim() };
+  }
+
+  const speaker = line.slice(0, colonIndex).trim();
+  const message = line.slice(colonIndex + 1).trim();
+
+  return {
+    speaker: speaker || null,
+    message,
+  };
+}
+
+/**
  * Parse chat block content into ordered message lines.
  * Lines starting with "You:" are outgoing; all others are incoming.
+ * Incoming lines use the first colon to separate speaker name from message.
  *
  * @param {string} content
  * @param {object} [storyState]
- * @returns {{ id: string, side: "incoming" | "outgoing", text: string }[]}
+ * @returns {{ id: string, side: "incoming" | "outgoing", speaker: string | null, message: string }[]}
  */
 export function parseChatLines(content = "", storyState = {}) {
   return content
@@ -15,12 +45,13 @@ export function parseChatLines(content = "", storyState = {}) {
     .filter(Boolean)
     .map((line, index) => {
       const isYou = line.startsWith("You:");
-      const text = isYou ? line.replace(/^You:\s*/, "") : line;
+      const { speaker, message } = splitChatLine(line, isYou);
 
       return {
-        id: `${index}-${text}`,
+        id: `${index}-${speaker || "msg"}-${message}`,
         side: isYou ? "outgoing" : "incoming",
-        text: renderStoryText(text, storyState),
+        speaker: speaker ? renderStoryText(speaker, storyState) : null,
+        message: renderStoryText(message, storyState),
       };
     });
 }
@@ -53,4 +84,56 @@ export function getChatPrefaceLines(chatLines = [], hasReplyChoices = false) {
   }
 
   return preface;
+}
+
+/**
+ * Animate chat lines appearing one-by-one (typing indicator between reveals).
+ *
+ * @returns {() => void} cleanup — clears scheduled timers
+ */
+export function runChatLineRevealSequence({
+  lines = [],
+  onReveal,
+  onTyping,
+  onDone,
+  timers = [],
+}) {
+  if (!lines.length) {
+    onTyping?.(false);
+    onDone?.();
+    return () => {};
+  }
+
+  const timerIds = [];
+  let cumulativeDelay = 450;
+
+  lines.forEach((line, index) => {
+    const typingStartId = window.setTimeout(() => {
+      onTyping?.(true);
+    }, cumulativeDelay);
+    timerIds.push(typingStartId);
+
+    const revealDelay =
+      700 + Math.min(1200, Math.max(250, (line.message?.length || 0) * 22));
+
+    const revealId = window.setTimeout(() => {
+      onReveal?.(line, index);
+      onTyping?.(index < lines.length - 1);
+    }, cumulativeDelay + revealDelay);
+
+    timerIds.push(revealId);
+    cumulativeDelay += revealDelay + 260;
+  });
+
+  const finishId = window.setTimeout(() => {
+    onTyping?.(false);
+    onDone?.();
+  }, cumulativeDelay);
+
+  timerIds.push(finishId);
+  timers.push(...timerIds);
+
+  return () => {
+    timerIds.forEach((timerId) => window.clearTimeout(timerId));
+  };
 }

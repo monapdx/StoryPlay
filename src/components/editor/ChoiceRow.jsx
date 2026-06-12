@@ -2,10 +2,16 @@ import ChoiceConditionsEditor from "./ChoiceConditionsEditor";
 import ChoiceEffectsEditor from "./ChoiceEffectsEditor";
 import ReferenceTextarea from "./ReferenceTextarea";
 import { renderStoryText } from "../../utils/storyReferences";
+import {
+  CHOICE_KIND,
+  getChoiceKind,
+  isChatReplyChoice,
+} from "../../utils/choiceKinds";
 
 export default function ChoiceRow({
   choiceIndex,
   choice,
+  blockType = "narrative",
   allNodes,
   variables,
   characters = [],
@@ -22,6 +28,17 @@ export default function ChoiceRow({
   const targetLabel = availableTargets.find(
     (node) => node.id === choice.targetNodeId
   )?.data?.title;
+  const isChatBlock = blockType === "chat";
+  const choiceKind = getChoiceKind(choice, blockType);
+  const isReply = isChatReplyChoice(choice, blockType);
+
+  const metaLabel = isChatBlock
+    ? isReply
+      ? choice.targetNodeId
+        ? `Chat reply → ${targetLabel || choice.targetNodeId}`
+        : "Chat reply (stays in block)"
+      : targetLabel || choice.targetNodeId || "Go to block (no target)"
+    : targetLabel || choice.targetNodeId || "No target selected";
 
   return (
     <div className={`choice-row ${isExpanded ? "is-expanded" : ""}`}>
@@ -33,9 +50,7 @@ export default function ChoiceRow({
       >
         <span>
           <span className="collapsible-row-title">{displayLabel}</span>
-          <span className="collapsible-row-meta">
-            {targetLabel || choice.targetNodeId || "No target selected"}
-          </span>
+          <span className="collapsible-row-meta">{metaLabel}</span>
         </span>
         <span className={`collapsible-chevron ${isExpanded ? "is-open" : ""}`}>
           ▾
@@ -44,20 +59,58 @@ export default function ChoiceRow({
 
       {isExpanded && (
         <>
+          {isChatBlock && (
+            <div className="form-group">
+              <label className="form-label">Choice Type</label>
+              <select
+                className="form-select"
+                value={choiceKind}
+                onChange={(e) =>
+                  onUpdate(choiceIndex, "choiceKind", e.target.value)
+                }
+              >
+                <option value={CHOICE_KIND.CHAT_REPLY}>Chat reply</option>
+                <option value={CHOICE_KIND.GO_TO}>Go to block</option>
+              </select>
+            </div>
+          )}
+
           <div className="form-group">
-            <label className="form-label">Choice Label</label>
+            <label className="form-label">
+              {isReply ? "Your Reply" : "Choice Label"}
+            </label>
             <ReferenceTextarea
               className="form-textarea choice-row__label-field"
               value={choice.label || ""}
               characters={characters}
               onChange={(nextValue) => onUpdate(choiceIndex, "label", nextValue)}
-              placeholder="Enter choice text"
+              placeholder={
+                isReply ? "What the player says in the chat" : "Enter choice text"
+              }
               insertLabel="Insert character"
             />
           </div>
 
+          {isReply && (
+            <div className="form-group">
+              <label className="form-label">Character Response</label>
+              <ReferenceTextarea
+                className="form-textarea"
+                value={choice.npcResponse || ""}
+                characters={characters}
+                onChange={(nextValue) =>
+                  onUpdate(choiceIndex, "npcResponse", nextValue)
+                }
+                placeholder={"Merchant: That'll be three coins.\nMerchant: Pleasure doing business!"}
+                insertLabel="Insert character"
+              />
+            </div>
+          )}
+
           <div className="form-group">
-            <label className="form-label">Target Block</label>
+            <label className="form-label">
+              {isReply ? "After Reply, Go To (optional)" : "Target Block"}
+            </label>
             <select
               className="form-select"
               value={choice.targetNodeId || ""}
@@ -65,7 +118,9 @@ export default function ChoiceRow({
                 onUpdate(choiceIndex, "targetNodeId", e.target.value)
               }
             >
-              <option value="">Select target block</option>
+              <option value="">
+                {isReply ? "Stay in this chat block" : "Select target block"}
+              </option>
               {availableTargets.map((node) => (
                 <option key={node.id} value={node.id}>
                   {node.data?.title || `Untitled (${node.id})`}

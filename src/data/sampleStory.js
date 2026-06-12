@@ -59,43 +59,17 @@ const sampleStory = {
         choices: [
           {
             id: "c4",
+            choiceKind: "chatReply",
             label: "Who is this?",
-            targetNodeId: "2b",
+            npcResponse: "Unknown Number: Don't trust the desk drawer.",
+            targetNodeId: "",
             conditions: [],
             effects: [],
           },
           {
             id: "c6",
+            choiceKind: "goTo",
             label: "Search desk anyway",
-            targetNodeId: "3",
-            conditions: [],
-            effects: [],
-          },
-        ],
-        enterEffects: [],
-        graphIssues: [],
-      },
-    },
-
-    {
-      id: "2b",
-      type: "storyNode",
-      position: { x: 620, y: 60 },
-      data: {
-        title: "Unknown Reply",
-        content: "Unknown Number: Don't trust the desk drawer.",
-        blockType: "narrative",
-        choices: [
-          {
-            id: "c4b",
-            label: "Go back to the room",
-            targetNodeId: "1",
-            conditions: [],
-            effects: [],
-          },
-          {
-            id: "c4c",
-            label: "Search the desk",
             targetNodeId: "3",
             conditions: [],
             effects: [],

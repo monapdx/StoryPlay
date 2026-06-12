@@ -184,14 +184,15 @@ export default function SidebarEditor({
 
       {blockType === "chat" && (
         <div className="helper-box">
-          Chat blocks show incoming lines as bubbles, then pause for the player to pick a
-          reply from <strong>Choices</strong> below (usually two options).
+          Put opening NPC lines in content as <strong>Name: message</strong>. Then add{" "}
+          <strong>Chat reply</strong> choices for back-and-forth conversation in this block,
+          and <strong>Go to block</strong> choices when the player should leave for another
+          scene.
           <br />
           <br />
-          Put NPC lines in content (e.g. <strong>Merchant: Hello!</strong>). Player replies
-          come from choice labels—not from <strong>You:</strong> lines in content.
-          <br />
-          Lines after the first <strong>You:</strong> line are skipped once choices exist.
+          Each chat reply can include a <strong>Character Response</strong> (more{" "}
+          <strong>Name: message</strong> lines). Leave &quot;After Reply, Go To&quot; empty to
+          keep talking in the same block.
         </div>
       )}
 

@@ -1808,6 +1808,23 @@ mark {
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
 }
 
+.chat-bubble__speaker {
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.chat-bubble-incoming .chat-bubble__speaker {
+  color: #e2e8f0;
+}
+
+.chat-bubble-outgoing .chat-bubble__speaker {
+  color: #fff;
+}
+
+.chat-bubble__message {
+  font-weight: 400;
+}
+
 .chat-bubble-incoming {
   background: rgba(51, 65, 85, 0.9);
   color: #f8fafc;
@@ -1930,6 +1947,26 @@ mark {
   opacity: 0.65;
   cursor: default;
 }
+
+.chat-exit-panel {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(148, 163, 184, 0.22);
+}
+
+.chat-exit-prompt {
+  margin: 0 0 10px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #94a3b8;
+}
+
+.chat-exit-choice-list {
+  margin-top: 0;
+}
+
 /* =========================
    Mini-Game Editor Workspace
    ========================= */

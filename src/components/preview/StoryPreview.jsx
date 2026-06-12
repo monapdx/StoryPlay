@@ -2,8 +2,14 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import PlayChoiceButton from "./PlayChoiceButton";
 import { evaluateConditions } from "../../utils/storyLogic";
 import { renderStoryText } from "../../utils/storyReferences";
-import { getChatPrefaceLines, parseChatLines } from "../../utils/chatPlay";
+import {
+  getChatPrefaceLines,
+  parseChatLines,
+  runChatLineRevealSequence,
+} from "../../utils/chatPlay";
+import { isChatReplyChoice, isGoToChoice } from "../../utils/choiceKinds";
 import ChatReplyPicker from "./ChatReplyPicker";
+import ChatBubbleContent from "./ChatBubbleContent";
 import TraitPickerBlockView from "../blocks/TraitPickerBlockView";
 import PersuasionBlockView from "../blocks/PersuasionBlockView";
 import ChoiceWeightingBlockView from "../blocks/ChoiceWeightingBlockView";
@@ -36,9 +42,10 @@ export default function StoryPreview({
   const isDock = variant === "dock";
   const [timeLeft, setTimeLeft] = useState(null);
 
-  const [revealedChatCount, setRevealedChatCount] = useState(0);
+  const [chatThreadLines, setChatThreadLines] = useState([]);
   const [showTyping, setShowTyping] = useState(false);
-  const [selectedReplyIndex, setSelectedReplyIndex] = useState(null);
+  const [chatTurnReady, setChatTurnReady] = useState(false);
+  const [chatBusy, setChatBusy] = useState(false);
   const [showVariableDetails, setShowVariableDetails] = useState(false);
   const [showPlayMeta, setShowPlayMeta] = useState(false);
   /** After trait / choice-weighting confirm without auto-advance, show branching choices. */
@@ -120,7 +127,17 @@ export default function StoryPreview({
     return parseChatLines(playNodeData?.content || "", storyRenderState);
   }, [isChat, playNodeData?.content, storyRenderState]);
 
-  const hasChatReplyChoices = isChat && visibleChoices.length > 0;
+  const chatReplyChoices = useMemo(
+    () => visibleChoices.filter((choice) => isChatReplyChoice(choice, blockType)),
+    [visibleChoices, blockType]
+  );
+
+  const goToChoices = useMemo(
+    () => visibleChoices.filter((choice) => isGoToChoice(choice, blockType)),
+    [visibleChoices, blockType]
+  );
+
+  const hasChatReplyChoices = isChat && chatReplyChoices.length > 0;
 
   const chatLinesToAnimate = useMemo(() => {
     if (!isChat) return [];
@@ -156,72 +173,52 @@ export default function StoryPreview({
     chatTimersRef.current.forEach((timerId) => window.clearTimeout(timerId));
     chatTimersRef.current = [];
 
-    setSelectedReplyIndex(null);
+    setChatThreadLines([]);
+    setChatTurnReady(false);
+    setChatBusy(false);
+    setShowTyping(false);
 
     if (!isChat || !currentPlayNode?.id) {
-      setRevealedChatCount(0);
-      setShowTyping(false);
       return;
     }
 
     if (chatLinesToAnimate.length === 0) {
-      setRevealedChatCount(0);
-      setShowTyping(false);
+      setChatTurnReady(true);
       return;
     }
 
-    setRevealedChatCount(0);
-    setShowTyping(true);
+    setChatBusy(true);
 
-    let cumulativeDelay = 450;
-
-    chatLinesToAnimate.forEach((line, index) => {
-      const typingStartId = window.setTimeout(() => {
-        setShowTyping(true);
-      }, cumulativeDelay);
-      chatTimersRef.current.push(typingStartId);
-
-      const revealDelay =
-        700 + Math.min(1200, Math.max(250, line.text.length * 22));
-
-      const revealId = window.setTimeout(() => {
-        setRevealedChatCount(index + 1);
-        setShowTyping(index < chatLinesToAnimate.length - 1);
-      }, cumulativeDelay + revealDelay);
-
-      chatTimersRef.current.push(revealId);
-      cumulativeDelay += revealDelay + 260;
+    const cleanup = runChatLineRevealSequence({
+      lines: chatLinesToAnimate,
+      timers: chatTimersRef.current,
+      onTyping: setShowTyping,
+      onReveal: (line) => {
+        setChatThreadLines((prev) => [...prev, line]);
+      },
+      onDone: () => {
+        setChatBusy(false);
+        setChatTurnReady(true);
+      },
     });
 
-    const finishId = window.setTimeout(() => {
-      setShowTyping(false);
-    }, cumulativeDelay);
-
-    chatTimersRef.current.push(finishId);
-
     return () => {
+      cleanup();
       chatTimersRef.current.forEach((timerId) => window.clearTimeout(timerId));
       chatTimersRef.current = [];
     };
   }, [isChat, currentPlayNode?.id, chatLinesToAnimate]);
 
-  const revealedChatLines = isChat
-    ? chatLinesToAnimate.slice(0, revealedChatCount)
-    : [];
-
-  const incomingSequenceComplete =
-    !isChat ||
-    (chatLinesToAnimate.length === 0
-      ? true
-      : revealedChatCount >= chatLinesToAnimate.length && !showTyping);
-
   const chatAwaitingReply =
-    hasChatReplyChoices && incomingSequenceComplete && selectedReplyIndex === null;
+    hasChatReplyChoices && chatTurnReady && !chatBusy;
+
+  const showChatGoToChoices =
+    isChat && chatTurnReady && !chatBusy && goToChoices.length > 0;
 
   useEffect(() => {
     if (!chatScrollRef.current) return;
     chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
-  }, [revealedChatCount, showTyping, selectedReplyIndex, chatAwaitingReply]);
+  }, [chatThreadLines, showTyping, chatTurnReady, chatBusy, chatAwaitingReply]);
 
   useEffect(() => {
     if (isDock) return;
@@ -230,14 +227,57 @@ export default function StoryPreview({
     }
   }, [changedVariableKeys, isDock]);
 
-  function handleChatReply(choice, index) {
-    if (selectedReplyIndex !== null) return;
+  function finishChatReplyTurn(choice) {
+    setChatBusy(false);
 
-    setSelectedReplyIndex(index);
+    if (choice.targetNodeId) {
+      window.setTimeout(() => {
+        goToNode(choice.targetNodeId, []);
+      }, 420);
+      return;
+    }
 
-    window.setTimeout(() => {
-      goToNode(choice.targetNodeId, choice.effects || []);
-    }, 420);
+    setChatTurnReady(true);
+  }
+
+  function handleChatReply(choice) {
+    if (!chatTurnReady || chatBusy) return;
+
+    const outgoingLine = {
+      id: `you-${Date.now()}`,
+      side: "outgoing",
+      speaker: "You",
+      message:
+        renderStoryText(choice.label, storyRenderState)?.trim() || "Reply",
+    };
+
+    setChatThreadLines((prev) => [...prev, outgoingLine]);
+    setChatTurnReady(false);
+    setChatBusy(true);
+
+    if ((choice.effects || []).length > 0 && currentPlayNode?.id) {
+      goToNode(currentPlayNode.id, choice.effects || []);
+    }
+
+    const responseLines = parseChatLines(
+      choice.npcResponse || "",
+      storyRenderState
+    );
+
+    if (responseLines.length === 0) {
+      finishChatReplyTurn(choice);
+      return;
+    }
+
+    runChatLineRevealSequence({
+      lines: responseLines,
+      timers: chatTimersRef.current,
+      onTyping: setShowTyping,
+      onReveal: (line) => {
+        setChatThreadLines((prev) => [...prev, line]);
+      },
+      onDone: () => finishChatReplyTurn(choice),
+    });
   }
 
   function handleMiniGameComplete(result) {
@@ -448,19 +488,22 @@ export default function StoryPreview({
 
           {isChat && (
             <div className="chat-thread chat-thread-playable" ref={chatScrollRef}>
-              {revealedChatLines.length === 0 &&
+              {chatThreadLines.length === 0 &&
                 !showTyping &&
                 !chatAwaitingReply && (
                 <div className="muted">No chat messages yet.</div>
               )}
 
-              {revealedChatLines.map((line) => (
+              {chatThreadLines.map((line) => (
                 <div
                   key={line.id}
                   className={`chat-row chat-row-${line.side}`}
                 >
                   <div className={`chat-bubble chat-bubble-${line.side}`}>
-                    {line.text}
+                    <ChatBubbleContent
+                      speaker={line.speaker}
+                      message={line.message}
+                    />
                   </div>
                 </div>
               ))}
@@ -477,32 +520,43 @@ export default function StoryPreview({
 
               {chatAwaitingReply && (
                 <ChatReplyPicker
-                  choices={visibleChoices}
+                  choices={chatReplyChoices}
                   characters={characters}
-                  selectedReplyIndex={selectedReplyIndex}
+                  disabled={chatBusy}
                   onSelect={handleChatReply}
                 />
               )}
-
-              {selectedReplyIndex !== null &&
-                visibleChoices[selectedReplyIndex] && (
-                  <div className="chat-row chat-row-outgoing">
-                    <div className="chat-bubble chat-bubble-outgoing">
-                      {renderStoryText(
-                        visibleChoices[selectedReplyIndex].label,
-                        storyRenderState
-                      ) || "Reply"}
-                    </div>
-                  </div>
-                )}
             </div>
           )}
 
-          {isChat && incomingSequenceComplete && visibleChoices.length === 0 && (
+          {showChatGoToChoices && (
+            <div className="chat-exit-panel">
+              <p className="chat-exit-prompt">Continue the story</p>
+              <div className="preview-choice-list chat-exit-choice-list">
+                {goToChoices.map((choice, index) => (
+                  <PlayChoiceButton
+                    key={`${choice.id || choice.label}-${index}`}
+                    choice={choice}
+                    characters={characters}
+                    targetNode={nodesById[choice.targetNodeId]}
+                    onChoose={() =>
+                      goToNode(choice.targetNodeId, choice.effects || [])
+                    }
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {isChat &&
+            chatTurnReady &&
+            !chatBusy &&
+            chatReplyChoices.length === 0 &&
+            goToChoices.length === 0 && (
             <div className="helper-box" style={{ marginTop: 12 }}>
               {playChoices.length === 0
-                ? "No reply choices configured for this chat block."
-                : "No replies available right now (choice conditions not met)."}
+                ? "Add chat replies or go-to choices for this block."
+                : "No choices available right now (conditions not met)."}
             </div>
           )}
 
