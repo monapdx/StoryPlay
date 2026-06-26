@@ -20,6 +20,7 @@ export default function ChoiceRow({
   highlightChevron = false,
   revealOnboarding = false,
   revealDelayMs = 0,
+  readOnly = false,
   onExpand,
   onUpdate,
   onRemove,
@@ -100,6 +101,13 @@ export default function ChoiceRow({
 
       {isExpanded && (
         <>
+          {readOnly ? (
+            <p className="sidebar-hint" style={{ marginTop: 8 }}>
+              This is where you edit the choice label, target block, conditions, and
+              effects.
+            </p>
+          ) : (
+            <>
           {isChatBlock && (
             <div className="form-group">
               <label className="form-label">Choice Type</label>
@@ -216,13 +224,17 @@ export default function ChoiceRow({
             onUpdate={(field, value) => onUpdate(choiceIndex, field, value)}
           />
 
-          <button
-            type="button"
-            className="danger-button"
-            onClick={() => onRemove(choiceIndex)}
-          >
-            Remove Choice
-          </button>
+          {!readOnly && (
+            <button
+              type="button"
+              className="danger-button"
+              onClick={() => onRemove(choiceIndex)}
+            >
+              Remove Choice
+            </button>
+          )}
+            </>
+          )}
         </>
       )}
     </div>

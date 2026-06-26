@@ -15,3 +15,21 @@ export const ONBOARDING_DEMO_CHOICES = [
     effects: [],
   },
 ];
+
+export const ONBOARDING_DEMO_NODE = {
+  id: ONBOARDING_SCAFFOLD_NODE_ID,
+  data: {
+    title: "Tutorial Scene",
+    blockType: "narrative",
+    choices: ONBOARDING_DEMO_CHOICES,
+  },
+};
+
+/** Tour steps that need example choices visible in the sidebar. */
+export function isOnboardingChoiceStep(stepId) {
+  return stepId === "choices" || stepId === "choice-expand";
+}
+
+export function isOnboardingSidebarStep(stepId) {
+  return stepId === "sidebar" || isOnboardingChoiceStep(stepId);
+}

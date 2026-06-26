@@ -1,7 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import ChoicesEditor from "./ChoicesEditor";
 import StoryDiagnostics from "./StoryDiagnostics";
 import ReferenceTextarea from "./ReferenceTextarea";
+import {
+  ONBOARDING_DEMO_NODE,
+  isOnboardingChoiceStep,
+} from "../../data/onboardingDemo";
 
 export default function SidebarEditor({
   nodes,
@@ -9,6 +13,7 @@ export default function SidebarEditor({
   characters = [],
   selectedNode,
   onboardingStepId = null,
+  ensureOnboardingScaffold,
   updateSelectedNodeField,
   deleteSelectedNode,
   addChoiceToSelectedNode,
@@ -18,12 +23,54 @@ export default function SidebarEditor({
   onOpenVariables,
 }) {
   const [isNarrativeContentOpen, setIsNarrativeContentOpen] = useState(false);
+  const showOnboardingChoiceDemo = isOnboardingChoiceStep(onboardingStepId);
+
+  useLayoutEffect(() => {
+    if (!ensureOnboardingScaffold || !onboardingStepId) return;
+
+    if (onboardingStepId === "sidebar") {
+      ensureOnboardingScaffold({ seedChoices: false });
+      return;
+    }
+
+    if (isOnboardingChoiceStep(onboardingStepId)) {
+      ensureOnboardingScaffold({ seedChoices: true });
+    }
+  }, [ensureOnboardingScaffold, onboardingStepId]);
+
+  useEffect(() => {
+    if (!ensureOnboardingScaffold || !isOnboardingChoiceStep(onboardingStepId)) return;
+    ensureOnboardingScaffold({ seedChoices: true });
+  }, [ensureOnboardingScaffold, onboardingStepId, selectedNode?.id]);
 
   useEffect(() => {
     setIsNarrativeContentOpen(false);
   }, [selectedNode?.id]);
 
   if (!selectedNode) {
+    if (showOnboardingChoiceDemo) {
+      return (
+        <div>
+          <h2 className="section-title">Block Editor</h2>
+          <p className="sidebar-hint">Tutorial Scene — example choices below.</p>
+
+          <div data-onboarding="choices">
+            <ChoicesEditor
+              selectedNode={ONBOARDING_DEMO_NODE}
+              nodes={nodes}
+              variables={variables}
+              characters={characters}
+              onboardingStepId={onboardingStepId}
+              isOnboardingDemoPreview
+              addChoiceToSelectedNode={addChoiceToSelectedNode}
+              updateChoiceOnSelectedNode={updateChoiceOnSelectedNode}
+              removeChoiceFromSelectedNode={removeChoiceFromSelectedNode}
+            />
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div>
         <h2 className="section-title">Block Editor</h2>

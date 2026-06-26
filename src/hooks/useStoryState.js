@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { cloneDemoStoryById, DEMO_STORIES } from "../data/demoStoriesCatalog";
 import {
   ONBOARDING_DEMO_CHOICES,
@@ -70,6 +70,8 @@ export default function useStoryState() {
   const [variables, setVariables] = useState(initial.variables);
   const [characters, setCharacters] = useState(initial.characters);
   const [selectedNodeId, setSelectedNodeId] = useState(null);
+  const selectedNodeIdRef = useRef(selectedNodeId);
+  selectedNodeIdRef.current = selectedNodeId;
 
   const [storyBaselineSignature, setStoryBaselineSignature] = useState(() =>
     stableDemoSignature(initial.nodes, initial.variables, initial.characters)
@@ -383,57 +385,69 @@ export default function useStoryState() {
   }
 
   const ensureOnboardingScaffold = useCallback(({ seedChoices = false } = {}) => {
-    let targetId = null;
+    let targetIdToSelect = null;
 
     setNodes((prev) => {
       let next = [...prev];
 
-      let targetNode = next.find(
-        (node) =>
-          node.id === ONBOARDING_SCAFFOLD_NODE_ID || node.data?.isOnboardingScaffold
-      );
+      let targetId =
+        selectedNodeIdRef.current &&
+        next.some((node) => node.id === selectedNodeIdRef.current)
+          ? selectedNodeIdRef.current
+          : null;
 
-      if (!targetNode && next.length === 0) {
-        targetNode = {
-          id: ONBOARDING_SCAFFOLD_NODE_ID,
-          type: "storyNode",
-          position: { x: 260, y: 120 },
-          data: {
-            title: "Tutorial Scene",
-            content: "Write what the player reads when they reach this scene.",
-            blockType: "narrative",
-            choices: [],
-            isOnboardingScaffold: true,
-            enterEffects: [],
-            graphIssues: [],
-          },
-        };
-        next.push(targetNode);
-      } else if (!targetNode) {
-        targetNode = next[0];
+      if (!targetId) {
+        const existingScaffold = next.find(
+          (node) =>
+            node.id === ONBOARDING_SCAFFOLD_NODE_ID || node.data?.isOnboardingScaffold
+        );
+
+        if (existingScaffold) {
+          targetId = existingScaffold.id;
+        } else if (next.length === 0) {
+          const scaffold = {
+            id: ONBOARDING_SCAFFOLD_NODE_ID,
+            type: "storyNode",
+            position: { x: 260, y: 120 },
+            data: {
+              title: "Tutorial Scene",
+              content: "Write what the player reads when they reach this scene.",
+              blockType: "narrative",
+              choices: [],
+              isOnboardingScaffold: true,
+              enterEffects: [],
+              graphIssues: [],
+            },
+          };
+          next = [...next, scaffold];
+          targetId = scaffold.id;
+        } else {
+          targetId = next[0]?.id || null;
+        }
       }
 
-      targetId = targetNode.id;
-
-      if (seedChoices && (targetNode.data?.choices || []).length === 0) {
+      if (seedChoices && targetId) {
+        const demoChoices = ONBOARDING_DEMO_CHOICES.map((choice) => ({ ...choice }));
         next = next.map((node) =>
           node.id === targetId
             ? {
                 ...node,
                 data: {
                   ...node.data,
-                  choices: ONBOARDING_DEMO_CHOICES.map((choice) => ({ ...choice })),
+                  blockType: node.data?.blockType || "narrative",
+                  choices: demoChoices,
                 },
               }
             : node
         );
       }
 
+      targetIdToSelect = targetId;
       return next;
     });
 
-    if (targetId) {
-      setSelectedNodeId(targetId);
+    if (targetIdToSelect) {
+      setSelectedNodeId(targetIdToSelect);
     }
   }, []);
 

@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import StoryCanvas from "./components/canvas/StoryCanvas";
 import SidebarEditor from "./components/editor/SidebarEditor";
 import VariablesScreen from "./components/editor/VariablesScreen";
@@ -107,23 +107,6 @@ function EditorApp() {
     const timerId = window.setTimeout(() => onboarding.start(), 500);
     return () => window.clearTimeout(timerId);
   }, [activeScreen, onboarding.shouldAutoStart, onboarding.start]);
-
-  useLayoutEffect(() => {
-    if (!onboarding.isActive || activeScreen !== "editor") return;
-
-    const stepId = onboarding.step?.id;
-    if (stepId === "sidebar") {
-      story.ensureOnboardingScaffold({ seedChoices: false });
-    }
-    if (stepId === "choices" || stepId === "choice-expand") {
-      story.ensureOnboardingScaffold({ seedChoices: true });
-    }
-  }, [
-    onboarding.isActive,
-    onboarding.step?.id,
-    activeScreen,
-    story.ensureOnboardingScaffold,
-  ]);
 
   const selectedMiniGame = useMemo(() => {
     if (!story.selectedNode || !isSupportedMiniGameBlock(story.selectedNode)) {

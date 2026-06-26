@@ -1,5 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ChoiceRow from "./ChoiceRow";
+import {
+  ONBOARDING_DEMO_CHOICES,
+  isOnboardingChoiceStep,
+} from "../../data/onboardingDemo";
 
 export default function ChoicesEditor({
   selectedNode,
@@ -7,20 +11,30 @@ export default function ChoicesEditor({
   variables,
   characters = [],
   onboardingStepId = null,
+  isOnboardingDemoPreview = false,
   addChoiceToSelectedNode,
   updateChoiceOnSelectedNode,
   removeChoiceFromSelectedNode,
 }) {
-  const choices = selectedNode?.data?.choices || [];
   const blockType = selectedNode?.data?.blockType || "narrative";
   const selectedNodeId = selectedNode?.id;
+  const storyChoices = selectedNode?.data?.choices || [];
+  const showOnboardingChoiceDemo = isOnboardingChoiceStep(onboardingStepId);
+  const visibleChoices = useMemo(() => {
+    if (showOnboardingChoiceDemo && storyChoices.length === 0) {
+      return ONBOARDING_DEMO_CHOICES;
+    }
+    return storyChoices;
+  }, [showOnboardingChoiceDemo, storyChoices]);
+  const readOnly = isOnboardingDemoPreview;
+
   const [expandedChoiceIndex, setExpandedChoiceIndex] = useState(null);
   const showChoiceReveal = onboardingStepId === "choices";
   const highlightChoiceChevron = onboardingStepId === "choice-expand";
 
   useEffect(() => {
     setExpandedChoiceIndex(null);
-  }, [selectedNodeId, blockType]);
+  }, [selectedNodeId, blockType, onboardingStepId]);
 
   useEffect(() => {
     if (!highlightChoiceChevron) return;
@@ -33,13 +47,13 @@ export default function ChoicesEditor({
     });
 
     return () => window.cancelAnimationFrame(frameId);
-  }, [highlightChoiceChevron, choices.length]);
+  }, [highlightChoiceChevron, visibleChoices.length]);
 
   useEffect(() => {
-    if (expandedChoiceIndex !== null && expandedChoiceIndex >= choices.length) {
+    if (expandedChoiceIndex !== null && expandedChoiceIndex >= visibleChoices.length) {
       setExpandedChoiceIndex(null);
     }
-  }, [choices.length, expandedChoiceIndex]);
+  }, [visibleChoices.length, expandedChoiceIndex]);
 
   function handleChoiceExpand(index) {
     setExpandedChoiceIndex((current) => (current === index ? null : index));
@@ -49,16 +63,18 @@ export default function ChoicesEditor({
     <div className="editor-section">
       <div className="editor-section-header">
         <h3 className="section-title">Choices</h3>
-        <button className="toolbar-button" onClick={addChoiceToSelectedNode}>
-          + Add Choice
-        </button>
+        {!readOnly && (
+          <button className="toolbar-button" onClick={addChoiceToSelectedNode}>
+            + Add Choice
+          </button>
+        )}
       </div>
 
-      {choices.length === 0 ? (
+      {visibleChoices.length === 0 ? (
         <p className="sidebar-hint">No choices yet.</p>
       ) : (
         <div className="choice-list">
-          {choices.map((choice, index) => (
+          {visibleChoices.map((choice, index) => (
             <ChoiceRow
               key={`${selectedNode.id}-choice-${index}`}
               choiceIndex={index}
@@ -72,9 +88,10 @@ export default function ChoicesEditor({
               highlightChevron={highlightChoiceChevron && index === 0}
               revealOnboarding={showChoiceReveal}
               revealDelayMs={index * 180}
+              readOnly={readOnly}
               onExpand={() => handleChoiceExpand(index)}
-              onUpdate={updateChoiceOnSelectedNode}
-              onRemove={removeChoiceFromSelectedNode}
+              onUpdate={readOnly ? undefined : updateChoiceOnSelectedNode}
+              onRemove={readOnly ? undefined : removeChoiceFromSelectedNode}
             />
           ))}
         </div>
