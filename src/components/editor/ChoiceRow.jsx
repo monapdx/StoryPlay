@@ -66,10 +66,12 @@ export default function ChoiceRow({
         "choice-row",
         isExpanded ? "is-expanded" : "",
         revealOnboarding ? "choice-row--onboarding-reveal" : "",
+        highlightChevron ? "choice-row--onboarding-highlight" : "",
       ]
         .filter(Boolean)
         .join(" ")}
       style={revealOnboarding ? { animationDelay: `${revealDelayMs}ms` } : undefined}
+      data-onboarding={highlightChevron ? "choice-expand-demo" : undefined}
     >
       <button
         type="button"
@@ -89,7 +91,7 @@ export default function ChoiceRow({
           ]
             .filter(Boolean)
             .join(" ")}
-          data-onboarding={highlightChevron ? "choice-chevron" : undefined}
+          data-onboarding={highlightChevron ? "choice-expand-chevron" : undefined}
           aria-hidden="true"
         >
           ▾

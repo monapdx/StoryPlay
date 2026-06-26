@@ -30,10 +30,13 @@ export const ONBOARDING_STEPS = [
   },
   {
     id: "choice-expand",
-    target: '[data-onboarding="choice-chevron"]',
+    target: '[data-onboarding="choice-expand-demo"]',
     title: "Expand to edit",
-    body: "Look for the blue ▾ arrow on the right of each choice. Click the row—or the arrow—to open it and edit the label, target block, conditions, and effects.",
+    body: "Each choice row has a blue ▾ arrow on the right. Click the row—or the arrow—to open it and edit the label, target block, conditions, and effects.",
     placement: "left",
+    scrollBlock: "center",
+    spotlightPadding: 10,
+    waitForTarget: true,
   },
   {
     id: "preview",

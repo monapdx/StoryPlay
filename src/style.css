@@ -370,6 +370,29 @@ body {
   animation: onboarding-choice-reveal 0.42s ease backwards;
 }
 
+.choice-row--onboarding-highlight {
+  border-color: rgba(56, 189, 248, 0.72);
+  box-shadow:
+    0 0 0 2px rgba(56, 189, 248, 0.35),
+    0 0 24px rgba(56, 189, 248, 0.22);
+  animation: onboarding-choice-highlight 1.6s ease-in-out infinite;
+}
+
+@keyframes onboarding-choice-highlight {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 2px rgba(56, 189, 248, 0.35),
+      0 0 20px rgba(56, 189, 248, 0.18);
+  }
+
+  50% {
+    box-shadow:
+      0 0 0 3px rgba(125, 211, 252, 0.65),
+      0 0 28px rgba(56, 189, 248, 0.38);
+  }
+}
+
 @keyframes onboarding-choice-reveal {
   from {
     opacity: 0;

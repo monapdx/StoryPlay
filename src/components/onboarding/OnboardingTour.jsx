@@ -7,6 +7,8 @@ import {
   getViewportMetrics,
 } from "../../utils/onboardingPosition";
 
+const TARGET_RETRY_LIMIT = 24;
+
 function getTargetElement(selector) {
   if (!selector) return null;
   const el = document.querySelector(selector);
@@ -28,18 +30,22 @@ export default function OnboardingTour({
   const tooltipRef = useRef(null);
   const [layout, setLayout] = useState(null);
 
-  const updateLayout = useCallback(() => {
+  const updateLayout = useCallback(({ allowFallback = true } = {}) => {
     const tooltipEl = tooltipRef.current;
     if (!tooltipEl || !step) {
       setLayout(null);
-      return;
+      return false;
     }
 
     const viewport = getViewportMetrics();
-
     const targetEl = getTargetElement(step.target);
+
     if (targetEl) {
-      targetEl.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "auto" });
+      targetEl.scrollIntoView({
+        block: step.scrollBlock || "nearest",
+        inline: "nearest",
+        behavior: "auto",
+      });
     }
 
     const tooltipRect = tooltipEl.getBoundingClientRect();
@@ -47,6 +53,10 @@ export default function OnboardingTour({
     const tooltipHeight = tooltipRect.height || tooltipEl.offsetHeight || 160;
 
     if (!targetEl) {
+      if (!allowFallback) {
+        return false;
+      }
+
       const centered = computeCenteredTooltipPosition(tooltipWidth, tooltipHeight, viewport);
       setLayout({
         spotlight: null,
@@ -55,7 +65,7 @@ export default function OnboardingTour({
         placement: centered.placement,
         ready: true,
       });
-      return;
+      return false;
     }
 
     const targetRect = targetEl.getBoundingClientRect();
@@ -68,20 +78,33 @@ export default function OnboardingTour({
     });
 
     setLayout({
-      spotlight: getSpotlightRect(targetRect),
+      spotlight: getSpotlightRect(targetRect, step.spotlightPadding),
       tooltipTop: positioned.top,
       tooltipLeft: positioned.left,
       placement: positioned.placement,
       ready: true,
     });
+
+    return true;
   }, [step]);
 
   useLayoutEffect(() => {
     setLayout((current) => (current ? { ...current, ready: false } : null));
 
+    let retryCount = 0;
+    let retryFrameId = 0;
+
     const runUpdate = () => {
-      updateLayout();
-      window.requestAnimationFrame(updateLayout);
+      const found = updateLayout({ allowFallback: false });
+
+      if (!found && step?.waitForTarget && retryCount < TARGET_RETRY_LIMIT) {
+        retryCount += 1;
+        retryFrameId = window.requestAnimationFrame(runUpdate);
+        return;
+      }
+
+      updateLayout({ allowFallback: true });
+      window.requestAnimationFrame(() => updateLayout({ allowFallback: true }));
     };
 
     runUpdate();
@@ -99,13 +122,14 @@ export default function OnboardingTour({
     }
 
     return () => {
+      window.cancelAnimationFrame(retryFrameId);
       window.removeEventListener("resize", runUpdate);
       window.removeEventListener("scroll", runUpdate, true);
       window.visualViewport?.removeEventListener("resize", runUpdate);
       window.visualViewport?.removeEventListener("scroll", runUpdate);
       resizeObserver?.disconnect();
     };
-  }, [updateLayout, stepIndex, step?.target]);
+  }, [updateLayout, stepIndex, step?.target, step?.waitForTarget]);
 
   if (!step) return null;
 
@@ -114,6 +138,8 @@ export default function OnboardingTour({
     left: layout?.tooltipLeft ?? VIEWPORT_FALLBACK_LEFT,
     visibility: layout?.ready ? "visible" : "hidden",
   };
+
+  const showFallback = !layout?.spotlight && !step.waitForTarget;
 
   const content = (
     <div
@@ -151,7 +177,7 @@ export default function OnboardingTour({
         </h2>
         <p className="onboarding-tour__body">{step.body}</p>
 
-        {!layout?.spotlight && (
+        {showFallback && (
           <p className="onboarding-tour__fallback muted">
             This panel opens when you select a scene or use the matching button above.
           </p>

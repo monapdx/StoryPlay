@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import StoryCanvas from "./components/canvas/StoryCanvas";
 import SidebarEditor from "./components/editor/SidebarEditor";
 import VariablesScreen from "./components/editor/VariablesScreen";
@@ -108,7 +108,7 @@ function EditorApp() {
     return () => window.clearTimeout(timerId);
   }, [activeScreen, onboarding.shouldAutoStart, onboarding.start]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!onboarding.isActive || activeScreen !== "editor") return;
 
     const stepId = onboarding.step?.id;

@@ -23,10 +23,17 @@ export default function ChoicesEditor({
   }, [selectedNodeId, blockType]);
 
   useEffect(() => {
-    if (highlightChoiceChevron) {
-      setExpandedChoiceIndex(null);
-    }
-  }, [highlightChoiceChevron]);
+    if (!highlightChoiceChevron) return;
+
+    setExpandedChoiceIndex(null);
+
+    const frameId = window.requestAnimationFrame(() => {
+      const row = document.querySelector('[data-onboarding="choice-expand-demo"]');
+      row?.scrollIntoView({ block: "center", inline: "nearest", behavior: "smooth" });
+    });
+
+    return () => window.cancelAnimationFrame(frameId);
+  }, [highlightChoiceChevron, choices.length]);
 
   useEffect(() => {
     if (expandedChoiceIndex !== null && expandedChoiceIndex >= choices.length) {
