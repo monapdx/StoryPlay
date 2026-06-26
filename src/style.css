@@ -336,6 +336,52 @@ body {
   transform: rotate(180deg);
 }
 
+.collapsible-chevron--onboarding {
+  color: #7dd3fc;
+  background: rgba(56, 189, 248, 0.32);
+  box-shadow:
+    0 0 0 2px rgba(125, 211, 252, 0.55),
+    0 0 14px rgba(56, 189, 248, 0.45);
+  animation: onboarding-chevron-pulse 1.35s ease-in-out infinite;
+}
+
+@keyframes onboarding-chevron-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow:
+      0 0 0 2px rgba(125, 211, 252, 0.55),
+      0 0 14px rgba(56, 189, 248, 0.45);
+  }
+
+  50% {
+    transform: scale(1.12);
+    box-shadow:
+      0 0 0 3px rgba(125, 211, 252, 0.75),
+      0 0 22px rgba(56, 189, 248, 0.65);
+  }
+}
+
+.collapsible-chevron--onboarding.is-open {
+  animation: none;
+}
+
+.choice-row--onboarding-reveal {
+  animation: onboarding-choice-reveal 0.42s ease backwards;
+}
+
+@keyframes onboarding-choice-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .sidebar-hint {
   margin: 0;
   font-size: 0.86rem;

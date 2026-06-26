@@ -17,6 +17,9 @@ export default function ChoiceRow({
   characters = [],
   currentNodeId,
   isExpanded,
+  highlightChevron = false,
+  revealOnboarding = false,
+  revealDelayMs = 0,
   onExpand,
   onUpdate,
   onRemove,
@@ -58,7 +61,16 @@ export default function ChoiceRow({
     : targetLabel || choice.targetNodeId || "No target selected";
 
   return (
-    <div className={`choice-row ${isExpanded ? "is-expanded" : ""}`}>
+    <div
+      className={[
+        "choice-row",
+        isExpanded ? "is-expanded" : "",
+        revealOnboarding ? "choice-row--onboarding-reveal" : "",
+      ]
+        .filter(Boolean)
+        .join(" ")}
+      style={revealOnboarding ? { animationDelay: `${revealDelayMs}ms` } : undefined}
+    >
       <button
         type="button"
         className="collapsible-row-header"
@@ -69,7 +81,17 @@ export default function ChoiceRow({
           <span className="collapsible-row-title">{displayLabel}</span>
           <span className="collapsible-row-meta">{metaLabel}</span>
         </span>
-        <span className={`collapsible-chevron ${isExpanded ? "is-open" : ""}`}>
+        <span
+          className={[
+            "collapsible-chevron",
+            isExpanded ? "is-open" : "",
+            highlightChevron ? "collapsible-chevron--onboarding" : "",
+          ]
+            .filter(Boolean)
+            .join(" ")}
+          data-onboarding={highlightChevron ? "choice-chevron" : undefined}
+          aria-hidden="true"
+        >
           ▾
         </span>
       </button>

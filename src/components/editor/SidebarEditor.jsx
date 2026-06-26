@@ -8,6 +8,7 @@ export default function SidebarEditor({
   variables,
   characters = [],
   selectedNode,
+  onboardingStepId = null,
   updateSelectedNodeField,
   deleteSelectedNode,
   addChoiceToSelectedNode,
@@ -291,6 +292,7 @@ export default function SidebarEditor({
               nodes={nodes}
               variables={variables}
               characters={characters}
+              onboardingStepId={onboardingStepId}
               addChoiceToSelectedNode={addChoiceToSelectedNode}
               updateChoiceOnSelectedNode={updateChoiceOnSelectedNode}
               removeChoiceFromSelectedNode={removeChoiceFromSelectedNode}

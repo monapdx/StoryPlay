@@ -1,5 +1,9 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { cloneDemoStoryById, DEMO_STORIES } from "../data/demoStoriesCatalog";
+import {
+  ONBOARDING_DEMO_CHOICES,
+  ONBOARDING_SCAFFOLD_NODE_ID,
+} from "../data/onboardingDemo";
 import { createBlankStory } from "../utils/blankStory";
 import { createCharacter, normalizeCharacters } from "../utils/storyEntities";
 import { renderStoryText } from "../utils/storyReferences";
@@ -378,6 +382,61 @@ export default function useStoryState() {
     );
   }
 
+  const ensureOnboardingScaffold = useCallback(({ seedChoices = false } = {}) => {
+    let targetId = null;
+
+    setNodes((prev) => {
+      let next = [...prev];
+
+      let targetNode = next.find(
+        (node) =>
+          node.id === ONBOARDING_SCAFFOLD_NODE_ID || node.data?.isOnboardingScaffold
+      );
+
+      if (!targetNode && next.length === 0) {
+        targetNode = {
+          id: ONBOARDING_SCAFFOLD_NODE_ID,
+          type: "storyNode",
+          position: { x: 260, y: 120 },
+          data: {
+            title: "Tutorial Scene",
+            content: "Write what the player reads when they reach this scene.",
+            blockType: "narrative",
+            choices: [],
+            isOnboardingScaffold: true,
+            enterEffects: [],
+            graphIssues: [],
+          },
+        };
+        next.push(targetNode);
+      } else if (!targetNode) {
+        targetNode = next[0];
+      }
+
+      targetId = targetNode.id;
+
+      if (seedChoices && (targetNode.data?.choices || []).length === 0) {
+        next = next.map((node) =>
+          node.id === targetId
+            ? {
+                ...node,
+                data: {
+                  ...node.data,
+                  choices: ONBOARDING_DEMO_CHOICES.map((choice) => ({ ...choice })),
+                },
+              }
+            : node
+        );
+      }
+
+      return next;
+    });
+
+    if (targetId) {
+      setSelectedNodeId(targetId);
+    }
+  }, []);
+
   return {
     nodes,
     setNodes,
@@ -408,5 +467,6 @@ export default function useStoryState() {
     removeChoiceFromSelectedNode,
     connectNodesFromHandle,
     deleteEdge,
+    ensureOnboardingScaffold,
   };
 }

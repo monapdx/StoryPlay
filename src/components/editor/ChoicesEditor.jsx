@@ -6,6 +6,7 @@ export default function ChoicesEditor({
   nodes,
   variables,
   characters = [],
+  onboardingStepId = null,
   addChoiceToSelectedNode,
   updateChoiceOnSelectedNode,
   removeChoiceFromSelectedNode,
@@ -14,10 +15,18 @@ export default function ChoicesEditor({
   const blockType = selectedNode?.data?.blockType || "narrative";
   const selectedNodeId = selectedNode?.id;
   const [expandedChoiceIndex, setExpandedChoiceIndex] = useState(null);
+  const showChoiceReveal = onboardingStepId === "choices";
+  const highlightChoiceChevron = onboardingStepId === "choice-expand";
 
   useEffect(() => {
     setExpandedChoiceIndex(null);
   }, [selectedNodeId, blockType]);
+
+  useEffect(() => {
+    if (highlightChoiceChevron) {
+      setExpandedChoiceIndex(null);
+    }
+  }, [highlightChoiceChevron]);
 
   useEffect(() => {
     if (expandedChoiceIndex !== null && expandedChoiceIndex >= choices.length) {
@@ -53,6 +62,9 @@ export default function ChoicesEditor({
               characters={characters}
               currentNodeId={selectedNode.id}
               isExpanded={expandedChoiceIndex === index}
+              highlightChevron={highlightChoiceChevron && index === 0}
+              revealOnboarding={showChoiceReveal}
+              revealDelayMs={index * 180}
               onExpand={() => handleChoiceExpand(index)}
               onUpdate={updateChoiceOnSelectedNode}
               onRemove={removeChoiceFromSelectedNode}

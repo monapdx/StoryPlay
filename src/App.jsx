@@ -108,6 +108,23 @@ function EditorApp() {
     return () => window.clearTimeout(timerId);
   }, [activeScreen, onboarding.shouldAutoStart, onboarding.start]);
 
+  useEffect(() => {
+    if (!onboarding.isActive || activeScreen !== "editor") return;
+
+    const stepId = onboarding.step?.id;
+    if (stepId === "sidebar") {
+      story.ensureOnboardingScaffold({ seedChoices: false });
+    }
+    if (stepId === "choices" || stepId === "choice-expand") {
+      story.ensureOnboardingScaffold({ seedChoices: true });
+    }
+  }, [
+    onboarding.isActive,
+    onboarding.step?.id,
+    activeScreen,
+    story.ensureOnboardingScaffold,
+  ]);
+
   const selectedMiniGame = useMemo(() => {
     if (!story.selectedNode || !isSupportedMiniGameBlock(story.selectedNode)) {
       return null;
@@ -478,6 +495,7 @@ function EditorApp() {
             <aside className="panel sidebar-panel custom-scrollbar" data-onboarding="sidebar">
               <SidebarEditor
                 {...story}
+                onboardingStepId={onboarding.isActive ? onboarding.step?.id : null}
                 onOpenMiniGameEditor={handleOpenMiniGameEditor}
                 onOpenVariables={handleOpenVariablesWorkspace}
               />

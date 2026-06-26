@@ -24,8 +24,15 @@ export const ONBOARDING_STEPS = [
   {
     id: "choices",
     target: '[data-onboarding="choices"]',
-    title: "Branch the story",
-    body: "Add choices here, or drag from one block’s handle to another to link scenes.",
+    title: "Add choices",
+    body: "Click + Add Choice to branch the story. Two example choices appear below—yours work the same way.",
+    placement: "left",
+  },
+  {
+    id: "choice-expand",
+    target: '[data-onboarding="choice-chevron"]',
+    title: "Expand to edit",
+    body: "Look for the blue ▾ arrow on the right of each choice. Click the row—or the arrow—to open it and edit the label, target block, conditions, and effects.",
     placement: "left",
   },
   {
