@@ -365,7 +365,7 @@ function EditorApp() {
               </div>
             </div>
 
-            <div style={styles.headerActions}>
+            <div className="app-header__actions">
               <button
                 type="button"
                 className="header-help-button"
@@ -377,9 +377,9 @@ function EditorApp() {
 
               <button
                 type="button"
+                className="header-button"
                 data-onboarding="templates"
                 onClick={handleOpenTemplates}
-                style={styles.headerButton}
                 title="Browse starter example stories"
               >
                 Example stories
@@ -387,12 +387,14 @@ function EditorApp() {
 
               <button
                 type="button"
+                className={[
+                  "header-button",
+                  isQuickPreviewOpen ? "header-button--active" : "",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
                 data-onboarding="preview"
                 onClick={() => setIsQuickPreviewOpen((open) => !open)}
-                style={{
-                  ...styles.headerButton,
-                  ...(isQuickPreviewOpen ? styles.headerButtonActive : null),
-                }}
                 title="Show or hide a compact play preview beside the editor (full test: Play in new tab)"
                 aria-pressed={isQuickPreviewOpen}
               >
@@ -401,8 +403,8 @@ function EditorApp() {
 
               <button
                 type="button"
+                className="header-button"
                 onClick={handleOpenCharactersWorkspace}
-                style={styles.headerButton}
                 title="Manage reusable character names and references"
               >
                 Characters
@@ -410,9 +412,9 @@ function EditorApp() {
 
               <button
                 type="button"
+                className="header-button"
                 data-onboarding="variables"
                 onClick={() => setActiveScreen("variables")}
-                style={styles.headerButton}
                 title="Open full-screen variables workspace"
               >
                 Variables
@@ -420,8 +422,8 @@ function EditorApp() {
 
               <button
                 type="button"
+                className="header-button"
                 onClick={handlePlayInNewTab}
-                style={styles.headerButton}
                 title="Save to the browser, open #/play in a new tab, and keep that tab updated (debounced) while you edit in this tab after the first use"
               >
                 Play in new tab
@@ -429,9 +431,9 @@ function EditorApp() {
 
               <button
                 type="button"
+                className="header-button"
                 data-onboarding="export"
                 onClick={handleExportStory}
-                style={styles.headerButton}
                 title="Download story as StoryPlay export JSON (v1)"
               >
                 Export Game
@@ -439,12 +441,9 @@ function EditorApp() {
 
               <button
                 type="button"
+                className="header-button"
                 onClick={handleOpenMiniGameEditor}
                 disabled={!canOpenMiniGameEditor}
-                style={{
-                  ...styles.headerButton,
-                  ...(!canOpenMiniGameEditor ? styles.headerButtonDisabled : null),
-                }}
                 title={miniGameEditorTitle}
               >
                 Open Mini-Game Editor
@@ -533,33 +532,6 @@ function getActiveTemplateLabel(story) {
   const entry = story.demoStories.find((item) => item.id === story.activeDemoStoryId);
   return entry ? entry.label : "Example story";
 }
-
-const styles = {
-  headerActions: {
-    display: "flex",
-    alignItems: "center",
-    gap: "12px",
-    marginLeft: "auto",
-  },
-  headerButton: {
-    border: "1px solid rgba(255,255,255,0.18)",
-    background: "rgba(255,255,255,0.08)",
-    color: "#ffffff",
-    padding: "10px 14px",
-    borderRadius: "12px",
-    cursor: "pointer",
-    fontWeight: 700,
-  },
-  headerButtonDisabled: {
-    opacity: 0.45,
-    cursor: "not-allowed",
-  },
-  headerButtonActive: {
-    borderColor: "rgba(129, 140, 248, 0.65)",
-    background: "rgba(99, 102, 241, 0.22)",
-    boxShadow: "0 0 0 2px rgba(99, 102, 241, 0.2)",
-  },
-};
 
 export default function App() {
   const route = useHashRoute();

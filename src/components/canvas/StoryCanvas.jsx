@@ -1,6 +1,7 @@
 import { useMemo, useCallback, useEffect } from "react";
 import ReactFlow, {
   Background,
+  BackgroundVariant,
   Controls,
   MiniMap,
   useNodesState,
@@ -240,7 +241,12 @@ export default function StoryCanvas({
         edgeTypes={edgeTypes}
         fitView
       >
-        <Background />
+        <Background
+          variant={BackgroundVariant.Dots}
+          gap={22}
+          size={1.15}
+          color="rgba(129, 140, 248, 0.14)"
+        />
         <Controls />
         <MiniMap zoomable pannable />
       </ReactFlow>

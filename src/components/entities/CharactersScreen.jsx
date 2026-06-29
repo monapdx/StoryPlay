@@ -11,7 +11,7 @@ export default function CharactersScreen({
   activeTemplateLabel,
 }) {
   return (
-    <div className="variables-screen variables-screen--edgeless">
+    <div className="variables-screen variables-screen--edgeless characters-screen">
       <div className="variables-screen-topbar">
         <div className="variables-screen-topbar-start">
           <button
