@@ -77,13 +77,16 @@ export default function PlayerPage() {
         </div>
       ) : (
         <div className="player-page-body custom-scrollbar">
-          <StoryPreview
-            {...play}
-            nodes={nodes}
-            characters={characters}
-            selectedNode={selectedNode}
-            selectedNodeId={selectedNodeId}
-          />
+          <div className="player-play-shell">
+            <StoryPreview
+              {...play}
+              nodes={nodes}
+              characters={characters}
+              selectedNode={selectedNode}
+              selectedNodeId={selectedNodeId}
+              initialVariables={variables}
+            />
+          </div>
         </div>
       )}
     </div>

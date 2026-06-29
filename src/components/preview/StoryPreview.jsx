@@ -13,6 +13,7 @@ import ChatBubbleContent from "./ChatBubbleContent";
 import TraitPickerBlockView from "../blocks/TraitPickerBlockView";
 import PersuasionBlockView from "../blocks/PersuasionBlockView";
 import ChoiceWeightingBlockView from "../blocks/ChoiceWeightingBlockView";
+import PlayerStatsPanel from "./PlayerStatsPanel";
 
 function variablePatchToEffects(variablePatch = {}) {
   return Object.entries(variablePatch || {}).map(([variable, value]) => ({
@@ -30,8 +31,9 @@ export default function StoryPreview({
   currentPlayNode,
   history,
   playVariables,
-  previousPlayVariables,
   changedVariableKeys,
+  revealedVariableKeys = [],
+  initialVariables = {},
   startFromNode,
   resetToSelected,
   goToNode,
@@ -46,7 +48,6 @@ export default function StoryPreview({
   const [showTyping, setShowTyping] = useState(false);
   const [chatTurnReady, setChatTurnReady] = useState(false);
   const [chatBusy, setChatBusy] = useState(false);
-  const [showVariableDetails, setShowVariableDetails] = useState(false);
   const [showPlayMeta, setShowPlayMeta] = useState(false);
   /** After trait / choice-weighting confirm without auto-advance, show branching choices. */
   const [setterGateOpen, setSetterGateOpen] = useState(false);
@@ -345,6 +346,7 @@ export default function StoryPreview({
 
   return (
     <div className={`preview-story${isDock ? " preview-story--dock" : ""}`}>
+      <div className="preview-play-shell">
       <div className="preview-header-row">
         <h2 className="section-title" style={{ marginBottom: 0 }}>
           {isDock ? "Preview" : "Play Preview"}
@@ -384,64 +386,14 @@ export default function StoryPreview({
         </div>
       </div>
 
-      <div className="preview-block">
-        <button
-          type="button"
-          className="collapsible-row-header"
-          onClick={() => setShowVariableDetails((value) => !value)}
-          aria-expanded={showVariableDetails}
-        >
-          <span>
-            <span className="collapsible-row-title">Variables</span>
-            <span className="collapsible-row-meta">
-              {Object.keys(playVariables || {}).length} total
-              {(changedVariableKeys?.length || 0) > 0
-                ? `, ${changedVariableKeys.length} changed`
-                : ""}
-            </span>
-          </span>
-          <span className={`collapsible-chevron ${showVariableDetails ? "is-open" : ""}`}>
-            ▾
-          </span>
-        </button>
-
-        {showVariableDetails &&
-          (Object.keys(playVariables || {}).length === 0 ? (
-            <div className="muted">No variables defined.</div>
-          ) : (
-            <div className="variable-debugger-list">
-              {Object.entries(playVariables).map(([key, value]) => {
-                const changed = changedVariableKeys?.includes?.(key);
-                const previousValue = previousPlayVariables?.[key];
-
-                return (
-                  <div
-                    key={key}
-                    className={`variable-debugger-item ${changed ? "changed" : ""}`}
-                  >
-                    <div className="variable-debugger-key">{key}</div>
-
-                    <div className="variable-debugger-value">
-                      {changed ? (
-                        <>
-                          <span className="variable-debugger-old">
-                            {String(previousValue)}
-                          </span>
-                          <span className="variable-debugger-arrow">→</span>
-                          <span className="variable-debugger-new">
-                            {String(value)}
-                          </span>
-                        </>
-                      ) : (
-                        <span>{String(value)}</span>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          ))}
-      </div>
+      <PlayerStatsPanel
+        playVariables={playVariables}
+        initialVariables={initialVariables}
+        revealedVariableKeys={revealedVariableKeys}
+        changedVariableKeys={changedVariableKeys}
+        nodes={nodes}
+        currentPlayNode={currentPlayNode}
+      />
 
       {!currentPlayNode ? (
         <div className="preview-block">
@@ -607,6 +559,8 @@ export default function StoryPreview({
 
         </div>
       )}
+
+      </div>
 
       {!isDock && (
         <div className="helper-box">

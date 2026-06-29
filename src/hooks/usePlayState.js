@@ -1,5 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { applyEffects } from "../utils/storyLogic";
+import {
+  getInitiallyRevealedVariableKeys,
+  getNodeVariableExposure,
+} from "../utils/playerVariableStats";
 
 function cloneVariables(variables) {
   return { ...(variables || {}) };
@@ -24,6 +28,24 @@ export default function usePlayState(nodes, selectedNodeId, initialVariables = {
     cloneVariables(initialVariables)
   );
   const [changedVariableKeys, setChangedVariableKeys] = useState([]);
+  const [revealedVariableKeys, setRevealedVariableKeys] = useState(() =>
+    getInitiallyRevealedVariableKeys(initialVariables)
+  );
+
+  function mergeRevealedKeys(keys = []) {
+    if (!keys.length) return;
+    setRevealedVariableKeys((prev) => {
+      const next = new Set(prev);
+      keys.forEach((key) => {
+        if (key) next.add(key);
+      });
+      return [...next];
+    });
+  }
+
+  function resetRevealedKeys(variables = initialVariables) {
+    setRevealedVariableKeys(getInitiallyRevealedVariableKeys(variables));
+  }
 
   useEffect(() => {
     if (!nodes.length) {
@@ -32,6 +54,7 @@ export default function usePlayState(nodes, selectedNodeId, initialVariables = {
       setPlayVariables(cloneVariables(initialVariables));
       setPreviousPlayVariables(cloneVariables(initialVariables));
       setChangedVariableKeys([]);
+      resetRevealedKeys(initialVariables);
       return;
     }
 
@@ -45,6 +68,7 @@ export default function usePlayState(nodes, selectedNodeId, initialVariables = {
       setPlayVariables(cloneVariables(initialVariables));
       setPreviousPlayVariables(cloneVariables(initialVariables));
       setChangedVariableKeys([]);
+      resetRevealedKeys(initialVariables);
       return;
     }
 
@@ -59,6 +83,18 @@ export default function usePlayState(nodes, selectedNodeId, initialVariables = {
     return nodes.find((node) => node.id === currentPlayNodeId) || null;
   }, [nodes, currentPlayNodeId]);
 
+  useEffect(() => {
+    if (!currentPlayNode) return;
+    const exposure = getNodeVariableExposure(currentPlayNode);
+    if (!exposure.length) return;
+
+    setRevealedVariableKeys((prev) => {
+      const next = new Set(prev);
+      exposure.forEach((key) => next.add(key));
+      return [...next];
+    });
+  }, [currentPlayNode]);
+
   function startFromNode(nodeId) {
     if (!nodeId) return;
 
@@ -69,6 +105,7 @@ export default function usePlayState(nodes, selectedNodeId, initialVariables = {
     setPlayVariables(resetVars);
     setPreviousPlayVariables(resetVars);
     setChangedVariableKeys([]);
+    resetRevealedKeys(resetVars);
   }
 
   function resetToSelected() {
@@ -79,6 +116,7 @@ export default function usePlayState(nodes, selectedNodeId, initialVariables = {
     setPlayVariables(resetVars);
     setPreviousPlayVariables(resetVars);
     setChangedVariableKeys([]);
+    resetRevealedKeys(resetVars);
   }
 
   function goToNode(nodeId, effects = []) {
@@ -87,6 +125,7 @@ export default function usePlayState(nodes, selectedNodeId, initialVariables = {
     const safeEffects = effects || [];
     const beforeVars = cloneVariables(playVariables);
     const afterVars = applyEffects(safeEffects, beforeVars);
+    const changedKeys = getChangedKeys(beforeVars, afterVars);
 
     if (nodeId === currentPlayNodeId) {
       if (!safeEffects.length) return;
@@ -101,7 +140,8 @@ export default function usePlayState(nodes, selectedNodeId, initialVariables = {
 
       setPreviousPlayVariables(beforeVars);
       setPlayVariables(afterVars);
-      setChangedVariableKeys(getChangedKeys(beforeVars, afterVars));
+      setChangedVariableKeys(changedKeys);
+      mergeRevealedKeys(changedKeys);
       return;
     }
 
@@ -115,7 +155,8 @@ export default function usePlayState(nodes, selectedNodeId, initialVariables = {
 
     setPreviousPlayVariables(beforeVars);
     setPlayVariables(afterVars);
-    setChangedVariableKeys(getChangedKeys(beforeVars, afterVars));
+    setChangedVariableKeys(changedKeys);
+    mergeRevealedKeys(changedKeys);
     setCurrentPlayNodeId(nodeId);
   }
 
@@ -141,6 +182,7 @@ export default function usePlayState(nodes, selectedNodeId, initialVariables = {
     playVariables,
     previousPlayVariables,
     changedVariableKeys,
+    revealedVariableKeys,
     startFromNode,
     resetToSelected,
     goToNode,

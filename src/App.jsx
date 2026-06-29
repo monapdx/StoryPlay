@@ -586,7 +586,12 @@ function EditorApp() {
                   Close
                 </button>
               </div>
-              <StoryPreview {...story} {...play} variant="dock" />
+              <StoryPreview
+                {...story}
+                {...play}
+                initialVariables={story.variables}
+                variant="dock"
+              />
             </aside>
           </main>
 
