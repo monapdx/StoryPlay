@@ -9,6 +9,7 @@ import { saveEditorProject, loadEditorProject } from "../utils/storyProjectStora
 import { createCharacter, normalizeCharacters } from "../utils/storyEntities";
 import { normalizeVariableMeta } from "../utils/storyVariables";
 import { renderStoryText } from "../utils/storyReferences";
+import { buildStoryEdgesFromNodes } from "../utils/nodeGraphLinks";
 
 function makeNodeId() {
   return `node_${Math.random().toString(36).slice(2, 10)}`;
@@ -20,28 +21,7 @@ function makeChoiceLabel(targetTitle = "Next Block") {
 
 function buildEdgesFromNodes(nodes, characters = []) {
   const renderContext = { characters };
-  const edges = [];
-
-  for (const node of nodes) {
-    const choices = node?.data?.choices || [];
-
-    choices.forEach((choice, index) => {
-      if (!choice?.targetNodeId) return;
-
-      const rawLabel = choice.label || "";
-      edges.push({
-        id: `${node.id}__${choice.targetNodeId}__${index}`,
-        source: node.id,
-        target: choice.targetNodeId,
-        type: "storyEdge",
-        data: {
-          label: renderStoryText(rawLabel, renderContext),
-        },
-      });
-    });
-  }
-
-  return edges;
+  return buildStoryEdgesFromNodes(nodes, renderStoryText, renderContext);
 }
 
 function normalizeInitialStory(story) {

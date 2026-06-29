@@ -1,4 +1,9 @@
 import { getChoiceKind, CHOICE_KIND } from "./choiceKinds";
+import {
+  getNodeOutgoingLinks,
+  isBranchingGoToChoice,
+  nodeHasOutgoingLinks,
+} from "./nodeGraphLinks";
 
 export function analyzeStoryGraph(nodes = [], variables = {}) {
   const issues = [];
@@ -27,6 +32,14 @@ export function analyzeStoryGraph(nodes = [], variables = {}) {
   const incomingCounts = new Map(nodes.map((node) => [node.id, 0]));
   const visited = new Set();
 
+  function recordIncoming(targetNodeId) {
+    if (!targetNodeId || !nodeMap.has(targetNodeId)) return;
+    incomingCounts.set(
+      targetNodeId,
+      (incomingCounts.get(targetNodeId) || 0) + 1
+    );
+  }
+
   function dfs(nodeId) {
     if (!nodeId || visited.has(nodeId)) return;
     visited.add(nodeId);
@@ -34,10 +47,9 @@ export function analyzeStoryGraph(nodes = [], variables = {}) {
     const node = nodeMap.get(nodeId);
     if (!node) return;
 
-    const choices = node.data?.choices || [];
-    for (const choice of choices) {
-      if (choice.targetNodeId && nodeMap.has(choice.targetNodeId)) {
-        dfs(choice.targetNodeId);
+    for (const link of getNodeOutgoingLinks(node)) {
+      if (nodeMap.has(link.targetNodeId)) {
+        dfs(link.targetNodeId);
       }
     }
   }
@@ -45,10 +57,24 @@ export function analyzeStoryGraph(nodes = [], variables = {}) {
   for (const node of nodes) {
     const choices = node.data?.choices || [];
     const blockType = node.data?.blockType || "narrative";
+    const outgoingLinks = getNodeOutgoingLinks(node);
+
+    for (const link of outgoingLinks) {
+      if (!nodeMap.has(link.targetNodeId)) {
+        issues.push({
+          severity: "error",
+          nodeId: node.id,
+          code: "missing-node",
+          message: `Node "${node.data?.title || node.id}" link "${link.label}" points to a missing node.`,
+        });
+      } else {
+        recordIncoming(link.targetNodeId);
+      }
+    }
 
     for (const choice of choices) {
       const choiceKind = getChoiceKind(choice, blockType);
-      const choiceLabel = choice.label || "Untitled choice";
+      const choiceLabel = choice.label || choice.text || "Untitled choice";
 
       if (choiceKind === CHOICE_KIND.CHAT_REPLY) {
         if (!String(choice.npcResponse || "").trim()) {
@@ -61,27 +87,13 @@ export function analyzeStoryGraph(nodes = [], variables = {}) {
         }
       }
 
-      if (!choice.targetNodeId) {
-        if (choiceKind === CHOICE_KIND.GO_TO) {
-          issues.push({
-            severity: "warning",
-            nodeId: node.id,
-            code: "missing-target",
-            message: `Choice "${choiceLabel}" has no target.`,
-          });
-        }
-      } else if (!nodeMap.has(choice.targetNodeId)) {
+      if (isBranchingGoToChoice(choice, blockType) && !choice.targetNodeId) {
         issues.push({
-          severity: "error",
+          severity: "warning",
           nodeId: node.id,
-          code: "missing-node",
-          message: `Choice "${choiceLabel}" points to a missing node.`,
+          code: "missing-target",
+          message: `Choice "${choiceLabel}" has no target.`,
         });
-      } else {
-        incomingCounts.set(
-          choice.targetNodeId,
-          (incomingCounts.get(choice.targetNodeId) || 0) + 1
-        );
       }
 
       for (const condition of choice.conditions || []) {
@@ -90,7 +102,7 @@ export function analyzeStoryGraph(nodes = [], variables = {}) {
             severity: "warning",
             nodeId: node.id,
             code: "undefined-variable-condition",
-            message: `Choice "${choice.label || "Untitled choice"}" uses undefined variable "${condition.variable}" in a condition.`,
+            message: `Choice "${choice.label || choice.text || "Untitled choice"}" uses undefined variable "${condition.variable}" in a condition.`,
           });
         }
       }
@@ -101,7 +113,7 @@ export function analyzeStoryGraph(nodes = [], variables = {}) {
             severity: "warning",
             nodeId: node.id,
             code: "undefined-variable-effect",
-            message: `Choice "${choice.label || "Untitled choice"}" uses undefined variable "${effect.variable}" in an effect.`,
+            message: `Choice "${choice.label || choice.text || "Untitled choice"}" uses undefined variable "${effect.variable}" in an effect.`,
           });
         }
       }
@@ -118,13 +130,12 @@ export function analyzeStoryGraph(nodes = [], variables = {}) {
       }
     }
 
-    const isEnding = node.data?.blockType === "ending";
-    if (!isEnding && choices.length === 0) {
+    if (!nodeHasOutgoingLinks(node)) {
       issues.push({
         severity: "warning",
         nodeId: node.id,
         code: "no-exits",
-        message: `Node "${node.data?.title || node.id}" has no outgoing choices.`,
+        message: `Node "${node.data?.title || node.id}" has no outgoing connections.`,
       });
     }
   }
@@ -151,7 +162,7 @@ export function analyzeStoryGraph(nodes = [], variables = {}) {
         severity: "warning",
         nodeId: node.id,
         code: "no-incoming",
-        message: `Node "${node.data?.title || node.id}" has no incoming choices.`,
+        message: `Node "${node.data?.title || node.id}" has no incoming connections.`,
       });
     }
   }
