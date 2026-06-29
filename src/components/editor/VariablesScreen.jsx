@@ -7,6 +7,8 @@ import VariableEditor from "./VariableEditor";
 export default function VariablesScreen({
   variables,
   setVariables,
+  variableMeta,
+  setVariableMeta,
   onBack,
   activeTemplateLabel = "Blank project",
   onOpenTemplates,
@@ -105,6 +107,7 @@ export default function VariablesScreen({
               </li>
               <li>
                 <strong>Preview</strong> — play mode starts from these defaults, then applies effects as you play.
+                Set <strong>player-facing names</strong> on each variable so stats read naturally in preview and play mode.
               </li>
               <li>
                 <strong>Export</strong> — use <strong>Export Game</strong> in the bar above; the same{" "}
@@ -129,6 +132,8 @@ export default function VariablesScreen({
           <VariableEditor
             variables={variables}
             setVariables={setVariables}
+            variableMeta={variableMeta}
+            setVariableMeta={setVariableMeta}
             showHeading={false}
           />
         </section>

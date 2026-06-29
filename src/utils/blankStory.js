@@ -3,6 +3,7 @@ export function createBlankStory() {
   return {
     nodes: [],
     variables: {},
+    variableMeta: {},
     characters: [],
   };
 }

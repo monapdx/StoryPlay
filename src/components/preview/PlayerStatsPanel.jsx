@@ -44,8 +44,8 @@ function AnimatedStatNumber({ value, className = "" }) {
   return <span className={className}>{display}</span>;
 }
 
-function StatValue({ statKey, value, nodes, changed }) {
-  const formatted = formatPlayerStatValue(statKey, value, nodes);
+function StatValue({ statKey, value, nodes, variableMeta, changed }) {
+  const formatted = formatPlayerStatValue(statKey, value, nodes, variableMeta);
   const isNumber = typeof value === "number";
 
   if (isNumber) {
@@ -75,6 +75,7 @@ export default function PlayerStatsPanel({
   revealedVariableKeys = [],
   changedVariableKeys = [],
   nodes = [],
+  variableMeta = {},
   currentPlayNode = null,
 }) {
   const activeNodeExposure = useMemo(() => {
@@ -90,8 +91,16 @@ export default function PlayerStatsPanel({
         revealedKeys: revealedVariableKeys,
         activeNodeExposure,
         nodes,
+        variableMeta,
       }),
-    [playVariables, initialVariables, revealedVariableKeys, activeNodeExposure, nodes]
+    [
+      playVariables,
+      initialVariables,
+      revealedVariableKeys,
+      activeNodeExposure,
+      nodes,
+      variableMeta,
+    ]
   );
 
   const [enteredKeys, setEnteredKeys] = useState(() => new Set());
@@ -162,6 +171,7 @@ export default function PlayerStatsPanel({
                   statKey={stat.key}
                   value={stat.value}
                   nodes={nodes}
+                  variableMeta={variableMeta}
                   changed={changed}
                 />
                 <span className="player-stat-card__description">

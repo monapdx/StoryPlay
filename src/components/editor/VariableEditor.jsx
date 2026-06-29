@@ -1,5 +1,13 @@
 import { useEffect, useState } from "react";
 
+import {
+  deleteVariableMetaKey,
+  getAuthoredPlayerLabel,
+  normalizeVariableMeta,
+  patchVariableMeta,
+  renameVariableMetaKey,
+} from "../../utils/storyVariables";
+
 function detectType(value) {
   if (typeof value === "boolean") return "boolean";
   if (typeof value === "number") return "number";
@@ -20,6 +28,8 @@ function coerceValue(type, rawValue) {
 export default function VariableEditor({
   variables = {},
   setVariables,
+  variableMeta = {},
+  setVariableMeta,
   showHeading = true,
 }) {
   const entries = Object.entries(variables || {});
@@ -51,6 +61,9 @@ export default function VariableEditor({
     const next = { ...variables };
     delete next[key];
     setVariables(next);
+    if (setVariableMeta) {
+      setVariableMeta(deleteVariableMetaKey(variableMeta, key));
+    }
   }
 
   function renameVariable(oldKey, newKey) {
@@ -68,9 +81,18 @@ export default function VariableEditor({
 
     setVariables(next);
 
+    if (setVariableMeta) {
+      setVariableMeta(renameVariableMetaKey(variableMeta, oldKey, trimmed));
+    }
+
     if (expandedVariableKey === oldKey) {
       setExpandedVariableKey(trimmed);
     }
+  }
+
+  function updateVariableMetaField(key, field, value) {
+    if (!setVariableMeta) return;
+    setVariableMeta(patchVariableMeta(variableMeta, key, { [field]: value }));
   }
 
   function updateVariableValue(key, value) {
@@ -125,6 +147,8 @@ export default function VariableEditor({
 
           const type = detectType(value);
           const isExpanded = expandedVariableKey === key;
+          const playerLabel = getAuthoredPlayerLabel(key, variableMeta);
+          const meta = normalizeVariableMeta(variableMeta)[key] || {};
 
           return (
             <div key={key} className={`choice-row ${isExpanded ? "is-expanded" : ""}`}>
@@ -135,8 +159,11 @@ export default function VariableEditor({
                 aria-expanded={isExpanded}
               >
                 <span>
-                  <span className="collapsible-row-title">{key}</span>
+                  <span className="collapsible-row-title">
+                    {playerLabel || key}
+                  </span>
                   <span className="collapsible-row-meta">
+                    {playerLabel ? `${key} · ` : ""}
                     {type}: {String(value)}
                   </span>
                 </span>
@@ -148,13 +175,54 @@ export default function VariableEditor({
               {isExpanded && (
                 <>
                   <div className="form-group">
-                    <label className="form-label">Name</label>
+                    <label className="form-label">Variable id</label>
+                    <p className="form-hint">
+                      Internal name used in conditions and effects. Players do not see this.
+                    </p>
 
                     <input
                       className="form-input"
                       defaultValue={key}
                       onFocus={() => setExpandedVariableKey(key)}
                       onBlur={(e) => renameVariable(key, e.target.value)}
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">Player-facing name</label>
+                    <p className="form-hint">
+                      Shown on the play stats panel when this variable is visible.
+                    </p>
+
+                    <input
+                      className="form-input"
+                      value={meta.playerLabel || ""}
+                      placeholder={key}
+                      onFocus={() => setExpandedVariableKey(key)}
+                      onChange={(e) =>
+                        updateVariableMetaField(key, "playerLabel", e.target.value)
+                      }
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">Player description</label>
+                    <p className="form-hint">
+                      Short flavor text under the stat value in preview and play mode.
+                    </p>
+
+                    <input
+                      className="form-input"
+                      value={meta.playerDescription || ""}
+                      placeholder="Optional description for players"
+                      onFocus={() => setExpandedVariableKey(key)}
+                      onChange={(e) =>
+                        updateVariableMetaField(
+                          key,
+                          "playerDescription",
+                          e.target.value
+                        )
+                      }
                     />
                   </div>
 

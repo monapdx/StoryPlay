@@ -4,6 +4,7 @@
  */
 
 import { normalizeCharacters } from "./storyEntities";
+import { normalizeVariableMeta } from "./storyVariables";
 import { STORYPLAY_EXPORT_FORMAT_VERSION } from "./projectSchema";
 import { resolveNodesTextForExport } from "./storyReferences";
 
@@ -45,6 +46,7 @@ function cloneNodeForExport(node, { cleanGraphIssues }) {
  * @param {object} params
  * @param {object[]} [params.nodes] - React Flow nodes from useStoryState
  * @param {Record<string, unknown>} [params.variables] - variables map from useStoryState
+ * @param {Record<string, { playerLabel?: string, playerDescription?: string, icon?: string }>} [params.variableMeta] - player-facing stat labels
  * @param {object[]} [params.characters] - character registry from useStoryState
  * @param {object} [params.meta] - Optional envelope metadata (title, author, description, startNodeId)
  * @param {boolean} [params.includeExportedAt=true] - Set ISO `exportedAt` on the document
@@ -54,12 +56,13 @@ function cloneNodeForExport(node, { cleanGraphIssues }) {
  *   formatVersion: number,
  *   exportedAt?: string,
  *   meta?: object,
- *   story: { variables: Record<string, unknown>, characters: object[], nodes: unknown[] }
+ *   story: { variables: Record<string, unknown>, variableMeta?: object, characters: object[], nodes: unknown[] }
  * }}
  */
 export function serializeStoryPlayExportV1({
   nodes = [],
   variables = {},
+  variableMeta = {},
   characters = [],
   meta,
   includeExportedAt = true,
@@ -72,6 +75,7 @@ export function serializeStoryPlayExportV1({
       ? variables
       : {};
   const safeCharacters = normalizeCharacters(characters);
+  const safeVariableMeta = normalizeVariableMeta(variableMeta);
 
   let storyNodes = safeNodes.map((node) => cloneNodeForExport(node, { cleanGraphIssues }));
 
@@ -83,13 +87,20 @@ export function serializeStoryPlayExportV1({
   }
 
   /** @type {Record<string, unknown>} */
+  const storyPayload = {
+    variables: cloneJson(safeVariables),
+    characters: cloneJson(safeCharacters),
+    nodes: storyNodes,
+  };
+
+  if (Object.keys(safeVariableMeta).length > 0) {
+    storyPayload.variableMeta = cloneJson(safeVariableMeta);
+  }
+
+  /** @type {Record<string, unknown>} */
   const doc = {
     formatVersion: STORYPLAY_EXPORT_FORMAT_VERSION,
-    story: {
-      variables: cloneJson(safeVariables),
-      characters: cloneJson(safeCharacters),
-      nodes: storyNodes,
-    },
+    story: storyPayload,
   };
 
   if (includeExportedAt) {

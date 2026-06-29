@@ -1,4 +1,5 @@
 import { normalizeCharacters } from "./storyEntities";
+import { normalizeVariableMeta } from "./storyVariables";
 import {
   buildStoryPlayImportSummary,
   validateStoryGraphReferences,
@@ -54,7 +55,7 @@ function cloneJson(value) {
  * Fill safe defaults without inventing missing node ids or repairing broken links.
  *
  * @param {Record<string, unknown>} story
- * @returns {{ variables: Record<string, unknown>, characters: import("./storyEntities").StoryCharacter[], nodes: unknown[] }}
+ * @returns {{ variables: Record<string, unknown>, variableMeta: Record<string, object>, characters: import("./storyEntities").StoryCharacter[], nodes: unknown[] }}
  */
 export function normalizeImportedStory(story) {
   const safeStory = cloneJson(story);
@@ -62,6 +63,8 @@ export function normalizeImportedStory(story) {
   if (!safeStory.variables || typeof safeStory.variables !== "object" || Array.isArray(safeStory.variables)) {
     safeStory.variables = {};
   }
+
+  safeStory.variableMeta = normalizeVariableMeta(safeStory.variableMeta);
 
   if (!Array.isArray(safeStory.characters)) {
     safeStory.characters = [];
@@ -107,7 +110,7 @@ export function normalizeImportedStory(story) {
  *   errors: string[],
  *   warnings: string[],
  *   summary: import("./projectSchema").StoryPlayImportSummary | null,
- *   story: { variables: Record<string, unknown>, characters: unknown[], nodes: unknown[] } | null,
+ *   story: { variables: Record<string, unknown>, variableMeta?: Record<string, object>, characters: unknown[], nodes: unknown[] } | null,
  *   project: Record<string, unknown> | null
  * }}
  */

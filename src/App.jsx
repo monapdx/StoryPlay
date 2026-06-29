@@ -45,6 +45,7 @@ function EditorApp() {
       return serializeStoryPlayExportV1({
         nodes: s.nodes,
         variables: s.variables,
+        variableMeta: s.variableMeta,
         characters: s.characters,
       });
     }
@@ -60,6 +61,7 @@ function EditorApp() {
       return downloadStoryPlayExportV1({
         nodes: s.nodes,
         variables: s.variables,
+        variableMeta: s.variableMeta,
         characters: s.characters,
       });
     };
@@ -87,13 +89,21 @@ function EditorApp() {
       saveCurrentStoryForPreview({
         nodes: s.nodes,
         variables: s.variables,
+        variableMeta: s.variableMeta,
         characters: s.characters,
         selectedNodeId: s.selectedNodeId,
       });
     }, 1500);
 
     return () => window.clearTimeout(id);
-  }, [story.nodes, story.variables, story.characters, story.selectedNodeId, previewSyncTick]);
+  }, [
+    story.nodes,
+    story.variables,
+    story.variableMeta,
+    story.characters,
+    story.selectedNodeId,
+    previewSyncTick,
+  ]);
 
   const [isMiniGameOpen, setIsMiniGameOpen] = useState(false);
   const [activeScreen, setActiveScreen] = useState("editor");
@@ -302,6 +312,7 @@ function EditorApp() {
     downloadStoryPlayExportV1({
       nodes: story.nodes,
       variables: story.variables,
+      variableMeta: story.variableMeta,
       characters: story.characters,
     });
   }
@@ -348,6 +359,7 @@ function EditorApp() {
     saveCurrentStoryForPreview({
       nodes: importPreview.story.nodes,
       variables: importPreview.story.variables,
+      variableMeta: importPreview.story.variableMeta,
       characters: importPreview.story.characters,
       selectedNodeId: importPreview.story.nodes[0]?.id || null,
     });
@@ -360,6 +372,7 @@ function EditorApp() {
     saveCurrentStoryForPreview({
       nodes: story.nodes,
       variables: story.variables,
+      variableMeta: story.variableMeta,
       characters: story.characters,
       selectedNodeId: story.selectedNodeId,
     });
@@ -402,6 +415,8 @@ function EditorApp() {
         <VariablesScreen
           variables={story.variables}
           setVariables={story.setVariables}
+          variableMeta={story.variableMeta}
+          setVariableMeta={story.setVariableMeta}
           onBack={handleCloseVariablesWorkspace}
           activeTemplateLabel={getActiveTemplateLabel(story)}
           onOpenTemplates={handleOpenTemplates}

@@ -3,6 +3,8 @@
  * conditional endings. Uses optional continueNodeId on mini-games
  * so preview can advance after trait/weighting.
  */
+import guildVariableMeta from "./guildVariableMeta";
+
 const guildAuditionStory = {
   variables: {
     reputation: 0,
@@ -15,6 +17,8 @@ const guildAuditionStory = {
     prepAllocation: {},
     buildFocus: [],
   },
+
+  variableMeta: guildVariableMeta,
 
   nodes: [
     {

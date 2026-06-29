@@ -34,6 +34,7 @@ export default function StoryPreview({
   changedVariableKeys,
   revealedVariableKeys = [],
   initialVariables = {},
+  variableMeta = {},
   startFromNode,
   resetToSelected,
   goToNode,
@@ -392,6 +393,7 @@ export default function StoryPreview({
         revealedVariableKeys={revealedVariableKeys}
         changedVariableKeys={changedVariableKeys}
         nodes={nodes}
+        variableMeta={variableMeta}
         currentPlayNode={currentPlayNode}
       />
 

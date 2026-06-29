@@ -7,6 +7,7 @@ import {
 import { createBlankStory } from "../utils/blankStory";
 import { saveEditorProject, loadEditorProject } from "../utils/storyProjectStorage";
 import { createCharacter, normalizeCharacters } from "../utils/storyEntities";
+import { normalizeVariableMeta } from "../utils/storyVariables";
 import { renderStoryText } from "../utils/storyReferences";
 
 function makeNodeId() {
@@ -53,12 +54,13 @@ function normalizeInitialStory(story) {
   return {
     nodes: safeNodes,
     variables: safeVariables,
+    variableMeta: normalizeVariableMeta(story?.variableMeta),
     characters: normalizeCharacters(story?.characters),
   };
 }
 
-function stableDemoSignature(nodes, variables, characters) {
-  return JSON.stringify({ nodes, variables, characters });
+function stableDemoSignature(nodes, variables, characters, variableMeta) {
+  return JSON.stringify({ nodes, variables, characters, variableMeta });
 }
 
 export default function useStoryState() {
@@ -75,6 +77,7 @@ export default function useStoryState() {
 
   const [nodes, setNodes] = useState(initial.nodes);
   const [variables, setVariables] = useState(initial.variables);
+  const [variableMeta, setVariableMeta] = useState(initial.variableMeta);
   const [characters, setCharacters] = useState(initial.characters);
   const [selectedNodeId, setSelectedNodeId] = useState(
     () => initial.nodes[0]?.id || null
@@ -83,14 +86,20 @@ export default function useStoryState() {
   selectedNodeIdRef.current = selectedNodeId;
 
   const [storyBaselineSignature, setStoryBaselineSignature] = useState(() =>
-    stableDemoSignature(initial.nodes, initial.variables, initial.characters)
+    stableDemoSignature(
+      initial.nodes,
+      initial.variables,
+      initial.characters,
+      initial.variableMeta
+    )
   );
 
   const isStoryDirty = useMemo(() => {
     return (
-      stableDemoSignature(nodes, variables, characters) !== storyBaselineSignature
+      stableDemoSignature(nodes, variables, characters, variableMeta) !==
+      storyBaselineSignature
     );
-  }, [nodes, variables, characters, storyBaselineSignature]);
+  }, [nodes, variables, characters, variableMeta, storyBaselineSignature]);
 
   const isBlankProject = nodes.length === 0 && activeDemoStoryId == null;
 
@@ -105,11 +114,17 @@ export default function useStoryState() {
 
     setNodes(next.nodes);
     setVariables(next.variables);
+    setVariableMeta(next.variableMeta);
     setCharacters(next.characters);
     setSelectedNodeId(next.nodes[0]?.id || null);
     setActiveDemoStoryId(storyId);
     setStoryBaselineSignature(
-      stableDemoSignature(next.nodes, next.variables, next.characters)
+      stableDemoSignature(
+        next.nodes,
+        next.variables,
+        next.characters,
+        next.variableMeta
+      )
     );
     saveEditorProject(next);
   }
@@ -118,11 +133,17 @@ export default function useStoryState() {
     const next = normalizeInitialStory(createBlankStory());
     setNodes(next.nodes);
     setVariables(next.variables);
+    setVariableMeta(next.variableMeta);
     setCharacters(next.characters);
     setSelectedNodeId(null);
     setActiveDemoStoryId(null);
     setStoryBaselineSignature(
-      stableDemoSignature(next.nodes, next.variables, next.characters)
+      stableDemoSignature(
+        next.nodes,
+        next.variables,
+        next.characters,
+        next.variableMeta
+      )
     );
     saveEditorProject(next);
   }
@@ -131,11 +152,17 @@ export default function useStoryState() {
     const next = normalizeInitialStory(story);
     setNodes(next.nodes);
     setVariables(next.variables);
+    setVariableMeta(next.variableMeta);
     setCharacters(next.characters);
     setSelectedNodeId(next.nodes[0]?.id || null);
     setActiveDemoStoryId(null);
     setStoryBaselineSignature(
-      stableDemoSignature(next.nodes, next.variables, next.characters)
+      stableDemoSignature(
+        next.nodes,
+        next.variables,
+        next.characters,
+        next.variableMeta
+      )
     );
     saveEditorProject(next);
   }
@@ -481,6 +508,8 @@ export default function useStoryState() {
     edges,
     variables,
     setVariables,
+    variableMeta,
+    setVariableMeta,
     characters,
     setCharacters,
     addCharacter,

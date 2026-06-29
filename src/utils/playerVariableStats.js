@@ -144,9 +144,19 @@ function lookupDisplayFromNodes(nodes, variableKey) {
 /**
  * @param {string} key
  * @param {unknown[]} [nodes]
+ * @param {Record<string, import("./storyVariables").VariablePlayerMeta>} [variableMeta]
  * @returns {PlayerVariableDisplay}
  */
-export function getPlayerVariableDisplay(key, nodes = []) {
+export function getPlayerVariableDisplay(key, nodes = [], variableMeta = {}) {
+  const authored = variableMeta?.[key];
+  if (authored?.playerLabel) {
+    return {
+      label: authored.playerLabel,
+      description: authored.playerDescription || "Story progress",
+      icon: authored.icon || "◆",
+    };
+  }
+
   if (KNOWN_DISPLAY[key]) {
     return KNOWN_DISPLAY[key];
   }
@@ -261,6 +271,7 @@ export function getInitiallyRevealedVariableKeys(initialVariables = {}) {
  * @param {string[]} params.revealedKeys
  * @param {string[]} [params.activeNodeExposure]
  * @param {unknown[]} [params.nodes]
+ * @param {Record<string, import("./storyVariables").VariablePlayerMeta>} [params.variableMeta]
  * @returns {Array<{ key: string, value: unknown, display: PlayerVariableDisplay }>}
  */
 export function getVisiblePlayerStats({
@@ -269,6 +280,7 @@ export function getVisiblePlayerStats({
   revealedKeys = [],
   activeNodeExposure = [],
   nodes = [],
+  variableMeta = {},
 }) {
   const revealed = new Set(revealedKeys);
   const activeExposure = new Set(activeNodeExposure);
@@ -293,7 +305,7 @@ export function getVisiblePlayerStats({
     visible.push({
       key,
       value,
-      display: getPlayerVariableDisplay(key, nodes),
+      display: getPlayerVariableDisplay(key, nodes, variableMeta),
     });
   }
 
@@ -304,8 +316,9 @@ export function getVisiblePlayerStats({
  * @param {string} key
  * @param {unknown} value
  * @param {unknown[]} [nodes]
+ * @param {Record<string, import("./storyVariables").VariablePlayerMeta>} [variableMeta]
  */
-export function formatPlayerStatValue(key, value, nodes = []) {
+export function formatPlayerStatValue(key, value, nodes = [], variableMeta = {}) {
   if (typeof value === "boolean") {
     return value ? "Yes" : "No";
   }
@@ -324,7 +337,7 @@ export function formatPlayerStatValue(key, value, nodes = []) {
     return entries
       .map(([part, amount]) => {
         const fullKey = key === "prepAllocation" ? `prep_${part}` : part;
-        const label = getPlayerVariableDisplay(fullKey, nodes).label;
+        const label = getPlayerVariableDisplay(fullKey, nodes, variableMeta).label;
         return `${label}: ${amount}`;
       })
       .join(" · ");

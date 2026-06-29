@@ -1,4 +1,6 @@
 /** localStorage key for "Play in new tab" snapshot (same shape as editor: nodes + variables). */
+import { normalizeVariableMeta } from "./storyVariables";
+
 export const STORYPLAY_PREVIEW_STORAGE_KEY = "storyplay-current-preview";
 
 /** BroadcastChannel name so play tabs can refresh when the snapshot updates. */
@@ -43,6 +45,7 @@ export function isLivePreviewSyncEnabled() {
 export function saveCurrentStoryForPreview({
   nodes,
   variables,
+  variableMeta,
   characters,
   selectedNodeId,
 }) {
@@ -50,6 +53,10 @@ export function saveCurrentStoryForPreview({
     nodes,
     variables:
       variables && typeof variables === "object" ? variables : {},
+    variableMeta:
+      variableMeta && typeof variableMeta === "object" && !Array.isArray(variableMeta)
+        ? variableMeta
+        : {},
     characters: Array.isArray(characters) ? characters : [],
     selectedNodeId: selectedNodeId ?? null,
     savedAt: new Date().toISOString(),
@@ -59,7 +66,7 @@ export function saveCurrentStoryForPreview({
 }
 
 /**
- * @returns {null | { nodes: unknown[], variables: Record<string, unknown>, selectedNodeId: string | null, savedAt?: string }}
+ * @returns {null | { nodes: unknown[], variables: Record<string, unknown>, variableMeta: Record<string, object>, characters: unknown[], selectedNodeId: string | null, savedAt?: string }}
  */
 export function loadStoryForPreview() {
   try {
@@ -72,11 +79,13 @@ export function loadStoryForPreview() {
         ? data.variables
         : {};
     const characters = Array.isArray(data.characters) ? data.characters : [];
+    const variableMeta = normalizeVariableMeta(data.variableMeta);
     const selectedNodeId =
       typeof data.selectedNodeId === "string" ? data.selectedNodeId : null;
     return {
       nodes: data.nodes,
       variables,
+      variableMeta,
       characters,
       selectedNodeId,
       savedAt: typeof data.savedAt === "string" ? data.savedAt : undefined,

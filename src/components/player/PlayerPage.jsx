@@ -31,6 +31,7 @@ export default function PlayerPage() {
 
   const nodes = snapshot?.nodes ?? [];
   const variables = snapshot?.variables ?? {};
+  const variableMeta = snapshot?.variableMeta ?? {};
   const characters = snapshot?.characters ?? [];
   const selectedNodeId = useMemo(() => {
     if (!snapshot?.nodes?.length) return null;
@@ -85,6 +86,7 @@ export default function PlayerPage() {
               selectedNode={selectedNode}
               selectedNodeId={selectedNodeId}
               initialVariables={variables}
+              variableMeta={variableMeta}
             />
           </div>
         </div>

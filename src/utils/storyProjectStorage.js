@@ -1,17 +1,23 @@
 /** localStorage key for the editor's working project (nodes + variables + characters). */
+import { normalizeVariableMeta } from "./storyVariables";
+
 export const STORYPLAY_EDITOR_STORAGE_KEY = "storyplay-editor-project";
 
 /**
  * Persist editor story state so imports and sessions survive refresh.
  *
- * @param {{ nodes: unknown[], variables: Record<string, unknown>, characters: unknown[] }} story
+ * @param {{ nodes: unknown[], variables: Record<string, unknown>, variableMeta?: Record<string, unknown>, characters: unknown[] }} story
  */
-export function saveEditorProject({ nodes, variables, characters }) {
+export function saveEditorProject({ nodes, variables, variableMeta, characters }) {
   const payload = {
     nodes: Array.isArray(nodes) ? nodes : [],
     variables:
       variables && typeof variables === "object" && !Array.isArray(variables)
         ? variables
+        : {},
+    variableMeta:
+      variableMeta && typeof variableMeta === "object" && !Array.isArray(variableMeta)
+        ? variableMeta
         : {},
     characters: Array.isArray(characters) ? characters : [],
     savedAt: new Date().toISOString(),
@@ -25,7 +31,7 @@ export function saveEditorProject({ nodes, variables, characters }) {
 }
 
 /**
- * @returns {null | { nodes: unknown[], variables: Record<string, unknown>, characters: unknown[], savedAt?: string }}
+ * @returns {null | { nodes: unknown[], variables: Record<string, unknown>, variableMeta: Record<string, object>, characters: unknown[], savedAt?: string }}
  */
 export function loadEditorProject() {
   try {
@@ -41,10 +47,12 @@ export function loadEditorProject() {
         : {};
 
     const characters = Array.isArray(data.characters) ? data.characters : [];
+    const variableMeta = normalizeVariableMeta(data.variableMeta);
 
     return {
       nodes: data.nodes,
       variables,
+      variableMeta,
       characters,
       savedAt: typeof data.savedAt === "string" ? data.savedAt : undefined,
     };

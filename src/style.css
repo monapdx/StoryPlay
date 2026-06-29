@@ -1525,6 +1525,13 @@ select {
   color: #cbd5e1;
 }
 
+.form-hint {
+  margin: 0 0 6px;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: #94a3b8;
+}
+
 .form-input,
 .form-textarea,
 .form-select {
