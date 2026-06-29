@@ -39,10 +39,11 @@ export default function StoryPreview({
   resetToSelected,
   goToNode,
   goBack,
-  /** "dock" = compact inline editor preview; default = full sidebar chrome */
+  /** "dock" = compact inline editor preview; "player" = standalone #/play tab */
   variant = "default",
 }) {
   const isDock = variant === "dock";
+  const isPlayer = variant === "player";
   const [timeLeft, setTimeLeft] = useState(null);
 
   const [chatThreadLines, setChatThreadLines] = useState([]);
@@ -343,10 +344,12 @@ export default function StoryPreview({
       <div className="preview-play-shell">
       <div className="preview-header-row">
         <h2 className="section-title" style={{ marginBottom: 0 }}>
-          {isDock ? "Preview" : "Play Preview"}
+          {isDock ? "Preview" : isPlayer ? "Play" : "Play Preview"}
         </h2>
 
         <div className="preview-toolbar">
+          {!isPlayer && (
+            <>
           <button
             className="toolbar-button"
             onClick={() => {
@@ -377,6 +380,30 @@ export default function StoryPreview({
           >
             Reset
           </button>
+            </>
+          )}
+
+          {isPlayer && (
+            <>
+              <button
+                className="toolbar-button"
+                onClick={goBack}
+                disabled={!history?.length}
+              >
+                Back
+              </button>
+
+              <button
+                className="toolbar-button"
+                onClick={() => {
+                  bumpPreviewSession();
+                  resetToSelected();
+                }}
+              >
+                Restart
+              </button>
+            </>
+          )}
         </div>
       </div>
 
@@ -526,7 +553,7 @@ export default function StoryPreview({
             </div>
           )}
 
-          {!isDock && (
+          {!isDock && !isPlayer && (
             <div className="helper-box" style={{ marginTop: 12 }}>
               Block type: {blockType}
             </div>
@@ -557,7 +584,7 @@ export default function StoryPreview({
 
       </div>
 
-      {!isDock && (
+      {!isDock && !isPlayer && (
         <div className="helper-box">
           <button
             type="button"

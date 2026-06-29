@@ -12,7 +12,7 @@ export default function PlayChoiceButton({
     renderStoryText(targetNode?.data?.title, storyState) || "Unlinked block";
 
   return (
-    <button className="preview-choice-button" onClick={onChoose}>
+    <button type="button" className="preview-choice-button" onClick={onChoose}>
       <span>{label}</span>
       <span className="preview-choice-target">{targetTitle}</span>
     </button>

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import StoryPreview from "../preview/StoryPreview";
 import usePlayState from "../../hooks/usePlayState";
 import {
@@ -6,16 +6,34 @@ import {
   STORYPLAY_PREVIEW_BROADCAST_CHANNEL,
 } from "../../utils/storyPreviewStorage";
 import { setEditorHash } from "../../utils/hashRoute";
+import {
+  getNodesSignature,
+  resolvePlayEntryNodeId,
+} from "../../utils/playEntryNode";
 
 export default function PlayerPage() {
   const [snapshot, setSnapshot] = useState(() => loadStoryForPreview());
+  const playEntryNodeIdRef = useRef(null);
+  const lastNodesSignatureRef = useRef("");
 
   useEffect(() => {
     let bc;
     try {
       bc = new BroadcastChannel(STORYPLAY_PREVIEW_BROADCAST_CHANNEL);
       bc.onmessage = () => {
-        setSnapshot(loadStoryForPreview());
+        const nextSnapshot = loadStoryForPreview();
+        if (!nextSnapshot) return;
+
+        const nextSignature = getNodesSignature(nextSnapshot.nodes);
+        if (
+          lastNodesSignatureRef.current &&
+          nextSignature !== lastNodesSignatureRef.current
+        ) {
+          playEntryNodeIdRef.current = resolvePlayEntryNodeId(nextSnapshot.nodes);
+        }
+
+        lastNodesSignatureRef.current = nextSignature;
+        setSnapshot(nextSnapshot);
       };
     } catch {
       /* ignore */
@@ -33,18 +51,21 @@ export default function PlayerPage() {
   const variables = snapshot?.variables ?? {};
   const variableMeta = snapshot?.variableMeta ?? {};
   const characters = snapshot?.characters ?? [];
-  const selectedNodeId = useMemo(() => {
-    if (!snapshot?.nodes?.length) return null;
-    const id = snapshot.selectedNodeId;
-    if (id && snapshot.nodes.some((n) => n.id === id)) return id;
-    return snapshot.nodes[0]?.id ?? null;
-  }, [snapshot]);
+
+  if (playEntryNodeIdRef.current == null && nodes.length > 0) {
+    playEntryNodeIdRef.current = resolvePlayEntryNodeId(nodes);
+    lastNodesSignatureRef.current = getNodesSignature(nodes);
+  }
+
+  const playEntryNodeId = playEntryNodeIdRef.current;
 
   const selectedNode = useMemo(() => {
-    return nodes.find((n) => n.id === selectedNodeId) || null;
-  }, [nodes, selectedNodeId]);
+    return nodes.find((n) => n.id === playEntryNodeId) || nodes[0] || null;
+  }, [nodes, playEntryNodeId]);
 
-  const play = usePlayState(nodes, selectedNodeId, variables);
+  const play = usePlayState(nodes, playEntryNodeId, variables, {
+    standalone: true,
+  });
 
   const hasStory = Boolean(snapshot && Array.isArray(snapshot.nodes) && snapshot.nodes.length > 0);
 
@@ -84,9 +105,10 @@ export default function PlayerPage() {
               nodes={nodes}
               characters={characters}
               selectedNode={selectedNode}
-              selectedNodeId={selectedNodeId}
+              selectedNodeId={playEntryNodeId}
               initialVariables={variables}
               variableMeta={variableMeta}
+              variant="player"
             />
           </div>
         </div>
