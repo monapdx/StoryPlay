@@ -3,6 +3,8 @@
  * @see schemas/storyplay-export.v1.schema.json
  */
 
+import { normalizeStoryNodes } from "./nodeHelpers";
+
 export const STORYPLAY_EXPORT_FORMAT_VERSION = 1;
 
 export const SUPPORTED_FORMAT_VERSIONS = [STORYPLAY_EXPORT_FORMAT_VERSION];
@@ -22,6 +24,37 @@ export const SUPPORTED_FORMAT_VERSIONS = [STORYPLAY_EXPORT_FORMAT_VERSION];
  */
 function isPlainObject(value) {
   return value != null && typeof value === "object" && !Array.isArray(value);
+}
+
+function cloneJson(value) {
+  try {
+    if (typeof structuredClone === "function") {
+      return structuredClone(value);
+    }
+  } catch {
+    /* fall through */
+  }
+  return JSON.parse(JSON.stringify(value));
+}
+
+/**
+ * Apply safe defaults so exports from the live editor round-trip through import.
+ * @param {unknown} project
+ * @returns {Record<string, unknown>}
+ */
+export function canonicalizeStoryPlayProject(project) {
+  if (!isPlainObject(project)) return {};
+
+  const next = cloneJson(project);
+
+  if (isPlainObject(next.story) && Array.isArray(next.story.nodes)) {
+    next.story = {
+      ...next.story,
+      nodes: normalizeStoryNodes(next.story.nodes),
+    };
+  }
+
+  return next;
 }
 
 /**

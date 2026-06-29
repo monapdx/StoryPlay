@@ -10,6 +10,7 @@ import { createCharacter, normalizeCharacters } from "../utils/storyEntities";
 import { normalizeVariableMeta } from "../utils/storyVariables";
 import { renderStoryText } from "../utils/storyReferences";
 import { buildStoryEdgesFromNodes } from "../utils/nodeGraphLinks";
+import { normalizeStoryNodes } from "../utils/nodeHelpers";
 
 function makeNodeId() {
   return `node_${Math.random().toString(36).slice(2, 10)}`;
@@ -25,7 +26,9 @@ function buildEdgesFromNodes(nodes, characters = []) {
 }
 
 function normalizeInitialStory(story) {
-  const safeNodes = Array.isArray(story?.nodes) ? story.nodes : [];
+  const safeNodes = normalizeStoryNodes(
+    Array.isArray(story?.nodes) ? story.nodes : []
+  );
   const safeVariables =
     story?.variables && typeof story.variables === "object"
       ? story.variables
@@ -193,6 +196,7 @@ export default function useStoryState() {
 
     const newNode = {
       id: nextId,
+      type: "storyNode",
       position: {
         x: 260 + nodes.length * 40,
         y: 120 + nodes.length * 30,

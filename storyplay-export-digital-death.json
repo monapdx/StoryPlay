@@ -1,0 +1,243 @@
+{
+  "formatVersion": 1,
+  "story": {
+    "variables": {},
+    "characters": [
+      {
+        "id": "char_apywso25",
+        "name": "Lena",
+        "description": "",
+        "aliases": []
+      },
+      {
+        "id": "char_u25v4lym",
+        "name": "Me",
+        "description": "",
+        "aliases": []
+      }
+    ],
+    "nodes": [
+      {
+        "id": "node_duh3uoh2",
+        "position": {
+          "x": 259.14856824290695,
+          "y": 120
+        },
+        "data": {
+          "title": "Logged Out",
+          "content": "You wake up to the sound of a dial-up modem screaming in the dark.\n\nAt first, you think it is a memory. Then you realize the sound is coming from inside your chest.\n\nYou are lying on a carpeted floor in a room lit by the blue glow of an old CRT monitor. The air smells like dust, ozone, and rain through an open window. On the screen, a blinking cursor waits beneath a single sentence:\n\nUSER SESSION ENDED.\n\nYou remember pain. Headlights. A wet road. The weightless moment before impact.\n\nThen nothing.\n\nNow this.\n\nThe monitor flickers.\n\nWelcome to the Dead Web.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "label": "Touch the keyboard",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_a4mwaygr",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "label": "Look around the room first",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_xr6lhlgp",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "label": "Refuse to believe this is real",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_4mqqv8jv",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_a4mwaygr",
+        "position": {
+          "x": 622.9266021237763,
+          "y": -75.10082064045136
+        },
+        "data": {
+          "title": "Touch The Keyboard",
+          "content": "Lena: Don’t panic. Or panic, but type while doing it.",
+          "blockType": "chat",
+          "choices": [
+            {
+              "label": "Am I dead?",
+              "choiceKind": "chatReply",
+              "playerMessage": "Am I dead?",
+              "npcResponse": "Lena: Well, if you are...that means I am too!",
+              "targetNodeId": "node_3mibgm1q",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "label": "Where the Hell am I?",
+              "choiceKind": "chatReply",
+              "playerMessage": "Me: Where the Hell am I?",
+              "npcResponse": "Lena: How would I know that?",
+              "targetNodeId": "node_ps9zy2th",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_xr6lhlgp",
+        "position": {
+          "x": 783.1181833416294,
+          "y": 278.6812181018749
+        },
+        "data": {
+          "title": "Look Around The Room",
+          "content": "Write your story text here.",
+          "blockType": "narrative",
+          "choices": [],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_4mqqv8jv",
+        "position": {
+          "x": 953.9990907582544,
+          "y": -33.06474780155966
+        },
+        "data": {
+          "title": "Refuse to Believe ",
+          "content": "Write your story text here.",
+          "blockType": "narrative",
+          "choices": [],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_3mibgm1q",
+        "position": {
+          "x": 296.80891322382615,
+          "y": -56.901014779326324
+        },
+        "data": {
+          "title": "Am I Dead?",
+          "content": "Write your story text here.",
+          "blockType": "narrative",
+          "choices": [],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_ps9zy2th",
+        "position": {
+          "x": 1040.6591657541062,
+          "y": 170.86618350754944
+        },
+        "data": {
+          "title": "Where the Hell am I?",
+          "content": "Write your story text here.",
+          "blockType": "narrative",
+          "choices": [],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_2vow5rj3",
+        "position": {
+          "x": 500,
+          "y": 300
+        },
+        "data": {
+          "title": "The Bedroom",
+          "content": "The room looks like every computer room you ever knew and none of them exactly.\n\nA rolling chair. A tower PC. Burned CDs stacked in a spindle. A printer with no paper. A shelf of blank VHS tapes labeled in someone else’s handwriting.\n\nOn the wall are framed screenshots of dead websites: GeoCities pages, vanished forums, glitter graphics, abandoned blogs, guestbooks full of ghosts.\n\nThe door has no knob.\n\nThe monitor flashes again.\n\nPLEASE COMPLETE INTAKE.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "label": "Sit at computer",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_a4mwaygr",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "label": "Study the screenshots",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_rs5ismd3",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_rs5ismd3",
+        "position": {
+          "x": 1186.2367036336486,
+          "y": -67.00045563049609
+        },
+        "data": {
+          "title": "Screenshots",
+          "content": "Write your story text here.",
+          "blockType": "narrative",
+          "choices": [],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_m7kst9sg",
+        "position": {
+          "x": 585.9600222996515,
+          "y": -79.25896493280226
+        },
+        "data": {
+          "title": "Denial Timer",
+          "content": "The room begins deleting itself.\n\nFirst the wallpaper vanishes. Then the chair. Then the air near your hands turns into broken pixels.\n\nA countdown appears:\n\nREALITY ACCEPTANCE REQUIRED: 10 SECONDS",
+          "blockType": "timed",
+          "choices": [
+            {
+              "label": "Fine. I'm dead, accept it.",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_a4mwaygr",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "label": "No. I'm in a coma dream.",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "label": "Scream for someone alive",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      }
+    ]
+  },
+  "exportedAt": "2026-06-29T22:16:36.197Z"
+}

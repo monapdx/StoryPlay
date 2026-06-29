@@ -6,6 +6,7 @@
 import { normalizeCharacters } from "./storyEntities";
 import { normalizeVariableMeta } from "./storyVariables";
 import { STORYPLAY_EXPORT_FORMAT_VERSION } from "./projectSchema";
+import { normalizeStoryNode } from "./nodeHelpers";
 import { resolveNodesTextForExport } from "./storyReferences";
 
 export { STORYPLAY_EXPORT_FORMAT_VERSION };
@@ -37,7 +38,7 @@ function cloneNodeForExport(node, { cleanGraphIssues }) {
     next.data = restData;
   }
 
-  return next;
+  return normalizeStoryNode(next);
 }
 
 /**

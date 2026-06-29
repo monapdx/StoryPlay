@@ -1,7 +1,9 @@
 import { normalizeCharacters } from "./storyEntities";
 import { normalizeVariableMeta } from "./storyVariables";
+import { normalizeStoryNode } from "./nodeHelpers";
 import {
   buildStoryPlayImportSummary,
+  canonicalizeStoryPlayProject,
   validateStoryGraphReferences,
   validateStoryPlayProjectShape,
 } from "./projectSchema";
@@ -75,26 +77,7 @@ export function normalizeImportedStory(story) {
   if (!Array.isArray(safeStory.nodes)) {
     safeStory.nodes = [];
   } else {
-    safeStory.nodes = safeStory.nodes.map((node) => {
-      if (!node || typeof node !== "object") return node;
-
-      const next = { ...node };
-      if (!next.data || typeof next.data !== "object" || Array.isArray(next.data)) {
-        next.data = {};
-      } else {
-        next.data = { ...next.data };
-      }
-
-      if (!Array.isArray(next.data.choices)) {
-        next.data.choices = [];
-      }
-
-      if (!Array.isArray(next.data.enterEffects)) {
-        next.data.enterEffects = [];
-      }
-
-      return next;
-    });
+    safeStory.nodes = safeStory.nodes.map((node) => normalizeStoryNode(node));
   }
 
   return safeStory;
@@ -134,7 +117,8 @@ export function prepareStoryPlayImport(fileText) {
     };
   }
 
-  const { errors: shapeErrors, warnings } = validateStoryPlayProjectShape(raw);
+  const canonical = canonicalizeStoryPlayProject(raw);
+  const { errors: shapeErrors, warnings } = validateStoryPlayProjectShape(canonical);
   const errors = [...shapeErrors];
 
   if (errors.length > 0) {
@@ -150,7 +134,7 @@ export function prepareStoryPlayImport(fileText) {
 
   let project;
   try {
-    project = migrateStoryPlayProject(raw);
+    project = migrateStoryPlayProject(canonical);
   } catch (error) {
     const message =
       error instanceof UnsupportedFormatVersionError
