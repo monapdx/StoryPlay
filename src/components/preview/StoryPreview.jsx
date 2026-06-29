@@ -224,13 +224,6 @@ export default function StoryPreview({
     chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
   }, [chatThreadLines, showTyping, chatTurnReady, chatBusy, chatAwaitingReply]);
 
-  useEffect(() => {
-    if (isDock) return;
-    if ((changedVariableKeys?.length || 0) > 0) {
-      setShowVariableDetails(true);
-    }
-  }, [changedVariableKeys, isDock]);
-
   function finishChatReplyTurn(choice) {
     setChatBusy(false);
 
