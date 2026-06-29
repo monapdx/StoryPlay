@@ -5,6 +5,7 @@ import {
   ONBOARDING_SCAFFOLD_NODE_ID,
 } from "../data/onboardingDemo";
 import { createBlankStory } from "../utils/blankStory";
+import { saveEditorProject, loadEditorProject } from "../utils/storyProjectStorage";
 import { createCharacter, normalizeCharacters } from "../utils/storyEntities";
 import { renderStoryText } from "../utils/storyReferences";
 
@@ -64,12 +65,20 @@ export default function useStoryState() {
   /** `null` = blank project; otherwise id of the loaded starter template. */
   const [activeDemoStoryId, setActiveDemoStoryId] = useState(null);
 
-  const initial = useMemo(() => normalizeInitialStory(createBlankStory()), []);
+  const initial = useMemo(() => {
+    const saved = loadEditorProject();
+    if (saved) {
+      return normalizeInitialStory(saved);
+    }
+    return normalizeInitialStory(createBlankStory());
+  }, []);
 
   const [nodes, setNodes] = useState(initial.nodes);
   const [variables, setVariables] = useState(initial.variables);
   const [characters, setCharacters] = useState(initial.characters);
-  const [selectedNodeId, setSelectedNodeId] = useState(null);
+  const [selectedNodeId, setSelectedNodeId] = useState(
+    () => initial.nodes[0]?.id || null
+  );
   const selectedNodeIdRef = useRef(selectedNodeId);
   selectedNodeIdRef.current = selectedNodeId;
 
@@ -102,6 +111,7 @@ export default function useStoryState() {
     setStoryBaselineSignature(
       stableDemoSignature(next.nodes, next.variables, next.characters)
     );
+    saveEditorProject(next);
   }
 
   function resetToBlankStory() {
@@ -114,6 +124,20 @@ export default function useStoryState() {
     setStoryBaselineSignature(
       stableDemoSignature(next.nodes, next.variables, next.characters)
     );
+    saveEditorProject(next);
+  }
+
+  function importStory(story) {
+    const next = normalizeInitialStory(story);
+    setNodes(next.nodes);
+    setVariables(next.variables);
+    setCharacters(next.characters);
+    setSelectedNodeId(next.nodes[0]?.id || null);
+    setActiveDemoStoryId(null);
+    setStoryBaselineSignature(
+      stableDemoSignature(next.nodes, next.variables, next.characters)
+    );
+    saveEditorProject(next);
   }
 
   function addCharacter() {
@@ -469,6 +493,7 @@ export default function useStoryState() {
     demoStories: DEMO_STORIES,
     loadDemoStory,
     resetToBlankStory,
+    importStory,
     isBlankProject,
     isStoryDirty,
     isDemoDirty,

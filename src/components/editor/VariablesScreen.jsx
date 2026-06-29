@@ -11,6 +11,7 @@ export default function VariablesScreen({
   activeTemplateLabel = "Blank project",
   onOpenTemplates,
   onExport,
+  onImport,
   onOpenMiniGameEditor,
   canOpenMiniGameEditor,
   miniGameEditorTitle,
@@ -48,6 +49,14 @@ export default function VariablesScreen({
         </div>
 
         <div className="variables-screen-topbar-actions">
+          <button
+            type="button"
+            className="variables-screen-action-btn"
+            onClick={onImport}
+            title="Import a previously exported StoryPlay project (.json)"
+          >
+            Import Project
+          </button>
           <button
             type="button"
             className="variables-screen-action-btn"

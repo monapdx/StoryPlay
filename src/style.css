@@ -3207,6 +3207,92 @@ mark {
   font-size: 0.84rem;
 }
 
+.import-project-modal__warning {
+  color: #fcd34d;
+}
+
+.import-project-modal__summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 20px;
+  margin: 0 0 18px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.import-project-modal__summary-wide {
+  grid-column: 1 / -1;
+}
+
+.import-project-modal__summary dt {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #94a3b8;
+}
+
+.import-project-modal__summary dd {
+  margin: 4px 0 0;
+  font-size: 1rem;
+  color: #e2e8f0;
+}
+
+.import-project-modal__messages {
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+}
+
+.import-project-modal__messages--error {
+  background: rgba(127, 29, 29, 0.35);
+  border: 1px solid rgba(248, 113, 113, 0.35);
+  color: #fecaca;
+}
+
+.import-project-modal__messages--warning {
+  background: rgba(120, 53, 15, 0.35);
+  border: 1px solid rgba(251, 191, 36, 0.35);
+  color: #fde68a;
+}
+
+.import-project-modal__messages-title {
+  margin: 0 0 8px;
+  font-weight: 700;
+}
+
+.import-project-modal__messages ul {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.import-project-modal__messages li + li {
+  margin-top: 6px;
+}
+
+.import-project-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* Character registry & reference text fields */
 .reference-textarea__toolbar {
   display: flex;

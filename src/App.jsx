@@ -8,6 +8,7 @@ import MiniGameEditor from "./components/minigame/MiniGameEditor";
 import EditorEmptyState from "./components/onboarding/EditorEmptyState";
 import OnboardingTour from "./components/onboarding/OnboardingTour";
 import StarterTemplateModal from "./components/onboarding/StarterTemplateModal";
+import ImportProjectModal from "./components/editor/ImportProjectModal";
 import useStoryState from "./hooks/useStoryState";
 import usePlayState from "./hooks/usePlayState";
 import useOnboarding from "./hooks/useOnboarding";
@@ -26,6 +27,10 @@ import {
   buildMiniGameFromSelectedNode,
   isSupportedMiniGameBlock,
 } from "./utils/miniGameFromNode";
+import {
+  prepareStoryPlayImport,
+  readProjectFileAsText,
+} from "./utils/importStoryPlayProject";
 
 function EditorApp() {
   const story = useStoryState();
@@ -94,6 +99,8 @@ function EditorApp() {
   const [activeScreen, setActiveScreen] = useState("editor");
   const [isQuickPreviewOpen, setIsQuickPreviewOpen] = useState(false);
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
+  const [importPreview, setImportPreview] = useState(null);
+  const importFileInputRef = useRef(null);
 
   const onboarding = useOnboarding();
   const onboardingAutoStartedRef = useRef(false);
@@ -299,6 +306,55 @@ function EditorApp() {
     });
   }
 
+  function handleOpenImportPicker() {
+    importFileInputRef.current?.click();
+  }
+
+  async function handleImportFileSelected(event) {
+    const input = event.target;
+    const file = input.files?.[0];
+    input.value = "";
+
+    if (!file) return;
+
+    try {
+      const text = await readProjectFileAsText(file);
+      const result = prepareStoryPlayImport(text);
+      setImportPreview(result);
+    } catch (error) {
+      setImportPreview({
+        ok: false,
+        errors: [
+          error instanceof Error
+            ? error.message
+            : "Could not read the selected file.",
+        ],
+        warnings: [],
+        summary: null,
+        story: null,
+        project: null,
+      });
+    }
+  }
+
+  function handleCancelImport() {
+    setImportPreview(null);
+  }
+
+  function handleConfirmImport() {
+    if (!importPreview?.ok || !importPreview.story) return;
+
+    story.importStory(importPreview.story);
+    saveCurrentStoryForPreview({
+      nodes: importPreview.story.nodes,
+      variables: importPreview.story.variables,
+      characters: importPreview.story.characters,
+      selectedNodeId: importPreview.story.nodes[0]?.id || null,
+    });
+    setPreviewSyncTick((n) => n + 1);
+    setImportPreview(null);
+  }
+
   function handlePlayInNewTab() {
     enableLivePreviewSyncForEditorTab();
     saveCurrentStoryForPreview({
@@ -325,6 +381,23 @@ function EditorApp() {
         onSelectTemplate={requestLoadTemplate}
       />
 
+      <input
+        ref={importFileInputRef}
+        type="file"
+        accept=".json,application/json"
+        className="sr-only"
+        aria-hidden="true"
+        tabIndex={-1}
+        onChange={handleImportFileSelected}
+      />
+
+      <ImportProjectModal
+        open={importPreview != null}
+        preview={importPreview}
+        onCancel={handleCancelImport}
+        onConfirm={handleConfirmImport}
+      />
+
       {activeScreen === "variables" ? (
         <VariablesScreen
           variables={story.variables}
@@ -333,6 +406,7 @@ function EditorApp() {
           activeTemplateLabel={getActiveTemplateLabel(story)}
           onOpenTemplates={handleOpenTemplates}
           onExport={handleExportStory}
+          onImport={handleOpenImportPicker}
           onOpenMiniGameEditor={handleOpenMiniGameEditor}
           canOpenMiniGameEditor={canOpenMiniGameEditor}
           miniGameEditorTitle={miniGameEditorTitle}
@@ -427,6 +501,15 @@ function EditorApp() {
                 title="Save to the browser, open #/play in a new tab, and keep that tab updated (debounced) while you edit in this tab after the first use"
               >
                 Play in new tab
+              </button>
+
+              <button
+                type="button"
+                className="header-button"
+                onClick={handleOpenImportPicker}
+                title="Import a previously exported StoryPlay project (.json)"
+              >
+                Import Project
               </button>
 
               <button

@@ -1,0 +1,347 @@
+{
+  "formatVersion": 1,
+  "story": {
+    "variables": {
+      "reputation": 0,
+      "coins": 4,
+      "pitchScore": 0,
+      "wonPitch": false,
+      "prep_combat": 0,
+      "prep_social": 0,
+      "prep_lore": 0,
+      "prepAllocation": {},
+      "buildFocus": []
+    },
+    "characters": [],
+    "nodes": [
+      {
+        "id": "guild-start",
+        "type": "storyNode",
+        "position": {
+          "x": 40,
+          "y": 180
+        },
+        "data": {
+          "title": "Guild Hall Steps",
+          "content": "Rain slicks the stone lions flanking the guild doors.\nPosters promise coin for “capable hands”—but everyone here looks like they already passed a test you have not taken yet.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "g-c0",
+              "label": "Step inside for the open audition",
+              "targetNodeId": "guild-traits",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "guild-traits",
+        "type": "storyNode",
+        "position": {
+          "x": 380,
+          "y": 120
+        },
+        "data": {
+          "title": "Show Your Angles",
+          "content": "A clerk marks a slate: “Pick up to two focuses. We train what you emphasize.”",
+          "blockType": "traitPicker",
+          "continueNodeId": "guild-hub",
+          "minSelections": 1,
+          "maxSelections": 2,
+          "traitListVariable": "buildFocus",
+          "options": [
+            {
+              "id": "stealth",
+              "label": "Stealth",
+              "description": "Quiet feet, sharp eyes.",
+              "effects": {
+                "reputation": 2
+              }
+            },
+            {
+              "id": "charm",
+              "label": "Charm",
+              "description": "Fast talk, steady nerve.",
+              "effects": {
+                "reputation": 2
+              }
+            },
+            {
+              "id": "brawn",
+              "label": "Brawn",
+              "description": "Shoulders first, questions later.",
+              "effects": {
+                "reputation": 1
+              }
+            }
+          ],
+          "choices": [],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "guild-hub",
+        "type": "storyNode",
+        "position": {
+          "x": 720,
+          "y": 120
+        },
+        "data": {
+          "title": "Waiting for the Captain",
+          "content": "Captain Vex enters without apology, cloak dripping.\nThey do not ask your name. They ask what you want from the guild—and whether you are worth the risk.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "g-c1",
+              "label": "Make your pitch",
+              "targetNodeId": "guild-pitch",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "guild-pitch",
+        "type": "storyNode",
+        "position": {
+          "x": 1060,
+          "y": 120
+        },
+        "data": {
+          "title": "The Pitch",
+          "content": "Vex taps two fingers on the hilt of a practice blade.\n“Convince me you belong here. Words only—save the stunts for later.”",
+          "prompt": "Vex taps two fingers on the hilt of a practice blade.\n“Convince me you belong here. Words only—save the stunts for later.”",
+          "blockType": "persuasion",
+          "targetName": "Captain Vex",
+          "startScore": 48,
+          "minScore": 0,
+          "maxScore": 100,
+          "threshold": 72,
+          "maxTurns": 4,
+          "visibleMeter": true,
+          "scoreVariable": "pitchScore",
+          "successVariable": "wonPitch",
+          "successNodeId": "guild-pass",
+          "failureNodeId": "guild-fail",
+          "choices": [
+            {
+              "id": "p1",
+              "text": "Name a concrete problem you can solve for the guild.",
+              "delta": 14,
+              "response": "Vex’s eyes narrow—interested, not sold."
+            },
+            {
+              "id": "p2",
+              "text": "Offer to take the worst jobs first.",
+              "delta": 10,
+              "response": "A grunt. “Everyone says that.”"
+            },
+            {
+              "id": "p3",
+              "text": "Admit a weakness, then your plan to cover it.",
+              "delta": 12,
+              "response": "Honesty lands better than swagger, for once."
+            },
+            {
+              "id": "p4",
+              "text": "Quote guild history like a lecture.",
+              "delta": 4,
+              "once": true,
+              "response": "Vex sighs. “Book-smarts. Useful. Sometimes.”"
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "guild-pass",
+        "type": "storyNode",
+        "position": {
+          "x": 1060,
+          "y": 320
+        },
+        "data": {
+          "title": "Through the First Gate",
+          "content": "Vex nods once—barely praise, but enough.\n“Training yard tomorrow dawn. Tonight, decide how you spend your focus.”",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "g-c2",
+              "label": "Plan tonight’s training split",
+              "targetNodeId": "guild-train",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "guild-fail",
+        "type": "storyNode",
+        "position": {
+          "x": 1060,
+          "y": 520
+        },
+        "data": {
+          "title": "Not This Season",
+          "content": "Vex cuts you off mid-sentence.\n“Come back when you’ve done something worth hearing about.”\nThe doors do not slam—they simply close, soft and final.",
+          "blockType": "ending",
+          "choices": [],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "guild-train",
+        "type": "storyNode",
+        "position": {
+          "x": 1400,
+          "y": 320
+        },
+        "data": {
+          "title": "Tonight’s Split",
+          "content": "You have limited hours. Distribute preparation points across three tracks.\n(Assign exactly 8 points total.)",
+          "blockType": "choiceWeighting",
+          "continueNodeId": "guild-finale",
+          "totalPoints": 8,
+          "lockExactTotal": true,
+          "variablePrefix": "prep_",
+          "resultVariable": "prepAllocation",
+          "options": [
+            {
+              "id": "combat",
+              "label": "Combat drills",
+              "min": 0,
+              "max": 8
+            },
+            {
+              "id": "social",
+              "label": "Social recon",
+              "min": 0,
+              "max": 8
+            },
+            {
+              "id": "lore",
+              "label": "Lore & maps",
+              "min": 0,
+              "max": 8
+            }
+          ],
+          "choices": [],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "guild-finale",
+        "type": "storyNode",
+        "position": {
+          "x": 1740,
+          "y": 320
+        },
+        "data": {
+          "title": "Dawn Roster",
+          "content": "Names are called. The yard smells like iron and chalk.\nWhere you stand on the roster depends on how you carried yourself—and how you prepared.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "g-c3",
+              "label": "Star recruit path",
+              "targetNodeId": "guild-end-star",
+              "conditions": [
+                {
+                  "variable": "reputation",
+                  "operator": "greaterThanOrEqual",
+                  "value": 4
+                }
+              ],
+              "effects": []
+            },
+            {
+              "id": "g-c4",
+              "label": "Solid placement path",
+              "targetNodeId": "guild-end-solid",
+              "conditions": [
+                {
+                  "variable": "reputation",
+                  "operator": "greaterThanOrEqual",
+                  "value": 2
+                },
+                {
+                  "variable": "reputation",
+                  "operator": "lessThanOrEqual",
+                  "value": 3
+                }
+              ],
+              "effects": []
+            },
+            {
+              "id": "g-c5",
+              "label": "Washout path",
+              "targetNodeId": "guild-end-washout",
+              "conditions": [
+                {
+                  "variable": "reputation",
+                  "operator": "lessThan",
+                  "value": 2
+                }
+              ],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "guild-end-star",
+        "type": "storyNode",
+        "position": {
+          "x": 2080,
+          "y": 160
+        },
+        "data": {
+          "title": "Front of the Line",
+          "content": "Vex points you toward the lead squad without a speech.\nYou earned the glare of veterans—and the smallest smile from the captain.",
+          "blockType": "ending",
+          "choices": [],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "guild-end-solid",
+        "type": "storyNode",
+        "position": {
+          "x": 2080,
+          "y": 320
+        },
+        "data": {
+          "title": "Reliable Hands",
+          "content": "You are not legend yet—but you are on the board.\nThe guild gives you a tabard that fits, and work that matters.",
+          "blockType": "ending",
+          "choices": [],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "guild-end-washout",
+        "type": "storyNode",
+        "position": {
+          "x": 2080,
+          "y": 480
+        },
+        "data": {
+          "title": "Back of the Roster",
+          "content": "You are in—barely. The jobs are dull, the pay is thin, and the lesson is clear:\nreputation is not decoration. It is leverage.",
+          "blockType": "ending",
+          "choices": [],
+          "enterEffects": []
+        }
+      }
+    ]
+  },
+  "exportedAt": "2026-06-29T11:38:34.343Z"
+}

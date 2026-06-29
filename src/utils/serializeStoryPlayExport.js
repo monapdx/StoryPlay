@@ -4,9 +4,10 @@
  */
 
 import { normalizeCharacters } from "./storyEntities";
+import { STORYPLAY_EXPORT_FORMAT_VERSION } from "./projectSchema";
 import { resolveNodesTextForExport } from "./storyReferences";
 
-export const STORYPLAY_EXPORT_FORMAT_VERSION = 1;
+export { STORYPLAY_EXPORT_FORMAT_VERSION };
 
 function cloneJson(value) {
   try {
