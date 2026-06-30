@@ -1,7 +1,13 @@
 import React from "react";
 
 export default function MiniGameToolbar({ editor }) {
-  const { activeTab, setActiveTab, validation } = editor;
+  const { activeTab, setActiveTab, validation, isDirty } = editor;
+
+  const statusMessage = !validation.isValid
+    ? "Draft incomplete — you can still save"
+    : isDirty
+      ? "Unsaved changes"
+      : "All changes saved";
 
   return (
     <div className="minigame-toolbar">
@@ -9,7 +15,7 @@ export default function MiniGameToolbar({ editor }) {
         <button
           type="button"
           className="minigame-btn"
-          onClick={editor.handleClose}
+          onClick={editor.handleBack}
         >
           Back to Story
         </button>
@@ -40,13 +46,11 @@ export default function MiniGameToolbar({ editor }) {
       </div>
 
       <div className="minigame-toolbar__right">
-        <div className="minigame-toolbar__status">
-          {!validation.isValid ? "Needs fixes before save" : "Ready to save"}
-        </div>
+        <div className="minigame-toolbar__status">{statusMessage}</div>
         <button
           type="button"
           className="minigame-btn"
-          onClick={editor.handleClose}
+          onClick={editor.handleDiscard}
         >
           Cancel
         </button>
@@ -54,7 +58,7 @@ export default function MiniGameToolbar({ editor }) {
           type="button"
           className="minigame-btn minigame-btn--primary"
           onClick={editor.handleSave}
-          disabled={!validation.isValid}
+          disabled={!isDirty}
         >
           Save Changes
         </button>

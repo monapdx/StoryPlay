@@ -230,6 +230,7 @@ export default function useMiniGameEditorState({
   }, [game]);
 
   const [draft, setDraft] = useState(normalizedGame);
+  const [savedSnapshot, setSavedSnapshot] = useState(null);
   const [activeTab, setActiveTab] = useState("config");
   const [selectedItemId, setSelectedItemId] = useState(null);
   const [previewState, setPreviewState] = useState(null);
@@ -240,6 +241,7 @@ export default function useMiniGameEditorState({
 
     const nextDraft = normalizedGame || createDefaultMiniGame("choiceWeighting");
     setDraft(nextDraft);
+    setSavedSnapshot(clone(nextDraft));
     setActiveTab("config");
     setPreviewState(null);
     setAdvancedJson(JSON.stringify(nextDraft, null, 2));
@@ -338,6 +340,11 @@ export default function useMiniGameEditorState({
       isValid: false,
     };
   }, [draft, totalAssigned]);
+
+  const isDirty = useMemo(() => {
+    if (!draft || !savedSnapshot) return false;
+    return JSON.stringify(draft) !== JSON.stringify(savedSnapshot);
+  }, [draft, savedSnapshot]);
 
   function updateDraft(patch) {
     setDraft((current) => ({
@@ -540,10 +547,31 @@ export default function useMiniGameEditorState({
   function handleSave() {
     if (!draft) return;
     onSave?.(clone(draft));
+    setSavedSnapshot(clone(draft));
+  }
+
+  function handleBack() {
+    if (!draft) {
+      onClose?.();
+      return;
+    }
+
+    onSave?.(clone(draft));
+  }
+
+  function handleDiscard() {
+    if (isDirty) {
+      const shouldDiscard = window.confirm(
+        "Discard unsaved mini-game changes?"
+      );
+      if (!shouldDiscard) return;
+    }
+
+    onClose?.();
   }
 
   function handleClose() {
-    onClose?.();
+    handleBack();
   }
 
   return {
@@ -558,6 +586,7 @@ export default function useMiniGameEditorState({
     previewState,
     totalAssigned,
     validation,
+    isDirty,
     advancedJson,
     setAdvancedJson,
     updateDraft,
@@ -569,6 +598,8 @@ export default function useMiniGameEditorState({
     applyAdvancedJson,
     runPreview,
     handleSave,
+    handleBack,
+    handleDiscard,
     handleClose,
   };
 }

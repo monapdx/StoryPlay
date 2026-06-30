@@ -80,3 +80,63 @@ export function buildMiniGameFromSelectedNode(selectedNode) {
       return null;
   }
 }
+
+/**
+ * Maps a mini-game editor payload back onto story node `data` fields.
+ */
+export function miniGamePayloadToNodeData(updatedMiniGame) {
+  if (!updatedMiniGame || typeof updatedMiniGame !== "object") {
+    return {};
+  }
+
+  const { type, title, prompt, config = {} } = updatedMiniGame;
+
+  const patch = {
+    blockType: type,
+    title: title || "Mini-Game",
+    content: prompt || "",
+  };
+
+  switch (type) {
+    case "traitPicker":
+      return {
+        ...patch,
+        options: Array.isArray(config.options) ? config.options : [],
+        minSelections: config.minSelections ?? 0,
+        maxSelections: config.maxSelections ?? 2,
+        traitListVariable: config.traitListVariable || "",
+        continueNodeId: config.continueNodeId || "",
+      };
+
+    case "persuasion":
+      return {
+        ...patch,
+        targetName: config.targetName || "",
+        startScore: config.startScore ?? 50,
+        minScore: config.minScore ?? 0,
+        maxScore: config.maxScore ?? 100,
+        threshold: config.threshold ?? 75,
+        maxTurns: config.maxTurns ?? 3,
+        visibleMeter: config.visibleMeter ?? true,
+        scoreVariable: config.scoreVariable || "",
+        successVariable: config.successVariable || "",
+        successNodeId: config.successNodeId || "",
+        failureNodeId: config.failureNodeId || "",
+        choices: Array.isArray(config.choices) ? config.choices : [],
+      };
+
+    case "choiceWeighting":
+      return {
+        ...patch,
+        options: Array.isArray(config.options) ? config.options : [],
+        totalPoints: config.totalPoints ?? 10,
+        variablePrefix: config.variablePrefix || "",
+        resultVariable: config.resultVariable || "",
+        lockExactTotal: config.lockExactTotal ?? true,
+        continueNodeId: config.continueNodeId || "",
+      };
+
+    default:
+      return patch;
+  }
+}

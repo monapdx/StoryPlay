@@ -11,6 +11,7 @@ import { normalizeVariableMeta } from "../utils/storyVariables";
 import { renderStoryText } from "../utils/storyReferences";
 import { buildStoryEdgesFromNodes } from "../utils/nodeGraphLinks";
 import { normalizeStoryNodes } from "../utils/nodeHelpers";
+import { miniGamePayloadToNodeData } from "../utils/miniGameFromNode";
 
 function makeNodeId() {
   return `node_${Math.random().toString(36).slice(2, 10)}`;
@@ -239,6 +240,26 @@ export default function useStoryState() {
               data: {
                 ...node.data,
                 [field]: value,
+              },
+            }
+          : node
+      )
+    );
+  }
+
+  function applyMiniGameToSelectedNode(updatedMiniGame) {
+    if (!selectedNodeId || !updatedMiniGame) return;
+
+    const dataPatch = miniGamePayloadToNodeData(updatedMiniGame);
+
+    setNodes((prev) =>
+      prev.map((node) =>
+        node.id === selectedNodeId
+          ? {
+              ...node,
+              data: {
+                ...node.data,
+                ...dataPatch,
               },
             }
           : node
@@ -513,6 +534,7 @@ export default function useStoryState() {
     addNode,
     updateNodePosition,
     updateSelectedNodeField,
+    applyMiniGameToSelectedNode,
     deleteSelectedNode,
     addChoiceToSelectedNode,
     updateChoiceOnSelectedNode,
