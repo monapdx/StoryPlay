@@ -1,4 +1,5 @@
 import React from "react";
+import UndoRedoButtons from "../editor/UndoRedoButtons";
 
 export default function MiniGameToolbar({ editor }) {
   const { activeTab, setActiveTab, validation, isDirty } = editor;
@@ -19,6 +20,15 @@ export default function MiniGameToolbar({ editor }) {
         >
           Back to Story
         </button>
+
+        <UndoRedoButtons
+          onUndo={editor.undo}
+          onRedo={editor.redo}
+          canUndo={editor.canUndo}
+          canRedo={editor.canRedo}
+          className="minigame-toolbar__undo-redo"
+          buttonClassName="minigame-btn"
+        />
       </div>
 
       <div className="minigame-toolbar__center">

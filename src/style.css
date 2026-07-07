@@ -735,6 +735,12 @@ select {
   transform: none;
 }
 
+.undo-redo-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .app-workspace {
   flex: 1;
   min-height: 0;

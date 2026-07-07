@@ -25,9 +25,29 @@ export default function MiniGameEditorSidebar({ editor, nodes = [] }) {
           <textarea
             className="form-textarea minigame-json"
             value={editor.advancedJson || ""}
-            onChange={(event) => editor.setAdvancedJson(event.target.value)}
+            onChange={(event) => {
+              editor.setAdvancedJson(event.target.value);
+              if (editor.advancedJsonError) {
+                editor.setAdvancedJsonError?.("");
+              }
+            }}
+            aria-invalid={Boolean(editor.advancedJsonError)}
+            aria-describedby={
+              editor.advancedJsonError ? "minigame-advanced-json-error" : undefined
+            }
           />
         </div>
+
+        {editor.advancedJsonError ? (
+          <p
+            id="minigame-advanced-json-error"
+            className="sidebar-hint"
+            style={{ color: "#f87171", marginBottom: 12 }}
+            role="alert"
+          >
+            {editor.advancedJsonError}
+          </p>
+        ) : null}
 
         <div className="minigame-inline-actions">
           <button

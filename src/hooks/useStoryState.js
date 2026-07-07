@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { cloneDemoStoryById, DEMO_STORIES } from "../data/demoStoriesCatalog";
 import {
   ONBOARDING_DEMO_CHOICES,
@@ -12,6 +12,7 @@ import { renderStoryText } from "../utils/storyReferences";
 import { buildStoryEdgesFromNodes } from "../utils/nodeGraphLinks";
 import { normalizeStoryNodes } from "../utils/nodeHelpers";
 import { miniGamePayloadToNodeData } from "../utils/miniGameFromNode";
+import { createStoryUndoHistory } from "../utils/storyUndoHistory";
 
 function makeNodeId() {
   return `node_${Math.random().toString(36).slice(2, 10)}`;
@@ -59,15 +60,103 @@ export default function useStoryState() {
     return normalizeInitialStory(createBlankStory());
   }, []);
 
-  const [nodes, setNodes] = useState(initial.nodes);
-  const [variables, setVariables] = useState(initial.variables);
-  const [variableMeta, setVariableMeta] = useState(initial.variableMeta);
-  const [characters, setCharacters] = useState(initial.characters);
+  const [nodes, setNodesState] = useState(initial.nodes);
+  const [variables, setVariablesState] = useState(initial.variables);
+  const [variableMeta, setVariableMetaState] = useState(initial.variableMeta);
+  const [characters, setCharactersState] = useState(initial.characters);
   const [selectedNodeId, setSelectedNodeId] = useState(
     () => initial.nodes[0]?.id || null
   );
   const selectedNodeIdRef = useRef(selectedNodeId);
   selectedNodeIdRef.current = selectedNodeId;
+
+  const historyRef = useRef(null);
+  if (!historyRef.current) {
+    historyRef.current = createStoryUndoHistory();
+  }
+  const [historyVersion, setHistoryVersion] = useState(0);
+
+  const storyStateRef = useRef({
+    nodes: initial.nodes,
+    variables: initial.variables,
+    variableMeta: initial.variableMeta,
+    characters: initial.characters,
+    selectedNodeId: initial.nodes[0]?.id || null,
+    activeDemoStoryId: null,
+  });
+
+  storyStateRef.current = {
+    nodes,
+    variables,
+    variableMeta,
+    characters,
+    selectedNodeId,
+    activeDemoStoryId,
+  };
+
+  useEffect(() => historyRef.current.subscribe(() => {
+    setHistoryVersion((value) => value + 1);
+  }), []);
+
+  function recordHistory({ immediate = false } = {}) {
+    historyRef.current.recordBeforeMutation(storyStateRef.current, { immediate });
+  }
+
+  function clearHistory() {
+    historyRef.current.clear();
+  }
+
+  function restoreStorySnapshot(snapshot) {
+    historyRef.current.runApplying(() => {
+      setNodesState(snapshot.nodes);
+      setVariablesState(snapshot.variables);
+      setVariableMetaState(snapshot.variableMeta);
+      setCharactersState(snapshot.characters);
+      setActiveDemoStoryId(snapshot.activeDemoStoryId ?? null);
+
+      const validSelectedId = snapshot.nodes.some(
+        (node) => node.id === snapshot.selectedNodeId
+      )
+        ? snapshot.selectedNodeId
+        : snapshot.nodes[0]?.id || null;
+
+      setSelectedNodeId(validSelectedId);
+    });
+  }
+
+  const undo = useCallback(() => {
+    const previous = historyRef.current.undo(storyStateRef.current);
+    if (previous) {
+      restoreStorySnapshot(previous);
+    }
+  }, []);
+
+  const redo = useCallback(() => {
+    const next = historyRef.current.redo(storyStateRef.current);
+    if (next) {
+      restoreStorySnapshot(next);
+    }
+  }, []);
+
+  const canUndo = useMemo(() => {
+    void historyVersion;
+    return historyRef.current.canUndo();
+  }, [historyVersion]);
+
+  const canRedo = useMemo(() => {
+    void historyVersion;
+    return historyRef.current.canRedo();
+  }, [historyVersion]);
+
+  function setVariables(updater) {
+    recordHistory();
+    setVariablesState(updater);
+  }
+
+  function setVariableMeta(updater) {
+    recordHistory();
+    setVariableMetaState(updater);
+  }
 
   const [storyBaselineSignature, setStoryBaselineSignature] = useState(() =>
     stableDemoSignature(
@@ -87,6 +176,15 @@ export default function useStoryState() {
 
   const isBlankProject = nodes.length === 0 && activeDemoStoryId == null;
 
+  /** Persist working project to localStorage (debounced) so edits survive refresh. */
+  useEffect(() => {
+    const timerId = window.setTimeout(() => {
+      saveEditorProject({ nodes, variables, variableMeta, characters });
+    }, 1500);
+
+    return () => window.clearTimeout(timerId);
+  }, [nodes, variables, variableMeta, characters]);
+
   /** @deprecated use isStoryDirty */
   const isDemoDirty = isStoryDirty;
 
@@ -96,10 +194,11 @@ export default function useStoryState() {
 
     const next = normalizeInitialStory(raw);
 
-    setNodes(next.nodes);
-    setVariables(next.variables);
-    setVariableMeta(next.variableMeta);
-    setCharacters(next.characters);
+    clearHistory();
+    setNodesState(next.nodes);
+    setVariablesState(next.variables);
+    setVariableMetaState(next.variableMeta);
+    setCharactersState(next.characters);
     setSelectedNodeId(next.nodes[0]?.id || null);
     setActiveDemoStoryId(storyId);
     setStoryBaselineSignature(
@@ -115,10 +214,11 @@ export default function useStoryState() {
 
   function resetToBlankStory() {
     const next = normalizeInitialStory(createBlankStory());
-    setNodes(next.nodes);
-    setVariables(next.variables);
-    setVariableMeta(next.variableMeta);
-    setCharacters(next.characters);
+    clearHistory();
+    setNodesState(next.nodes);
+    setVariablesState(next.variables);
+    setVariableMetaState(next.variableMeta);
+    setCharactersState(next.characters);
     setSelectedNodeId(null);
     setActiveDemoStoryId(null);
     setStoryBaselineSignature(
@@ -134,10 +234,11 @@ export default function useStoryState() {
 
   function importStory(story) {
     const next = normalizeInitialStory(story);
-    setNodes(next.nodes);
-    setVariables(next.variables);
-    setVariableMeta(next.variableMeta);
-    setCharacters(next.characters);
+    clearHistory();
+    setNodesState(next.nodes);
+    setVariablesState(next.variables);
+    setVariableMetaState(next.variableMeta);
+    setCharactersState(next.characters);
     setSelectedNodeId(next.nodes[0]?.id || null);
     setActiveDemoStoryId(null);
     setStoryBaselineSignature(
@@ -152,14 +253,16 @@ export default function useStoryState() {
   }
 
   function addCharacter() {
+    recordHistory({ immediate: true });
     const next = createCharacter();
-    setCharacters((prev) => [...prev, next]);
+    setCharactersState((prev) => [...prev, next]);
     return next.id;
   }
 
   function updateCharacter(characterId, patch) {
     if (!characterId) return;
-    setCharacters((prev) =>
+    recordHistory();
+    setCharactersState((prev) =>
       prev.map((character) =>
         character.id === characterId
           ? {
@@ -181,7 +284,8 @@ export default function useStoryState() {
 
   function deleteCharacter(characterId) {
     if (!characterId) return;
-    setCharacters((prev) => prev.filter((character) => character.id !== characterId));
+    recordHistory({ immediate: true });
+    setCharactersState((prev) => prev.filter((character) => character.id !== characterId));
   }
 
   const selectedNode = useMemo(() => {
@@ -193,6 +297,7 @@ export default function useStoryState() {
   }, [nodes, characters]);
 
   function addNode() {
+    recordHistory({ immediate: true });
     const nextId = makeNodeId();
 
     const newNode = {
@@ -212,12 +317,13 @@ export default function useStoryState() {
       },
     };
 
-    setNodes((prev) => [...prev, newNode]);
+    setNodesState((prev) => [...prev, newNode]);
     setSelectedNodeId(nextId);
   }
 
   function updateNodePosition(nodeId, position) {
-    setNodes((prev) =>
+    recordHistory({ immediate: true });
+    setNodesState((prev) =>
       prev.map((node) =>
         node.id === nodeId
           ? {
@@ -232,7 +338,8 @@ export default function useStoryState() {
   function updateSelectedNodeField(field, value) {
     if (!selectedNodeId) return;
 
-    setNodes((prev) =>
+    recordHistory();
+    setNodesState((prev) =>
       prev.map((node) =>
         node.id === selectedNodeId
           ? {
@@ -250,9 +357,10 @@ export default function useStoryState() {
   function applyMiniGameToSelectedNode(updatedMiniGame) {
     if (!selectedNodeId || !updatedMiniGame) return;
 
+    recordHistory({ immediate: true });
     const dataPatch = miniGamePayloadToNodeData(updatedMiniGame);
 
-    setNodes((prev) =>
+    setNodesState((prev) =>
       prev.map((node) =>
         node.id === selectedNodeId
           ? {
@@ -270,9 +378,10 @@ export default function useStoryState() {
   function deleteSelectedNode() {
     if (!selectedNodeId) return;
 
+    recordHistory({ immediate: true });
     const nodeIdToDelete = selectedNodeId;
 
-    setNodes((prev) => {
+    setNodesState((prev) => {
       const filteredNodes = prev
         .filter((node) => node.id !== nodeIdToDelete)
         .map((node) => ({
@@ -295,7 +404,8 @@ export default function useStoryState() {
   function addChoiceToSelectedNode() {
     if (!selectedNodeId) return;
 
-    setNodes((prev) =>
+    recordHistory({ immediate: true });
+    setNodesState((prev) =>
       prev.map((node) => {
         if (node.id !== selectedNodeId) return node;
 
@@ -328,7 +438,8 @@ export default function useStoryState() {
   function updateChoiceOnSelectedNode(index, field, value) {
     if (!selectedNodeId) return;
 
-    setNodes((prev) =>
+    recordHistory();
+    setNodesState((prev) =>
       prev.map((node) => {
         if (node.id !== selectedNodeId) return node;
 
@@ -356,7 +467,8 @@ export default function useStoryState() {
   function removeChoiceFromSelectedNode(index) {
     if (!selectedNodeId) return;
 
-    setNodes((prev) =>
+    recordHistory({ immediate: true });
+    setNodesState((prev) =>
       prev.map((node) => {
         if (node.id !== selectedNodeId) return node;
 
@@ -380,7 +492,8 @@ export default function useStoryState() {
 
     if (!sourceId || !targetId || sourceId === targetId) return;
 
-    setNodes((prevNodes) => {
+    recordHistory({ immediate: true });
+    setNodesState((prevNodes) => {
       const targetNode = prevNodes.find((node) => node.id === targetId);
       const targetTitle = targetNode?.data?.title || "Next Block";
 
@@ -423,7 +536,8 @@ export default function useStoryState() {
 
     if (!sourceId || !targetId) return;
 
-    setNodes((prev) =>
+    recordHistory({ immediate: true });
+    setNodesState((prev) =>
       prev.map((node) => {
         if (node.id !== sourceId) return node;
 
@@ -443,7 +557,7 @@ export default function useStoryState() {
   const ensureOnboardingScaffold = useCallback(({ seedChoices = false } = {}) => {
     let targetIdToSelect = null;
 
-    setNodes((prev) => {
+    setNodesState((prev) => {
       let next = [...prev];
 
       let targetId =
@@ -509,14 +623,12 @@ export default function useStoryState() {
 
   return {
     nodes,
-    setNodes,
     edges,
     variables,
     setVariables,
     variableMeta,
     setVariableMeta,
     characters,
-    setCharacters,
     addCharacter,
     updateCharacter,
     deleteCharacter,
@@ -542,5 +654,9 @@ export default function useStoryState() {
     connectNodesFromHandle,
     deleteEdge,
     ensureOnboardingScaffold,
+    undo,
+    redo,
+    canUndo,
+    canRedo,
   };
 }

@@ -9,6 +9,7 @@ import EditorEmptyState from "./components/onboarding/EditorEmptyState";
 import OnboardingTour from "./components/onboarding/OnboardingTour";
 import StarterTemplateModal from "./components/onboarding/StarterTemplateModal";
 import ImportProjectModal from "./components/editor/ImportProjectModal";
+import UndoRedoButtons from "./components/editor/UndoRedoButtons";
 import useStoryState from "./hooks/useStoryState";
 import usePlayState from "./hooks/usePlayState";
 import useOnboarding from "./hooks/useOnboarding";
@@ -114,6 +115,39 @@ function EditorApp() {
 
   const onboarding = useOnboarding();
   const onboardingAutoStartedRef = useRef(false);
+
+  useEffect(() => {
+    if (isMiniGameOpen) return undefined;
+
+    function shouldIgnoreKeyTarget(target) {
+      if (!target) return false;
+      const tag = target.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return true;
+      if (target.isContentEditable) return true;
+      return false;
+    }
+
+    function onKeyDown(event) {
+      const mod = event.metaKey || event.ctrlKey;
+      if (!mod) return;
+      if (shouldIgnoreKeyTarget(event.target)) return;
+
+      const key = event.key.toLowerCase();
+      if (key === "z" && !event.shiftKey) {
+        event.preventDefault();
+        story.undo();
+        return;
+      }
+
+      if (key === "y" || (key === "z" && event.shiftKey)) {
+        event.preventDefault();
+        story.redo();
+      }
+    }
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isMiniGameOpen, story.undo, story.redo]);
 
   useEffect(() => {
     if (onboardingAutoStartedRef.current) return;
@@ -344,6 +378,10 @@ function EditorApp() {
           onOpenMiniGameEditor={handleOpenMiniGameEditor}
           canOpenMiniGameEditor={canOpenMiniGameEditor}
           miniGameEditorTitle={miniGameEditorTitle}
+          onUndo={story.undo}
+          onRedo={story.redo}
+          canUndo={story.canUndo}
+          canRedo={story.canRedo}
         />
       ) : activeScreen === "characters" ? (
         <CharactersScreen
@@ -355,6 +393,10 @@ function EditorApp() {
           onDeleteCharacter={story.deleteCharacter}
           onOpenTemplates={handleOpenTemplates}
           activeTemplateLabel={getActiveTemplateLabel(story)}
+          onUndo={story.undo}
+          onRedo={story.redo}
+          canUndo={story.canUndo}
+          canRedo={story.canRedo}
         />
       ) : (
         <>
@@ -374,6 +416,13 @@ function EditorApp() {
             </div>
 
             <div className="app-header__actions">
+              <UndoRedoButtons
+                onUndo={story.undo}
+                onRedo={story.redo}
+                canUndo={story.canUndo}
+                canRedo={story.canRedo}
+              />
+
               <button
                 type="button"
                 className="header-help-button"

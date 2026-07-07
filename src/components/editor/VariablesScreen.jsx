@@ -1,4 +1,5 @@
 import VariableEditor from "./VariableEditor";
+import UndoRedoButtons from "./UndoRedoButtons";
 
 /**
  * Edge-to-edge workspace for global story variables (same object as editor / preview / export).
@@ -17,6 +18,10 @@ export default function VariablesScreen({
   onOpenMiniGameEditor,
   canOpenMiniGameEditor,
   miniGameEditorTitle,
+  onUndo,
+  onRedo,
+  canUndo = false,
+  canRedo = false,
 }) {
   const count = Object.keys(variables || {}).length;
 
@@ -51,6 +56,13 @@ export default function VariablesScreen({
         </div>
 
         <div className="variables-screen-topbar-actions">
+          <UndoRedoButtons
+            onUndo={onUndo}
+            onRedo={onRedo}
+            canUndo={canUndo}
+            canRedo={canRedo}
+            buttonClassName="variables-screen-action-btn"
+          />
           <button
             type="button"
             className="variables-screen-action-btn"

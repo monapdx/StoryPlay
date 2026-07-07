@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   buildMiniGameFromSelectedNode,
   isSupportedMiniGameBlock,
 } from "../utils/miniGameFromNode";
+import { createStoryUndoHistory } from "../utils/storyUndoHistory";
 
 function makeId(prefix = "item") {
   if (typeof crypto !== "undefined" && crypto.randomUUID) {
@@ -235,9 +236,92 @@ export default function useMiniGameEditorState({
   const [selectedItemId, setSelectedItemId] = useState(null);
   const [previewState, setPreviewState] = useState(null);
   const [advancedJson, setAdvancedJson] = useState("");
+  const [advancedJsonError, setAdvancedJsonError] = useState("");
+
+  const historyRef = useRef(null);
+  if (!historyRef.current) {
+    historyRef.current = createStoryUndoHistory();
+  }
+  const [historyVersion, setHistoryVersion] = useState(0);
+
+  const draftRef = useRef(draft);
+  const selectedItemIdRef = useRef(selectedItemId);
+  draftRef.current = draft;
+  selectedItemIdRef.current = selectedItemId;
+
+  const editorSnapshotRef = useRef({
+    draft,
+    selectedItemId,
+  });
+  editorSnapshotRef.current = { draft, selectedItemId };
+
+  useEffect(() => historyRef.current.subscribe(() => {
+    setHistoryVersion((value) => value + 1);
+  }), []);
+
+  function recordDraftHistory({ immediate = false } = {}) {
+    if (!draftRef.current) return;
+    historyRef.current.recordBeforeMutation(editorSnapshotRef.current, {
+      immediate,
+    });
+  }
+
+  function resolveSelectedItemId(nextDraft, preferredId) {
+    if (!nextDraft) return null;
+
+    const nextItems =
+      nextDraft.type === "persuasion"
+        ? nextDraft.config?.choices || []
+        : nextDraft.config?.options || [];
+
+    if (nextItems.some((item) => item.id === preferredId)) {
+      return preferredId;
+    }
+
+    return nextItems[0]?.id ?? null;
+  }
+
+  function restoreEditorSnapshot(snapshot) {
+    if (!snapshot?.draft) return;
+
+    historyRef.current.runApplying(() => {
+      const nextDraft = clone(snapshot.draft);
+      setDraft(nextDraft);
+      setSelectedItemId(
+        resolveSelectedItemId(nextDraft, snapshot.selectedItemId)
+      );
+      setPreviewState(null);
+    });
+  }
+
+  const undo = useCallback(() => {
+    const previous = historyRef.current.undo(editorSnapshotRef.current);
+    if (previous) {
+      restoreEditorSnapshot(previous);
+    }
+  }, []);
+
+  const redo = useCallback(() => {
+    const next = historyRef.current.redo(editorSnapshotRef.current);
+    if (next) {
+      restoreEditorSnapshot(next);
+    }
+  }, []);
+
+  const canUndo = useMemo(() => {
+    void historyVersion;
+    return historyRef.current.canUndo();
+  }, [historyVersion]);
+
+  const canRedo = useMemo(() => {
+    void historyVersion;
+    return historyRef.current.canRedo();
+  }, [historyVersion]);
 
   useEffect(() => {
     if (!open) return;
+
+    historyRef.current.clear();
 
     const nextDraft = normalizedGame || createDefaultMiniGame("choiceWeighting");
     setDraft(nextDraft);
@@ -260,6 +344,7 @@ export default function useMiniGameEditorState({
   useEffect(() => {
     if (!draft) return;
     setAdvancedJson(JSON.stringify(draft, null, 2));
+    setAdvancedJsonError("");
   }, [draft]);
 
   const items = useMemo(() => {
@@ -347,6 +432,7 @@ export default function useMiniGameEditorState({
   }, [draft, savedSnapshot]);
 
   function updateDraft(patch) {
+    recordDraftHistory();
     setDraft((current) => ({
       ...current,
       ...patch,
@@ -354,6 +440,7 @@ export default function useMiniGameEditorState({
   }
 
   function updateConfig(patch) {
+    recordDraftHistory();
     setDraft((current) => ({
       ...current,
       config: {
@@ -388,12 +475,14 @@ export default function useMiniGameEditorState({
   }
 
   function updateItem(itemId, patch) {
+    recordDraftHistory();
     replaceItems(
       items.map((item) => (item.id === itemId ? { ...item, ...patch } : item))
     );
   }
 
   function addItem() {
+    recordDraftHistory({ immediate: true });
     let nextItem = null;
 
     if (draft.type === "persuasion") {
@@ -411,6 +500,7 @@ export default function useMiniGameEditorState({
   }
 
   function removeItem(itemId) {
+    recordDraftHistory({ immediate: true });
     const nextItems = items.filter((item) => item.id !== itemId);
 
     if (nextItems.length === 0) {
@@ -434,6 +524,7 @@ export default function useMiniGameEditorState({
     const nextIndex = direction === "up" ? index - 1 : index + 1;
     if (nextIndex < 0 || nextIndex >= items.length) return;
 
+    recordDraftHistory({ immediate: true });
     const reordered = [...items];
     const [item] = reordered.splice(index, 1);
     reordered.splice(nextIndex, 0, item);
@@ -445,7 +536,9 @@ export default function useMiniGameEditorState({
     try {
       const parsed = JSON.parse(advancedJson);
       const normalized = normalizeMiniGame(parsed);
+      recordDraftHistory({ immediate: true });
       setDraft(normalized);
+      setAdvancedJsonError("");
 
       if (normalized.type === "persuasion") {
         setSelectedItemId(normalized.config.choices?.[0]?.id ?? null);
@@ -453,6 +546,9 @@ export default function useMiniGameEditorState({
         setSelectedItemId(normalized.config.options?.[0]?.id ?? null);
       }
     } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Invalid JSON";
+      setAdvancedJsonError(message);
       console.error("Invalid mini-game JSON:", error);
     }
   }
@@ -588,7 +684,9 @@ export default function useMiniGameEditorState({
     validation,
     isDirty,
     advancedJson,
+    advancedJsonError,
     setAdvancedJson,
+    setAdvancedJsonError,
     updateDraft,
     updateConfig,
     updateItem,
@@ -601,5 +699,9 @@ export default function useMiniGameEditorState({
     handleBack,
     handleDiscard,
     handleClose,
+    undo,
+    redo,
+    canUndo,
+    canRedo,
   };
 }
