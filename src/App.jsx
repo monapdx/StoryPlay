@@ -9,7 +9,6 @@ import EditorEmptyState from "./components/onboarding/EditorEmptyState";
 import OnboardingTour from "./components/onboarding/OnboardingTour";
 import StarterTemplateModal from "./components/onboarding/StarterTemplateModal";
 import ImportProjectModal from "./components/editor/ImportProjectModal";
-import UndoRedoButtons from "./components/editor/UndoRedoButtons";
 import useStoryState from "./hooks/useStoryState";
 import usePlayState from "./hooks/usePlayState";
 import useOnboarding from "./hooks/useOnboarding";
@@ -378,10 +377,6 @@ function EditorApp() {
           onOpenMiniGameEditor={handleOpenMiniGameEditor}
           canOpenMiniGameEditor={canOpenMiniGameEditor}
           miniGameEditorTitle={miniGameEditorTitle}
-          onUndo={story.undo}
-          onRedo={story.redo}
-          canUndo={story.canUndo}
-          canRedo={story.canRedo}
         />
       ) : activeScreen === "characters" ? (
         <CharactersScreen
@@ -393,19 +388,13 @@ function EditorApp() {
           onDeleteCharacter={story.deleteCharacter}
           onOpenTemplates={handleOpenTemplates}
           activeTemplateLabel={getActiveTemplateLabel(story)}
-          onUndo={story.undo}
-          onRedo={story.redo}
-          canUndo={story.canUndo}
-          canRedo={story.canRedo}
         />
       ) : (
         <>
           <header className="app-header">
             <div>
               <h1>StoryPlay</h1>
-              <p className="app-subtitle">
-                Build branching stories with interactive blocks
-              </p>
+              <p className="app-subtitle">Visual story editor</p>
 
               <div className="app-project-status">
                 <span className="app-project-status__label">Project</span>
@@ -416,13 +405,6 @@ function EditorApp() {
             </div>
 
             <div className="app-header__actions">
-              <UndoRedoButtons
-                onUndo={story.undo}
-                onRedo={story.redo}
-                canUndo={story.canUndo}
-                canRedo={story.canRedo}
-              />
-
               <button
                 type="button"
                 className="header-help-button"

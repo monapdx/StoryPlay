@@ -102,10 +102,7 @@ export default function ChoiceRow({
       {isExpanded && (
         <>
           {readOnly ? (
-            <p className="sidebar-hint" style={{ marginTop: 8 }}>
-              This is where you edit the choice label, target block, conditions, and
-              effects.
-            </p>
+            <p className="sidebar-hint">Example choice.</p>
           ) : (
             <>
           {isChatBlock && (
@@ -142,10 +139,7 @@ export default function ChoiceRow({
                   />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">
-                    Message in chat{" "}
-                    <span className="form-label-hint">(optional)</span>
-                  </label>
+                  <label className="form-label">Message in chat</label>
                   <ReferenceTextarea
                     className="form-textarea"
                     value={choice.playerMessage || ""}
@@ -192,7 +186,7 @@ export default function ChoiceRow({
 
           <div className="form-group">
             <label className="form-label">
-              {isReply ? "After Reply, Go To (optional)" : "Target Block"}
+              {isReply ? "After reply" : "Target"}
             </label>
             <select
               className="form-select"

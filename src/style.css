@@ -919,6 +919,10 @@ select {
   overflow: auto;
 }
 
+.variables-screen-body--single {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 @media (max-width: 900px) {
   .variables-screen-body {
     grid-template-columns: 1fr;
@@ -1478,7 +1482,15 @@ select {
   left: 12px;
   z-index: 20;
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 8px;
+}
+
+.canvas-toolbar__undo-redo {
+  margin-left: 4px;
+  padding-left: 12px;
+  border-left: 1px solid var(--border-default);
 }
 
 .toolbar-button {
@@ -3528,7 +3540,7 @@ mark {
 .character-manager__head {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 12px;
   margin-bottom: 16px;

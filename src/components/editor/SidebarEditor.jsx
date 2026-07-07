@@ -52,7 +52,7 @@ export default function SidebarEditor({
       return (
         <div>
           <h2 className="section-title">Block Editor</h2>
-          <p className="sidebar-hint">Tutorial Scene — example choices below.</p>
+          <p className="sidebar-hint">Tutorial — example choices below.</p>
 
           <div data-onboarding="choices">
             <ChoicesEditor
@@ -76,7 +76,7 @@ export default function SidebarEditor({
         <h2 className="section-title">Block Editor</h2>
 
         <p className="sidebar-hint" data-onboarding="choices">
-          Select a block on the canvas to edit it.
+          Select a block to edit.
         </p>
 
         <VariablesWorkspacePromo
@@ -273,7 +273,7 @@ export default function SidebarEditor({
         <div className="editor-section">
           <div className="editor-section-header">
             <h3 className="section-title" style={{ marginBottom: 0 }}>
-              Mini-Game Settings
+              Mini-game
             </h3>
           </div>
 
@@ -289,13 +289,8 @@ export default function SidebarEditor({
 
           <div style={miniGameStyles.card}>
             <div style={miniGameStyles.headerRow}>
-              <div>
-                <div style={miniGameStyles.title}>
-                  {getMiniGameDisplayName(blockType)}
-                </div>
-                <div style={miniGameStyles.meta}>
-                  Options, balance, logic, and live testing.
-                </div>
+              <div style={miniGameStyles.title}>
+                {getMiniGameDisplayName(blockType)}
               </div>
             </div>
 
@@ -327,12 +322,6 @@ export default function SidebarEditor({
         blockType === "choiceWeighting" ||
         !isMiniGameBlock) && (
         <>
-          {(blockType === "traitPicker" || blockType === "choiceWeighting") && (
-            <p className="sidebar-hint" style={{ marginBottom: 12 }}>
-              After confirm, use choices below (or auto-advance in mini-game editor).
-            </p>
-          )}
-
           <div data-onboarding="choices">
             <ChoicesEditor
               selectedNode={selectedNode}
@@ -477,7 +466,7 @@ function VariablesWorkspacePromo({ variables, onOpenVariables }) {
         onClick={onOpenVariables}
         disabled={!onOpenVariables}
       >
-        Open Variables workspace
+        Open Variables
       </button>
     </div>
   );

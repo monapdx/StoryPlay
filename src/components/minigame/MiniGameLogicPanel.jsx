@@ -5,40 +5,25 @@ export default function MiniGameLogicPanel({ editor }) {
 
   return (
     <div className="minigame-panel">
-      <h3 className="section-title">Validation & Logic</h3>
+      <h3 className="section-title">Logic checks</h3>
 
       <div className="minigame-checklist">
         <div className={validation.hasPrompt ? "check-pass" : "check-fail"}>
-          {validation.hasPrompt ? "✓" : "✕"} Prompt is filled out
+          {validation.hasPrompt ? "✓" : "✕"} Prompt
         </div>
 
         <div className={validation.hasEnoughItems ? "check-pass" : "check-fail"}>
-          {validation.hasEnoughItems ? "✓" : "✕"} Enough choices/options added
+          {validation.hasEnoughItems ? "✓" : "✕"} Enough items
         </div>
 
         {draft.type === "choiceWeighting" && (
-          <div className={validation.exactTotalOk ? "check-pass" : "check-fail"}>
-            {validation.exactTotalOk ? "✓" : "✕"} Assigned points satisfy total
-          </div>
-        )}
-      </div>
-
-      <div className="helper-box">
-        {draft.type === "choiceWeighting" && (
           <>
-            Players combine weighted options and try to reach the target score.
-          </>
-        )}
-
-        {draft.type === "persuasion" && (
-          <>
-            Each choice changes the persuasion score. Success depends on reaching the threshold.
-          </>
-        )}
-
-        {draft.type === "traitPicker" && (
-          <>
-            Players choose traits within the allowed selection range.
+            <div className={validation.exactTotalOk ? "check-pass" : "check-fail"}>
+              {validation.exactTotalOk ? "✓" : "✕"} Point total
+            </div>
+            <p className="sidebar-hint">
+              Assigned: {editor.totalAssigned} / {Number(draft.config.totalPoints || 0)}
+            </p>
           </>
         )}
       </div>

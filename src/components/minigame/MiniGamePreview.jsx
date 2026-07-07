@@ -101,10 +101,9 @@ export default function MiniGamePreview({ editor }) {
               })}
             </div>
 
-            <div className="helper-box">
-              Selected score: <strong>{selectedScore}</strong> /{" "}
-              <strong>{Number(draft.config.totalPoints || 0)}</strong>
-            </div>
+            <p className="sidebar-hint">
+              Score: {selectedScore} / {Number(draft.config.totalPoints || 0)}
+            </p>
           </>
         )}
 
@@ -154,10 +153,9 @@ export default function MiniGamePreview({ editor }) {
               })}
             </div>
 
-            <div className="helper-box">
-              Selected: <strong>{selectedIds.length}</strong> / Max{" "}
-              <strong>{Number(draft.config.maxSelections || 0)}</strong>
-            </div>
+            <p className="sidebar-hint">
+              Selected: {selectedIds.length} / {Number(draft.config.maxSelections || 0)}
+            </p>
           </>
         )}
 
@@ -203,9 +201,7 @@ export default function MiniGamePreview({ editor }) {
                   Success: <strong>{previewState.success ? "Yes" : "No"}</strong>
                 </div>
                 {previewState.response && (
-                  <div className="helper-box" style={{ marginTop: 10 }}>
-                    {previewState.response}
-                  </div>
+                  <p className="sidebar-hint">{previewState.response}</p>
                 )}
               </>
             )}

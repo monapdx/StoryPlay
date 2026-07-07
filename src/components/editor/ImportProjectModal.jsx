@@ -31,7 +31,7 @@ export default function ImportProjectModal({
               Review import
             </h2>
             <p className="starter-template-modal__lead import-project-modal__warning">
-              Importing this file will replace your current project.
+              Replaces your current project.
             </p>
           </div>
           <button

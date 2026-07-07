@@ -21,24 +21,14 @@ export default function CharacterManager({
   return (
     <div className="character-manager">
       <div className="character-manager__head">
-        <div>
-          <h2 className="section-title">Characters</h2>
-          <p className="character-manager__lead muted">
-            Define names once, then insert <code>{"{{character:id.name}}"}</code> tokens in scene
-            text and choices. Renaming updates every reference automatically.
-          </p>
-        </div>
+        <h2 className="section-title">Characters</h2>
         <button type="button" className="onboarding-tour__next" onClick={onAddCharacter}>
           + New character
         </button>
       </div>
 
       {characters.length === 0 ? (
-        <div className="helper-box">
-          No characters yet. Create one, then use <strong>Insert character</strong> in the block
-          editor to add references like{" "}
-          <code>{"{{character:char_001.name}}"}</code>.
-        </div>
+        <p className="sidebar-hint">No characters yet.</p>
       ) : (
         <ul className="character-list">
           {characters.map((character) => {

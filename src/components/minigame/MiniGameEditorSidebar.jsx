@@ -9,8 +9,8 @@ export default function MiniGameEditorSidebar({ editor, nodes = [] }) {
   if (!draft) {
     return (
       <div className="minigame-panel">
-        <h3 className="section-title">Mini-Game Settings</h3>
-        <div className="helper-box">Loading mini-game editor…</div>
+        <h3 className="section-title">Settings</h3>
+        <div className="helper-box">Loading…</div>
       </div>
     );
   }
@@ -21,7 +21,7 @@ export default function MiniGameEditorSidebar({ editor, nodes = [] }) {
         <h3 className="section-title">Advanced JSON</h3>
 
         <div className="form-group">
-          <label className="form-label">Raw mini-game config</label>
+          <label className="form-label">Raw config</label>
           <textarea
             className="form-textarea minigame-json"
             value={editor.advancedJson || ""}
@@ -58,10 +58,14 @@ export default function MiniGameEditorSidebar({ editor, nodes = [] }) {
             Apply JSON
           </button>
         </div>
+      </div>
+    );
+  }
 
-        <div className="helper-box">
-          Advanced mode is useful for power editing, but the structured tabs are safer.
-        </div>
+  if (activeTab === "logic") {
+    return (
+      <div className="minigame-sidebar">
+        <MiniGameLogicPanel editor={editor} />
       </div>
     );
   }
@@ -69,8 +73,6 @@ export default function MiniGameEditorSidebar({ editor, nodes = [] }) {
   return (
     <div className="minigame-sidebar">
       <MiniGameConfigPanel editor={editor} nodes={nodes} />
-
-      {activeTab === "logic" && <MiniGameLogicPanel editor={editor} />}
     </div>
   );
 }

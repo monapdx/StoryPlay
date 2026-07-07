@@ -5,10 +5,10 @@ export default function MiniGameToolbar({ editor }) {
   const { activeTab, setActiveTab, validation, isDirty } = editor;
 
   const statusMessage = !validation.isValid
-    ? "Draft incomplete — you can still save"
+    ? "Incomplete"
     : isDirty
-      ? "Unsaved changes"
-      : "All changes saved";
+      ? "Unsaved"
+      : "Saved";
 
   return (
     <div className="minigame-toolbar">

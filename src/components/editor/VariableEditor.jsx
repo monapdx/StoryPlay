@@ -135,10 +135,7 @@ export default function VariableEditor({
       </div>
 
       {entries.length === 0 && (
-        <div className="helper-box">
-          No variables yet.  
-          Try creating <b>health</b>, <b>gold</b>, or <b>hasKey</b>.
-        </div>
+        <p className="sidebar-hint">No variables yet.</p>
       )}
 
       <div className="choice-list">
@@ -176,13 +173,10 @@ export default function VariableEditor({
                 <>
                   <div className="form-group">
                     <label className="form-label">Variable id</label>
-                    <p className="form-hint">
-                      Internal name used in conditions and effects. Players do not see this.
-                    </p>
-
                     <input
                       className="form-input"
                       defaultValue={key}
+                      placeholder="Internal key"
                       onFocus={() => setExpandedVariableKey(key)}
                       onBlur={(e) => renameVariable(key, e.target.value)}
                     />
@@ -190,10 +184,6 @@ export default function VariableEditor({
 
                   <div className="form-group">
                     <label className="form-label">Player-facing name</label>
-                    <p className="form-hint">
-                      Shown on the play stats panel when this variable is visible.
-                    </p>
-
                     <input
                       className="form-input"
                       value={meta.playerLabel || ""}
@@ -207,14 +197,10 @@ export default function VariableEditor({
 
                   <div className="form-group">
                     <label className="form-label">Player description</label>
-                    <p className="form-hint">
-                      Short flavor text under the stat value in preview and play mode.
-                    </p>
-
                     <input
                       className="form-input"
                       value={meta.playerDescription || ""}
-                      placeholder="Optional description for players"
+                      placeholder="Optional"
                       onFocus={() => setExpandedVariableKey(key)}
                       onChange={(e) =>
                         updateVariableMetaField(

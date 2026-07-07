@@ -9,16 +9,8 @@ export default function EditorEmptyState({
         <p className="editor-empty-state__eyebrow">New story</p>
         <h2 className="editor-empty-state__title">Start your first scene</h2>
         <p className="editor-empty-state__lead">
-          Your canvas is empty on purpose. Add a block, write what happens, then branch with
-          choices.
+          Add a block, connect choices, or load an example.
         </p>
-
-        <ul className="editor-empty-state__tips">
-          <li>Add a node to create a scene</li>
-          <li>Create a choice to branch the story</li>
-          <li>Open the tutorial for a quick tour</li>
-          <li>Load an example story to see what’s possible</li>
-        </ul>
 
         <div className="editor-empty-state__actions">
           <button type="button" className="onboarding-tour__next" onClick={onAddNode}>

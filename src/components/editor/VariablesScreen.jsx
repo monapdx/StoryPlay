@@ -1,5 +1,4 @@
 import VariableEditor from "./VariableEditor";
-import UndoRedoButtons from "./UndoRedoButtons";
 
 /**
  * Edge-to-edge workspace for global story variables (same object as editor / preview / export).
@@ -18,10 +17,6 @@ export default function VariablesScreen({
   onOpenMiniGameEditor,
   canOpenMiniGameEditor,
   miniGameEditorTitle,
-  onUndo,
-  onRedo,
-  canUndo = false,
-  canRedo = false,
 }) {
   const count = Object.keys(variables || {}).length;
 
@@ -56,13 +51,6 @@ export default function VariablesScreen({
         </div>
 
         <div className="variables-screen-topbar-actions">
-          <UndoRedoButtons
-            onUndo={onUndo}
-            onRedo={onRedo}
-            canUndo={canUndo}
-            canRedo={canRedo}
-            buttonClassName="variables-screen-action-btn"
-          />
           <button
             type="button"
             className="variables-screen-action-btn"
@@ -92,51 +80,13 @@ export default function VariablesScreen({
       </div>
 
       <header className="variables-screen-hero">
-        <h1 className="variables-screen-title">Variables workspace</h1>
+        <h1 className="variables-screen-title">Variables</h1>
         <p className="variables-screen-subtitle">
-          {count} defined {count === 1 ? "variable" : "variables"} · shared across the graph,
-          conditions, effects, and play preview
+          {count} {count === 1 ? "variable" : "variables"}
         </p>
       </header>
 
-      <div className="variables-screen-body custom-scrollbar">
-        <aside className="variables-screen-aside" aria-label="How variables work">
-          <div className="variables-screen-panel">
-            <h2 className="variables-screen-panel-title">What lives here</h2>
-            <p>
-              These are <strong>story-wide</strong> values (numbers, strings, or booleans).
-              They are not stored on individual blocks—every node reads the same map.
-            </p>
-          </div>
-          <div className="variables-screen-panel">
-            <h2 className="variables-screen-panel-title">Where they are used</h2>
-            <ul className="variables-screen-list">
-              <li>
-                <strong>Choices</strong> — conditions can hide or show a choice based on current values.
-              </li>
-              <li>
-                <strong>Effects</strong> — picking a choice can add, set, subtract, or toggle variables.
-              </li>
-              <li>
-                <strong>Preview</strong> — play mode starts from these defaults, then applies effects as you play.
-                Set <strong>player-facing names</strong> on each variable so stats read naturally in preview and play mode.
-              </li>
-              <li>
-                <strong>Export</strong> — use <strong>Export Game</strong> in the bar above; the same{" "}
-                <code>variables</code> object is included in StoryPlay JSON exports.
-              </li>
-            </ul>
-          </div>
-          <div className="variables-screen-panel variables-screen-panel-tip">
-            <h2 className="variables-screen-panel-title">Tip</h2>
-            <p>
-              Name variables clearly (<code>hasKey</code>, <code>gold</code>) so conditions stay readable in the
-              sidebar. <strong>Open Mini-Game Editor</strong> is only available when a supported mini-game block is
-              selected on the canvas—return to the editor to pick one.
-            </p>
-          </div>
-        </aside>
-
+      <div className="variables-screen-body variables-screen-body--single custom-scrollbar">
         <section
           className="variables-screen-main"
           aria-label="Variable list and editor"

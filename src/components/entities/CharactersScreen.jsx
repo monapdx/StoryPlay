@@ -1,5 +1,4 @@
 import CharacterManager from "./CharacterManager";
-import UndoRedoButtons from "../editor/UndoRedoButtons";
 
 export default function CharactersScreen({
   characters,
@@ -10,10 +9,6 @@ export default function CharactersScreen({
   onDeleteCharacter,
   onOpenTemplates,
   activeTemplateLabel,
-  onUndo,
-  onRedo,
-  canUndo = false,
-  canRedo = false,
 }) {
   return (
     <div className="variables-screen variables-screen--edgeless characters-screen">
@@ -41,16 +36,6 @@ export default function CharactersScreen({
           >
             Example stories
           </button>
-        </div>
-
-        <div className="variables-screen-topbar-actions">
-          <UndoRedoButtons
-            onUndo={onUndo}
-            onRedo={onRedo}
-            canUndo={canUndo}
-            canRedo={canRedo}
-            buttonClassName="variables-screen-action-btn"
-          />
         </div>
       </div>
 

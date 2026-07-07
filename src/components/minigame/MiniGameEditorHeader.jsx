@@ -6,7 +6,6 @@ export default function MiniGameEditorHeader({ editor }) {
   return (
     <div className="minigame-header">
       <div>
-        <div className="minigame-header__eyebrow">Dedicated Mini-Game Workspace</div>
         <h2 className="minigame-header__title">
           {draft.title || "Untitled Mini-Game"}
         </h2>

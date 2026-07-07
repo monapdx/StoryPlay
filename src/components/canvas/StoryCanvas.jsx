@@ -12,6 +12,7 @@ import "reactflow/dist/style.css";
 import StoryNode from "./StoryNode";
 import StoryEdge from "./StoryEdge";
 import NodeSearchBar from "./NodeSearchBar";
+import UndoRedoButtons from "../editor/UndoRedoButtons";
 import { evaluateConditions } from "../../utils/storyLogic";
 
 const nodeTypes = {
@@ -34,6 +35,10 @@ export default function StoryCanvas({
   updateNodePosition,
   connectNodesFromHandle,
   deleteEdge,
+  undo,
+  redo,
+  canUndo = false,
+  canRedo = false,
   currentPlayNodeId,
   playVariables = {},
 }) {
@@ -219,6 +224,15 @@ export default function StoryCanvas({
         <button type="button" className="toolbar-button" onClick={handleDeleteSelectedEdge}>
           Delete Selected Edge
         </button>
+
+        <UndoRedoButtons
+          onUndo={undo}
+          onRedo={redo}
+          canUndo={canUndo}
+          canRedo={canRedo}
+          className="canvas-toolbar__undo-redo"
+          buttonClassName="toolbar-button"
+        />
       </div>
 
       <div className="canvas-searchbar-wrap">

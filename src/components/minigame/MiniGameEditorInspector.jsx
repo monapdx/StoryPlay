@@ -69,7 +69,7 @@ export default function MiniGameEditorInspector({ editor, nodes = [] }) {
         <h3 className="section-title">Selected Item</h3>
 
         {!selectedItem ? (
-          <div className="helper-box">Select an item to edit it.</div>
+          <p className="sidebar-hint">Select an item.</p>
         ) : (
           <>
             {draft.type === "choiceWeighting" && (
