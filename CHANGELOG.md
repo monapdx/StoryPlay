@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+#### In-app documentation
+
+- **Wiki-style docs** at `#/docs` — separate white reading layout with sidebar navigation (distinct from the dark editor UI).
+- **14 topics** — Getting started, your first story, building stories, block types, variables, characters, chat, mini-games, templates, import/export, JSON format, shortcuts, FAQ, and roadmap.
+- **Header entry** — **Documentation** button in the main editor header (also linked from Variables and Characters workspaces).
+
+---
+
 #### Undo / redo
 
 - **Story-wide history** — Snapshot-based undo/redo for nodes, choices, variables, variable metadata, and characters (up to 50 steps).

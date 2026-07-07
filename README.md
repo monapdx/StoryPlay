@@ -83,10 +83,12 @@ New projects start **blank** (empty canvas). Load a starter from **Example stori
 - **Play Preview** (sidebar **Quick preview**): start from selected node, follow allowed choices, **Back** (history), **Reset**; supports narrative, chat (staggered reveal, player/NPC reply turns, character token resolution), timed auto-advance, and the three mini-game UIs.
 - **Play in new tab**: opens `#/play` player mode and keeps that tab in sync with debounced editor snapshot updates after first launch (includes `characters` for token resolution).
 - **Export Game** (header): downloads **StoryPlay export v1** JSON (`schemas/storyplay-export.v1.schema.json`). In **dev** only: `window.__storyplayLogExport()` and `window.__storyplayDownloadExport()` in the console.
+- **Import Project** (header): validate and replace the current project from a StoryPlay JSON file.
+- **Documentation** (`#/docs`): wiki-style in-app guides (white reading layout)—getting started, block types, variables, import/export, JSON format, shortcuts, and more.
 
 ## Export
 
-The file includes `formatVersion`, optional `exportedAt`, and `story: { variables, characters, nodes }` (same shape as editor state). By default, reference tokens in text fields are resolved to current character names on export. **Edges** are not stored; they are implied by each node’s `choices[].targetNodeId`. **Import** and bundled/runtime distribution packaging are still planned; see [CHANGELOG.md](CHANGELOG.md) for limitations and next steps.
+The file includes `formatVersion`, optional `exportedAt`, and `story: { variables, characters, nodes }` (same shape as editor state). By default, reference tokens in text fields are resolved to current character names on export. **Edges** are not stored; they are implied by each node’s `choices[].targetNodeId`. Use **Import Project** to load a file back into the editor. See [CHANGELOG.md](CHANGELOG.md) for limitations and next steps.
 
 ## Tech stack
 
@@ -103,6 +105,8 @@ npm run build
 ```
 
 Then open [http://localhost:5173](http://localhost:5173).
+
+**Documentation:** [http://localhost:5173/#/docs](http://localhost:5173/#/docs) (wiki-style guides; or click **Documentation** in the editor header).
 
 ## Changelog
 

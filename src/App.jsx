@@ -23,6 +23,8 @@ import {
 } from "./utils/storyPreviewStorage";
 import useHashRoute from "./hooks/useHashRoute";
 import PlayerPage from "./components/player/PlayerPage";
+import DocumentationScreen from "./components/docs/DocumentationScreen";
+import { setDocsHash } from "./utils/hashRoute";
 import {
   buildMiniGameFromSelectedNode,
   isSupportedMiniGameBlock,
@@ -471,6 +473,15 @@ function EditorApp() {
               <button
                 type="button"
                 className="header-button"
+                onClick={() => setDocsHash()}
+                title="Open StoryPlay documentation"
+              >
+                Documentation
+              </button>
+
+              <button
+                type="button"
+                className="header-button"
                 onClick={handleOpenImportPicker}
                 title="Import a previously exported StoryPlay project (.json)"
               >
@@ -587,9 +598,12 @@ function getActiveTemplateLabel(story) {
 }
 
 export default function App() {
-  const route = useHashRoute();
+  const { route, docsSectionId } = useHashRoute();
   if (route === "play") {
     return <PlayerPage />;
+  }
+  if (route === "docs") {
+    return <DocumentationScreen sectionId={docsSectionId} />;
   }
   return <EditorApp />;
 }

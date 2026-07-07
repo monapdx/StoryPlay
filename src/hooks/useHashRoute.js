@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
-import { getHashRoute } from "../utils/hashRoute";
+import { parseHashRoute } from "../utils/hashRoute";
 
 export default function useHashRoute() {
-  const [route, setRoute] = useState(getHashRoute);
+  const [parsed, setParsed] = useState(parseHashRoute);
 
   useEffect(() => {
-    const onHashChange = () => setRoute(getHashRoute());
+    const onHashChange = () => setParsed(parseHashRoute());
     window.addEventListener("hashchange", onHashChange);
     return () => window.removeEventListener("hashchange", onHashChange);
   }, []);
 
-  return route;
+  return parsed;
 }

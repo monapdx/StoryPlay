@@ -1,4 +1,5 @@
 import CharacterManager from "./CharacterManager";
+import { setDocsHash } from "../../utils/hashRoute";
 
 export default function CharactersScreen({
   characters,
@@ -29,6 +30,14 @@ export default function CharactersScreen({
         <div className="variables-screen-topbar-demo">
           <span className="variables-screen-demo-label">Project</span>
           <span className="variables-screen-demo-value">{activeTemplateLabel}</span>
+          <button
+            type="button"
+            className="variables-screen-action-btn"
+            onClick={() => setDocsHash()}
+            title="Open StoryPlay documentation"
+          >
+            Documentation
+          </button>
           <button
             type="button"
             className="variables-screen-action-btn"

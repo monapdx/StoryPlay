@@ -1,0 +1,530 @@
+{
+  "formatVersion": 1,
+  "story": {
+    "variables": {
+      "regrets": 0,
+      "suffering": ""
+    },
+    "characters": [],
+    "nodes": [
+      {
+        "id": "node_ao6qtby0",
+        "type": "storyNode",
+        "position": {
+          "x": -214.38715689795913,
+          "y": 105.84835853061224
+        },
+        "data": {
+          "title": "Welcome",
+          "content": "You've just arrived. \n\nHow'd you get here?",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "label": "A sudden accident or event",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_m473099v",
+              "conditions": [],
+              "effects": [
+                {
+                  "variable": "suffering",
+                  "action": "set",
+                  "value": "Low"
+                }
+              ]
+            },
+            {
+              "label": "A long battle with disease",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_ie044hwd",
+              "conditions": [],
+              "effects": [
+                {
+                  "variable": "suffering",
+                  "action": "set",
+                  "value": "High"
+                }
+              ]
+            },
+            {
+              "label": "You were sacrificed while saving someone else",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_yujiy66v",
+              "conditions": [],
+              "effects": [
+                {
+                  "variable": "suffering",
+                  "action": "set",
+                  "value": "Low"
+                }
+              ]
+            },
+            {
+              "label": "Old age",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_8jq52ix6",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "label": "Carelessness",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_1qul75e0",
+              "conditions": [],
+              "effects": [
+                {
+                  "variable": "suffering",
+                  "action": "set",
+                  "value": "Low"
+                }
+              ]
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_m473099v",
+        "type": "storyNode",
+        "position": {
+          "x": 1280.289454746122,
+          "y": 120.21244580571434
+        },
+        "data": {
+          "title": "Sudden Accident",
+          "content": "The cause of your death was outside forces which you had no control over.\n\nYou were in the wrong place at the wrong time.\n\nPerhaps you were a pedestrian in a crosswalk who was ran over by a drunk driver.\n\nOr a victim killed in a terrorist attack.\n\nPerhaps a powerful earthquake left your broken body buried in the rubble that you once called your home.\n\nOn the bright side of things, you were completely blindsided by \n\nDeath so you didn't have to ruminate on your approaching demise.\n\nOn the bleaker side, there is nothing you could have done to avoid this ending to your life...which feels as helpless as it sounds.\n\nLooking back at your place and time of death, how important would you say it was that you were there at that particular time?",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "label": "Not at all important",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_hxzt8696",
+              "conditions": [],
+              "effects": [
+                {
+                  "variable": "regrets",
+                  "action": "set",
+                  "value": 1
+                }
+              ]
+            },
+            {
+              "label": "Absolutely imperative",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_gzh8adqv",
+              "conditions": [],
+              "effects": [
+                {
+                  "variable": "regrets",
+                  "action": "set",
+                  "value": 0
+                }
+              ]
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_ie044hwd",
+        "type": "storyNode",
+        "position": {
+          "x": 120.3472003657144,
+          "y": 494.3102940342858
+        },
+        "data": {
+          "title": "Battle With Disease",
+          "content": "Your death was not swift and involved a lot of suffering, from which you are now freed from.\n\nThe last few years of your life were filled with pain, struggle and weariness.\n\nIf you could live the last few years over again, would you do anything differently?",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "label": "Assisted suicide",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_36m8pskz",
+              "conditions": [],
+              "effects": [
+                {
+                  "variable": "regrets",
+                  "action": "set",
+                  "value": 1
+                }
+              ]
+            },
+            {
+              "label": "No changes",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_gvjnkw25",
+              "conditions": [],
+              "effects": [
+                {
+                  "variable": "regrets",
+                  "action": "set",
+                  "value": 0
+                }
+              ]
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_yujiy66v",
+        "type": "storyNode",
+        "position": {
+          "x": 125.97456512000014,
+          "y": -344.54342564571397
+        },
+        "data": {
+          "title": "Hero's Sacrifice",
+          "content": "Ah, yes...a hero's death for you!\n\nYou died trying to save the life of another.\n\nFortunately for them, your efforts were a success.\n\nThe person was saved.\n\nBut it cost you your own life, which is less fortunate.\n\nWhich begs the question: who did you sacrifice your life to save?",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "label": "Random stranger",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_69m8qams",
+              "conditions": [],
+              "effects": [
+                {
+                  "variable": "regrets",
+                  "action": "set",
+                  "value": 1
+                }
+              ]
+            },
+            {
+              "label": "Loved One",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_zgdu007u",
+              "conditions": [],
+              "effects": [
+                {
+                  "variable": "regrets",
+                  "action": "set",
+                  "value": 0
+                }
+              ]
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_8jq52ix6",
+        "type": "storyNode",
+        "position": {
+          "x": 979.1894267559184,
+          "y": 306.2875658187755
+        },
+        "data": {
+          "title": "Old Age",
+          "content": "You lived a long and full life.\n\nA life rich with memories of all kinds --- sorrow, joy, disappointment, humor, love, passion, and sometimes even indifference.\n\nThe full spectrum.\n\nOverall, which kind of memory do you have more of?",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "label": "Negative",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_x58pw756",
+              "conditions": [],
+              "effects": [
+                {
+                  "variable": "regrets",
+                  "action": "set",
+                  "value": 1
+                }
+              ]
+            },
+            {
+              "label": "Positive",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_qy0s1nbc",
+              "conditions": [],
+              "effects": [
+                {
+                  "variable": "regrets",
+                  "action": "set",
+                  "value": 0
+                }
+              ]
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_1qul75e0",
+        "type": "storyNode",
+        "position": {
+          "x": 305.624946049516,
+          "y": 9.309195347300374
+        },
+        "data": {
+          "title": "Carelessness",
+          "content": "Write your story text here.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "label": "New Choice",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_ek1wrugl",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_69m8qams",
+        "type": "storyNode",
+        "position": {
+          "x": 603.4816338285714,
+          "y": -406.60383551999985
+        },
+        "data": {
+          "title": "Random Stranger",
+          "content": "Write your story text here.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "label": "New Choice",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_ek1wrugl",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_zgdu007u",
+        "type": "storyNode",
+        "position": {
+          "x": 586.622609125201,
+          "y": -197.67958348311362
+        },
+        "data": {
+          "title": "Loved One",
+          "content": "Write your story text here.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "label": "New Choice",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_ek1wrugl",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_36m8pskz",
+        "type": "storyNode",
+        "position": {
+          "x": 539.5835882971429,
+          "y": 558.5675879314285
+        },
+        "data": {
+          "title": "Assisted Suicide",
+          "content": "Write your story text here.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "label": "New Choice",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_ek1wrugl",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_gvjnkw25",
+        "type": "storyNode",
+        "position": {
+          "x": 586.6125294628571,
+          "y": 780.1062346971427
+        },
+        "data": {
+          "title": "No Changes",
+          "content": "Write your story text here.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "label": "New Choice",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_ek1wrugl",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_hxzt8696",
+        "type": "storyNode",
+        "position": {
+          "x": 1600,
+          "y": -8
+        },
+        "data": {
+          "title": "Unimportant",
+          "content": "Write your story text here.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "label": "New Choice",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_ek1wrugl",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_gzh8adqv",
+        "type": "storyNode",
+        "position": {
+          "x": 1616,
+          "y": 260
+        },
+        "data": {
+          "title": "Imperative",
+          "content": "Write your story text here.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "label": "New Choice",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_ek1wrugl",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_qy0s1nbc",
+        "type": "storyNode",
+        "position": {
+          "x": 1272,
+          "y": 598
+        },
+        "data": {
+          "title": "Positive",
+          "content": "Write your story text here.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "label": "New Choice",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_ek1wrugl",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_x58pw756",
+        "type": "storyNode",
+        "position": {
+          "x": 1050,
+          "y": 761.9999999999999
+        },
+        "data": {
+          "title": "Negative",
+          "content": "Write your story text here.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "label": "New Choice",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_ek1wrugl",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_ek1wrugl",
+        "type": "storyNode",
+        "position": {
+          "x": 1090.4251923640818,
+          "y": -275.13879412601733
+        },
+        "data": {
+          "title": "New Block",
+          "content": "Write your story text here.",
+          "blockType": "ending",
+          "choices": [],
+          "enterEffects": []
+        }
+      }
+    ],
+    "variableMeta": {
+      "regrets": {
+        "playerLabel": "Regrets"
+      },
+      "suffering": {
+        "playerLabel": "Suffering"
+      }
+    }
+  },
+  "exportedAt": "2026-07-07T13:19:19.928Z"
+}

@@ -1,4 +1,5 @@
 import VariableEditor from "./VariableEditor";
+import { setDocsHash } from "../../utils/hashRoute";
 
 /**
  * Edge-to-edge workspace for global story variables (same object as editor / preview / export).
@@ -51,6 +52,14 @@ export default function VariablesScreen({
         </div>
 
         <div className="variables-screen-topbar-actions">
+          <button
+            type="button"
+            className="variables-screen-action-btn"
+            onClick={() => setDocsHash()}
+            title="Open StoryPlay documentation"
+          >
+            Documentation
+          </button>
           <button
             type="button"
             className="variables-screen-action-btn"
