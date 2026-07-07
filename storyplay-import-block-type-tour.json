@@ -1,0 +1,233 @@
+{
+  "formatVersion": 1,
+  "exportedAt": "2026-07-07T00:00:00.000Z",
+  "meta": {
+    "title": "Block Type Tour",
+    "description": "Short test story with one of each block type for import and play testing.",
+    "startNodeId": "tour-start"
+  },
+  "story": {
+    "variables": {
+      "reputation": 0,
+      "coins": 5,
+      "pitchScore": 0,
+      "wonPitch": false,
+      "buildFocus": [],
+      "prepAllocation": {},
+      "prep_focus": 0,
+      "prep_speed": 0,
+      "prep_mind": 0
+    },
+    "variableMeta": {
+      "reputation": {
+        "playerLabel": "Reputation",
+        "playerDescription": "How the guild sees you"
+      },
+      "coins": {
+        "playerLabel": "Coins"
+      }
+    },
+    "characters": [
+      {
+        "id": "char_guide",
+        "name": "Guide",
+        "description": "Tutorial NPC for the block type tour",
+        "aliases": ["Instructor"]
+      }
+    ],
+    "nodes": [
+      {
+        "id": "tour-start",
+        "type": "storyNode",
+        "position": { "x": 40, "y": 200 },
+        "data": {
+          "title": "Proving Ground",
+          "content": "A chalkboard lists every scene type StoryPlay supports.\nYour job: walk the line once, touch each block, and reach an ending.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "tour-c0",
+              "label": "Talk to the guide",
+              "targetNodeId": "tour-chat",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": [],
+          "graphIssues": []
+        }
+      },
+      {
+        "id": "tour-chat",
+        "type": "storyNode",
+        "position": { "x": 360, "y": 200 },
+        "data": {
+          "title": "Guide's Booth",
+          "content": "Guide: Welcome to the tour. Reply below, then pick where to go next.",
+          "blockType": "chat",
+          "choices": [
+            {
+              "id": "tour-c1a",
+              "choiceKind": "chatReply",
+              "label": "What comes first?",
+              "playerMessage": "What should I try first?",
+              "npcResponse": "Guide: Pick your strengths, then persuade me you belong here.",
+              "targetNodeId": "",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "tour-c1b",
+              "choiceKind": "chatReply",
+              "label": "Sounds good.",
+              "playerMessage": "Sounds good.",
+              "npcResponse": "Guide: Trait picker is next on the path.",
+              "targetNodeId": "",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "tour-c1c",
+              "choiceKind": "goTo",
+              "label": "Continue to trait picker",
+              "targetNodeId": "tour-traits",
+              "conditions": [],
+              "effects": [{ "variable": "reputation", "action": "add", "value": 1 }]
+            }
+          ],
+          "enterEffects": [],
+          "graphIssues": []
+        }
+      },
+      {
+        "id": "tour-traits",
+        "type": "storyNode",
+        "position": { "x": 680, "y": 200 },
+        "data": {
+          "title": "Trait Picker",
+          "content": "Choose up to two focuses for this run.",
+          "blockType": "traitPicker",
+          "continueNodeId": "tour-persuasion",
+          "minSelections": 1,
+          "maxSelections": 2,
+          "traitListVariable": "buildFocus",
+          "options": [
+            {
+              "id": "focus",
+              "label": "Focus",
+              "description": "Steady attention under pressure.",
+              "effects": { "reputation": 1 }
+            },
+            {
+              "id": "speed",
+              "label": "Speed",
+              "description": "Quick reads and fast answers.",
+              "effects": { "reputation": 1 }
+            },
+            {
+              "id": "mind",
+              "label": "Mind",
+              "description": "Patterns, lore, and clever angles.",
+              "effects": { "reputation": 1 }
+            }
+          ],
+          "choices": [],
+          "enterEffects": [],
+          "graphIssues": []
+        }
+      },
+      {
+        "id": "tour-persuasion",
+        "type": "storyNode",
+        "position": { "x": 1000, "y": 200 },
+        "data": {
+          "title": "Persuasion",
+          "content": "Guide: Convince me you are ready for the weighting exercise.",
+          "blockType": "persuasion",
+          "targetName": "Guide",
+          "startScore": 45,
+          "minScore": 0,
+          "maxScore": 100,
+          "threshold": 70,
+          "maxTurns": 3,
+          "visibleMeter": true,
+          "scoreVariable": "pitchScore",
+          "successVariable": "wonPitch",
+          "successNodeId": "tour-weight",
+          "failureNodeId": "tour-ending-fail",
+          "choices": [
+            {
+              "id": "p1",
+              "text": "Name a concrete skill you will bring.",
+              "delta": 15,
+              "response": "Guide: Specific. I like specific."
+            },
+            {
+              "id": "p2",
+              "text": "Offer to take the hardest task first.",
+              "delta": 10,
+              "response": "Guide: Brave—or reckless. Either can work."
+            },
+            {
+              "id": "p3",
+              "text": "Recite the tour steps from memory.",
+              "delta": 6,
+              "response": "Guide: You paid attention. Barely enough."
+            }
+          ],
+          "enterEffects": [],
+          "graphIssues": []
+        }
+      },
+      {
+        "id": "tour-weight",
+        "type": "storyNode",
+        "position": { "x": 1320, "y": 200 },
+        "data": {
+          "title": "Choice Weighting",
+          "content": "Spend exactly 6 preparation points across the tracks below.",
+          "blockType": "choiceWeighting",
+          "continueNodeId": "tour-ending-win",
+          "totalPoints": 6,
+          "lockExactTotal": true,
+          "variablePrefix": "prep_",
+          "resultVariable": "prepAllocation",
+          "options": [
+            { "id": "focus", "label": "Focus drills", "min": 0, "max": 6 },
+            { "id": "speed", "label": "Speed drills", "min": 0, "max": 6 },
+            { "id": "mind", "label": "Mind drills", "min": 0, "max": 6 }
+          ],
+          "choices": [],
+          "enterEffects": [],
+          "graphIssues": []
+        }
+      },
+      {
+        "id": "tour-ending-win",
+        "type": "storyNode",
+        "position": { "x": 1640, "y": 120 },
+        "data": {
+          "title": "Tour Complete",
+          "content": "You cleared every block type on the happy path:\nnarrative → chat → trait picker → persuasion → choice weighting → ending.\nImport test passed.",
+          "blockType": "ending",
+          "choices": [],
+          "enterEffects": [],
+          "graphIssues": []
+        }
+      },
+      {
+        "id": "tour-ending-fail",
+        "type": "storyNode",
+        "position": { "x": 1640, "y": 320 },
+        "data": {
+          "title": "Tour Incomplete",
+          "content": "Persuasion failed—you still reached an ending block.\nReset play and try a stronger pitch to see the weighting scene.",
+          "blockType": "ending",
+          "choices": [],
+          "enterEffects": [],
+          "graphIssues": []
+        }
+      }
+    ]
+  }
+}

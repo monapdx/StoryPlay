@@ -47,7 +47,7 @@ export default function CharactersScreen({
         </p>
       </header>
 
-      <div className="variables-screen-body custom-scrollbar">
+      <div className="variables-screen-body variables-screen-body--single custom-scrollbar">
         <div className="variables-screen-main">
           <CharacterManager
             characters={characters}
