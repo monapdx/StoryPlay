@@ -6,6 +6,43 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+#### Undo / redo
+
+- **Story-wide history** — Snapshot-based undo/redo for nodes, choices, variables, variable metadata, and characters (up to 50 steps).
+- **Debounced grouping** — Rapid typing in fields collapses into a single undo step; discrete actions (add/delete block, connect edge, drag stop) commit immediately.
+- **Canvas toolbar** — **Undo** and **Redo** beside Add Block / Delete Block / Delete Edge.
+- **Keyboard shortcuts** — Ctrl+Z / Cmd+Z to undo; Ctrl+Y or Ctrl+Shift+Z to redo (skipped while focus is in a text field).
+- **Mini-game draft history** — Separate undo/redo for in-progress mini-game edits before saving back to the block.
+
+---
+
+#### Safe project import
+
+- **Import Project** — File picker → validate → preview summary (node/variable/character counts) → confirm before replace.
+- **Shared schema** — `projectSchema.js`, `projectMigrations.js`, and `importStoryPlayProject.js` align import with v1 export shape.
+- **Canonical nodes** — `normalizeStoryNode()` ensures `type: "storyNode"` and related defaults on import/export round-trip.
+
+---
+
+#### Editor auto-save
+
+- **localStorage persistence** — Working project auto-saves to `storyplay-editor-project` (~1.5s debounce) so edits survive refresh, not only on template load or import.
+
+---
+
+#### Player-facing stats (preview / play)
+
+- **Player stats panel** — Replaces dev variable dropdown with animated stat cards in preview and `#/play`.
+- **Friendly labels** — `variableMeta` player-facing names and descriptions; stats stay hidden until meaningful or scene-relevant.
+
+---
+
+#### Graph / mini-game wiring
+
+- **`nodeGraphLinks.js`** — Builds edges and diagnostics from mini-game fields (`continueNodeId`, `successNodeId`, `failureNodeId`, `timeoutTargetNodeId`), not only `choices[].targetNodeId`.
+
+---
+
 #### First-run onboarding and blank-slate editor
 
 **What was added**
@@ -85,6 +122,10 @@ All notable changes to this project are documented in this file.
 
 ### Changed
 
+- **UI copy** — Trimmed explanatory text across variables workspace (removed help sidebar), sidebar, mini-game config/logic, characters, empty state, and import modal; helper boxes replaced with short hints where needed.
+- **Mini-game editor tabs** — **Config**, **Logic**, and **Advanced** each show a single distinct panel (Logic no longer stacks under Config).
+- **Mini-game save UX** — **Back to Story** saves the draft automatically; **Save** is no longer blocked by validation (incomplete drafts can still be saved); `applyMiniGameToSelectedNode()` writes all fields in one update.
+- **Undo/redo placement** — Removed from main header and Variables/Characters top bars; kept on canvas toolbar (mini-game editor retains its own undo/redo).
 - **Header** — Demo story `<select>` replaced with project status (“Blank project” / template name) and **Example stories**; **Characters** button opens the character workspace.
 - **Dirty / template detection** — `isStoryDirty` and template-load confirmation account for `characters` in the story signature.
 - **Sidebar editor** — Trimmed helper text and empty-state copy to reduce scrolling; node ID shown as a compact footnote instead of a full helper box.
@@ -95,6 +136,11 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **Mini-game editor data loss** — Edits were discarded when using **Back to Story** or when **Save** was disabled by validation; save path now persists draft state reliably.
+- **Guild Audition graph** — Missing connectors and false diagnostics for trait picker / persuasion / choice-weighting blocks.
+- **Export → import round-trip** — New blocks missing `type: "storyNode"` failed validation on re-import.
+- **Editor session persistence** — `saveEditorProject` previously ran only on template load/import/reset, not during normal editing.
+- **Play preview crash** — Stale `setShowVariableDetails` reference after choices in preview mode.
 - **Onboarding tooltip positioning** — Tooltips no longer clip off-screen on small viewports, header toolbar steps, or sidebar placements; uses measured tooltip size, automatic flip (top/bottom/left/right), viewport clamping (16px margin), `visualViewport` support, resize/scroll/ResizeObserver updates, and portal rendering.
 - **Minigame blocks in preview** — Trait Picker and related blocks no longer appear as unstyled default browser controls.
 - **Chat speaker parsing** — `splitChatLine()` ignores colons inside `{{character:…}}` tokens so lines like `{{character:char_id.name}}: Hello` resolve the speaker name instead of splitting on the token’s internal colon.
@@ -117,19 +163,17 @@ All notable changes to this project are documented in this file.
 - Export serializes the same shape the app already uses: global `variables` and React Flow–style `nodes` (including `position` and full `data`). Graph edges are not stored; they remain implied by `data.choices[].targetNodeId` (and timed timeout targets) as in the editor.
 - `formatVersion` is `1`. Each export includes `exportedAt` (ISO timestamp) unless callers override serializer options. By default, `data.graphIssues` is removed from cloned nodes so the file is suitable as a portable story artifact rather than editor diagnostics.
 - **Export Game** calls `downloadStoryPlayExportV1({ nodes, variables, characters })`, which creates a temporary blob URL and saves a file such as `storyplay-export-<timestamp>.json`.
+- **Import Project** parses the same envelope, validates shape and graph references, runs migrations, shows a preview modal, and replaces editor state on confirm (also persists to `localStorage`).
 
 **Limitations**
 
-- **Import** is not implemented; downloads are one-way until an importer exists.
 - **Assets** (images, audio, etc.) are not bundled; only JSON-serializable story data is exported.
 - **Start node** is not written automatically into `meta.startNodeId`; consumers still follow the same implicit rules as the app (for example, first node or selection) unless you extend the serializer to set `meta`.
 - **`enterEffects`** may exist on nodes but are not applied by the current play preview; exported stories preserve that field for fidelity, not guaranteed runtime behavior.
-- **Export Game** is only on the main app header; it is not shown while the full-screen mini-game editor is open.
 - **JSON Schema** documents intended shape; strict validation at export time is not wired in yet.
 
 **Next steps**
 
-- Add **Import** (file picker + merge/replace into `useStoryState`) with `formatVersion` checks and user-visible errors.
 - Optional **runtime-only** export mode (omit `position`, strip more editor-only fields) for smaller player bundles.
 - **ZIP** (or similar) packaging when binary assets and a standalone player are introduced.
-- **Validate** exports against the schema (or a shared Zod/JSON Schema step) before download and on import.
+- **Validate** exports against the schema (or a shared Zod/JSON Schema step) before download.
