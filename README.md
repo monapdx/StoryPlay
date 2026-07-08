@@ -4,6 +4,12 @@
 |---|---|
 | <img src="product.png" width="272"> | **Build interactive experiences visually.** |
 
+**[StoryPlay](https://monapdx.github.io/StoryPlay/)** is a visual editor for building interactive experiences.
+
+Create **branching stories**, chat fiction, RPG dialogue, escape rooms, personality quizzes, interactive tutorials, decision trees, and **narrative games** using an intuitive node-based editor.
+
+Design visually, preview instantly, organize characters and variables, validate your project with **built-in diagnostics**, and **export your work** as structured JSON.
+
 ## Story blocks
 
 [![Narrative](https://img.shields.io/badge/%F0%9F%93%96%20Narrative-111111?style=for-the-badge)](#block-types) [![Chats](https://img.shields.io/badge/%F0%9F%92%AC%20Chats-111111?style=for-the-badge)](#block-types) [![Timed](https://img.shields.io/badge/%F0%9F%95%90%20Timed-111111?style=for-the-badge)](#block-types) [![Ending](https://img.shields.io/badge/%F0%9F%8F%81%20Ending-111111?style=for-the-badge)](#block-types)
