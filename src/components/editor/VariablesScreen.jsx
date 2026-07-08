@@ -83,7 +83,7 @@ export default function VariablesScreen({
             disabled={!canOpenMiniGameEditor}
             title={miniGameEditorTitle}
           >
-            Open Mini-Game Editor
+            Mini-Games
           </button>
         </div>
       </div>

@@ -265,7 +265,7 @@ Guard: She's in the square.`}</DocPre>
     <>
       <DocP>
         Mini-game blocks add interactive beats between narrative scenes. Select a mini-game block
-        and click <DocCode>Open Mini-Game Editor</DocCode> for the full-screen editor.
+        and click <DocCode>Mini-Games</DocCode> for the full-screen editor.
       </DocP>
       <DocH3>Trait picker</DocH3>
       <DocP>

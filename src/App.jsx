@@ -505,7 +505,7 @@ function EditorApp() {
                 disabled={!canOpenMiniGameEditor}
                 title={miniGameEditorTitle}
               >
-                Open Mini-Game Editor
+                Mini-Games
               </button>
             </div>
           </header>
