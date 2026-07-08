@@ -108,6 +108,19 @@ Then open [http://localhost:5173](http://localhost:5173).
 
 **Documentation:** [http://localhost:5173/#/docs](http://localhost:5173/#/docs) (wiki-style guides; or click **Documentation** in the editor header).
 
+**Itch.io build:** [https://monapdx.itch.io/storyplay](https://monapdx.itch.io/storyplay) — click **Run tool** on the project page.
+
+### Deploy to itch.io
+
+See [docs/ITCH-DEPLOY.md](docs/ITCH-DEPLOY.md). Quick commands:
+
+```bash
+npm run deploy:itch      # build + butler push
+npm run verify:itch      # check live embed is current
+```
+
+If **Run tool** still shows an old UI after deploy, delete the old manual `storyplay-html.zip` on the [itch edit page](https://itch.io/game/edit/4386018) so the Butler `html` channel is used.
+
 ## Changelog
 
 See [CHANGELOG.md](CHANGELOG.md) for release notes and notable changes.

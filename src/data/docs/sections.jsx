@@ -76,7 +76,7 @@ const SECTION_RENDERERS = {
           <strong>Variables / Characters</strong> — full-screen workspaces for story-wide data.
         </li>
         <li>
-          <strong>Preview</strong> — quick play panel or <DocCode>Play in new tab</DocCode> for
+          <strong>Preview</strong> — quick play panel or <DocCode>Play</DocCode> for
           full-screen testing.
         </li>
       </DocUl>
@@ -109,16 +109,16 @@ const SECTION_RENDERERS = {
         </li>
         <li>
           <strong>Preview the story</strong> — Open <DocCode>Preview</DocCode> in the header or{" "}
-          <DocCode>Play in new tab</DocCode>. Pick choices and confirm the flow feels right.
+          <DocCode>Play</DocCode>. Pick choices and confirm the flow feels right.
         </li>
         <li>
-          <strong>Export the game</strong> — Click <DocCode>Export Game</DocCode> to download a
+          <strong>Export the game</strong> — Click <DocCode>Export</DocCode> to download a
           StoryPlay JSON file you can back up or re-import later.
         </li>
       </DocOl>
       <DocP>
         Tip: mark one block as your starting scene by selecting it before previewing, or load an
-        example from <DocCode>Example stories</DocCode> to see a complete graph.
+        example from <DocCode>Templates</DocCode> to see a complete graph.
       </DocP>
     </>
   ),
@@ -294,7 +294,7 @@ Guard: She's in the square.`}</DocPre>
     <>
       <DocP>
         New sessions start with a <strong>blank project</strong>. Load a starter from{" "}
-        <DocCode>Example stories</DocCode> in the header when you want a ready-made graph.
+        <DocCode>Templates</DocCode> in the header when you want a ready-made graph.
       </DocP>
       <DocH3>Built-in examples</DocH3>
       <DocUl>
@@ -325,12 +325,12 @@ Guard: She's in the square.`}</DocPre>
     <>
       <DocH3>Export</DocH3>
       <DocP>
-        Click <DocCode>Export Game</DocCode> to download a <DocCode>.json</DocCode> file (StoryPlay
+        Click <DocCode>Export</DocCode> to download a <DocCode>.json</DocCode> file (StoryPlay
         export v1). Keep backups, share with collaborators, or archive milestones.
       </DocP>
       <DocH3>Import</DocH3>
       <DocP>
-        Click <DocCode>Import Project</DocCode>, choose a StoryPlay JSON file, review the
+        Click <DocCode>Import</DocCode>, choose a StoryPlay JSON file, review the
         validation summary (node, variable, and character counts), then confirm to replace the
         current project.
       </DocP>
@@ -428,7 +428,7 @@ Guard: She's in the square.`}</DocPre>
       </DocP>
       <DocH3>How do I test my story?</DocH3>
       <DocP>
-        Use header <DocCode>Preview</DocCode> for a docked panel, or <DocCode>Play in new tab</DocCode>{" "}
+        Use header <DocCode>Preview</DocCode> for a docked panel, or <DocCode>Play</DocCode>{" "}
         for full-screen <DocCode>#/play</DocCode> mode that stays in sync with the editor.
       </DocP>
       <DocH3>Why is a choice missing in play?</DocH3>

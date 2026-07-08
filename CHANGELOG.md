@@ -14,6 +14,13 @@ All notable changes to this project are documented in this file.
 
 ---
 
+#### Itch.io deployment
+
+- **`npm run deploy:itch`** — build with relative paths and push `dist/` to `monapdx/storyplay:html` via butler.
+- **`scripts/deploy-itch.mjs`** / **`scripts/deploy-itch.ps1`** — repeatable local deploy helpers.
+
+---
+
 #### Undo / redo
 
 - **Story-wide history** — Snapshot-based undo/redo for nodes, choices, variables, variable metadata, and characters (up to 50 steps).

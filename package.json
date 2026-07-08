@@ -7,6 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "build:itch": "vite build --mode itch",
+    "package:itch": "npm run build:itch && node scripts/package-itch-zip.mjs",
+    "deploy:itch": "npm run build:itch && node scripts/deploy-itch.mjs",
+    "verify:itch": "node scripts/verify-itch-embed.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

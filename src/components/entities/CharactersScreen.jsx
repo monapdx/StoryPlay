@@ -42,8 +42,9 @@ export default function CharactersScreen({
             type="button"
             className="variables-screen-action-btn"
             onClick={onOpenTemplates}
+            title="Browse starter templates"
           >
-            Example stories
+            Templates
           </button>
         </div>
       </div>

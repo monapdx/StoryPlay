@@ -421,9 +421,9 @@ function EditorApp() {
                 className="header-button"
                 data-onboarding="templates"
                 onClick={handleOpenTemplates}
-                title="Browse starter example stories"
+                title="Browse starter templates"
               >
-                Example stories
+                Templates
               </button>
 
               <button
@@ -436,7 +436,7 @@ function EditorApp() {
                   .join(" ")}
                 data-onboarding="preview"
                 onClick={() => setIsQuickPreviewOpen((open) => !open)}
-                title="Show or hide a compact play preview beside the editor (full test: Play in new tab)"
+                title="Show or hide a compact play preview beside the editor (full test: Play)"
                 aria-pressed={isQuickPreviewOpen}
               >
                 Preview
@@ -465,9 +465,9 @@ function EditorApp() {
                 type="button"
                 className="header-button"
                 onClick={handlePlayInNewTab}
-                title="Save to the browser, open #/play in a new tab, and keep that tab updated (debounced) while you edit in this tab after the first use"
+                title="Open full-screen play mode in a new tab (#/play)"
               >
-                Play in new tab
+                Play
               </button>
 
               <button
@@ -485,7 +485,7 @@ function EditorApp() {
                 onClick={handleOpenImportPicker}
                 title="Import a previously exported StoryPlay project (.json)"
               >
-                Import Project
+                Import
               </button>
 
               <button
@@ -495,7 +495,7 @@ function EditorApp() {
                 onClick={handleExportStory}
                 title="Download story as StoryPlay export JSON (v1)"
               >
-                Export Game
+                Export
               </button>
 
               <button

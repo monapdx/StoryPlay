@@ -45,9 +45,9 @@ export default function VariablesScreen({
             className="variables-screen-action-btn"
             data-onboarding="templates"
             onClick={onOpenTemplates}
-            title="Browse starter example stories"
+            title="Browse starter templates"
           >
-            Example stories
+            Templates
           </button>
         </div>
 
@@ -66,7 +66,7 @@ export default function VariablesScreen({
             onClick={onImport}
             title="Import a previously exported StoryPlay project (.json)"
           >
-            Import Project
+            Import
           </button>
           <button
             type="button"
@@ -74,7 +74,7 @@ export default function VariablesScreen({
             onClick={onExport}
             title="Download story as StoryPlay export JSON (v1)"
           >
-            Export Game
+            Export
           </button>
           <button
             type="button"

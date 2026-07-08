@@ -89,9 +89,9 @@ export default function PlayerPage() {
         <div className="player-page-empty">
           <h1 className="player-page-empty-title">No story to play yet</h1>
           <p className="player-page-empty-text">
-            This page loads the snapshot saved when you choose <strong>Play in new tab</strong> from the
+            This page loads the snapshot saved when you choose <strong>Play</strong> from the
             editor. After that, the editor tab can push debounced updates here automatically while you keep
-            working. You can also click <strong>Play in new tab</strong> again anytime for an immediate refresh.
+            working. You can also click <strong>Play</strong> again anytime for an immediate refresh.
           </p>
           <button type="button" className="toolbar-button" onClick={() => setEditorHash()}>
             Go to editor (#/)
