@@ -1,10 +1,14 @@
 # StoryPlay
 
-| Logo | Description |
+| Logo | Tagline |
 |---|---|
-| <img src="product.png" width="402"> | StoryPlay is a visual editor for building playable narrative games. Design branching stories, track variables, define reusable characters, and add game mechanics using a node-based interface with live preview. **Think Twine, but visual, built-in game systems, and a real play/debug mode** |
+| <img src="product.png" width="272"> | **Build interactive experiences visually.** |
 
-[![Chrome Extension](https://img.shields.io/badge/%F0%9F%93%8CChrome%20Extension-111111?style=for-the-badge)](#)
+**[StoryPlay](https://monapdx.github.io/StoryPlay/)** is a visual editor for building interactive experiences.
+
+Create **branching stories**, chat fiction, RPG dialogue, escape rooms, personality quizzes, interactive tutorials, decision trees, and **narrative games** using an intuitive node-based editor.
+
+Design visually, preview instantly, organize characters and variables, validate your project with **built-in diagnostics**, and **export your work** as structured JSON.
 
 ## Story blocks
 
