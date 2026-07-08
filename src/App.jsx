@@ -396,7 +396,7 @@ function EditorApp() {
           <header className="app-header">
             <div>
               <h1>StoryPlay</h1>
-              <p className="app-subtitle">Visual story editor</p>
+              <p className="app-subtitle">Build Interactive Experiences Visually</p>
 
               <div className="app-project-status">
                 <span className="app-project-status__label">Project</span>

@@ -4,7 +4,7 @@
  */
 
 const EMBED_INDEX_URL = "https://html-classic.itch.zone/html/17517522/index.html";
-const MARKERS_NEW = ["Visual story editor", "Documentation", "Templates"];
+const MARKERS_NEW = ["Build Interactive Experiences Visually", "Documentation", "Templates"];
 const MARKERS_OLD = ["Build branching stories", "Demo story"];
 
 async function fetchText(url) {

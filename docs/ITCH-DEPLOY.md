@@ -45,7 +45,7 @@ Then zip the **contents** of `dist/` (not the folder itself) as `storyplay-html.
 npm run verify:itch
 ```
 
-Checks that the public itch embed JS includes markers from the current app (e.g. `Documentation`, `Visual story editor`).
+Checks that the public itch embed JS includes markers from the current app (e.g. `Documentation`, `Build Interactive Experiences Visually`).
 
 ## Requirements
 
