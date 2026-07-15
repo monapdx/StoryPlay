@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { parseHashRoute } from "../utils/hashRoute";
+import { parseHashRoute, type ParsedHashRoute } from "../utils/hashRoute";
 
-export default function useHashRoute() {
+export default function useHashRoute(): ParsedHashRoute {
   const [parsed, setParsed] = useState(parseHashRoute);
 
   useEffect(() => {

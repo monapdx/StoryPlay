@@ -4,8 +4,9 @@ import {
 } from "./projectSchema";
 
 export class UnsupportedFormatVersionError extends Error {
-  /** @param {number} version */
-  constructor(version) {
+  version: unknown;
+
+  constructor(version: unknown) {
     super(
       `Unsupported StoryPlay format version ${version}. This app supports version ${SUPPORTED_FORMAT_VERSIONS.join(", ")}.`
     );
@@ -17,19 +18,19 @@ export class UnsupportedFormatVersionError extends Error {
 /**
  * Migrate a parsed export document to the current in-app story shape.
  * Unknown versions throw UnsupportedFormatVersionError.
- *
- * @param {unknown} project
- * @returns {Record<string, unknown>}
  */
-export function migrateStoryPlayProject(project) {
+export function migrateStoryPlayProject(
+  project: unknown
+): Record<string, unknown> {
   if (!project || typeof project !== "object" || Array.isArray(project)) {
     throw new Error("Project file must be a JSON object.");
   }
 
-  const version = project.formatVersion;
+  const doc = project as Record<string, unknown>;
+  const version = doc.formatVersion;
 
   if (version === STORYPLAY_EXPORT_FORMAT_VERSION) {
-    return project;
+    return doc;
   }
 
   throw new UnsupportedFormatVersionError(version);
