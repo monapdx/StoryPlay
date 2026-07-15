@@ -1558,6 +1558,48 @@ select {
   color: #94a3b8;
 }
 
+.choice-path-generator {
+  display: grid;
+  gap: 10px;
+  margin: 0 0 14px;
+  padding: 12px;
+  border: 1px solid var(--border-default);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.choice-path-generator__row {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: 8px;
+  align-items: end;
+}
+
+.choice-path-generator__row .form-label {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+.choice-path-generator__count {
+  margin: 0;
+  padding: 8px 10px;
+  text-align: center;
+}
+
+.choice-path-generator__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.choice-path-generator__actions .toolbar-button {
+  flex: 1 1 auto;
+}
+
+.choice-path-generator__status {
+  margin: 0;
+}
+
 .form-input,
 .form-textarea,
 .form-select {

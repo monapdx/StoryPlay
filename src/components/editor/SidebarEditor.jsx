@@ -17,6 +17,9 @@ export default function SidebarEditor({
   updateSelectedNodeField,
   deleteSelectedNode,
   addChoiceToSelectedNode,
+  addMultipleChoicesToSelectedNode,
+  generateDestinationNodesForSelectedNode,
+  generateChoicePathsForSelectedNode,
   updateChoiceOnSelectedNode,
   removeChoiceFromSelectedNode,
   onOpenMiniGameEditor,
@@ -63,6 +66,11 @@ export default function SidebarEditor({
               onboardingStepId={onboardingStepId}
               isOnboardingDemoPreview
               addChoiceToSelectedNode={addChoiceToSelectedNode}
+              addMultipleChoicesToSelectedNode={addMultipleChoicesToSelectedNode}
+              generateDestinationNodesForSelectedNode={
+                generateDestinationNodesForSelectedNode
+              }
+              generateChoicePathsForSelectedNode={generateChoicePathsForSelectedNode}
               updateChoiceOnSelectedNode={updateChoiceOnSelectedNode}
               removeChoiceFromSelectedNode={removeChoiceFromSelectedNode}
             />
@@ -330,6 +338,11 @@ export default function SidebarEditor({
               characters={characters}
               onboardingStepId={onboardingStepId}
               addChoiceToSelectedNode={addChoiceToSelectedNode}
+              addMultipleChoicesToSelectedNode={addMultipleChoicesToSelectedNode}
+              generateDestinationNodesForSelectedNode={
+                generateDestinationNodesForSelectedNode
+              }
+              generateChoicePathsForSelectedNode={generateChoicePathsForSelectedNode}
               updateChoiceOnSelectedNode={updateChoiceOnSelectedNode}
               removeChoiceFromSelectedNode={removeChoiceFromSelectedNode}
             />

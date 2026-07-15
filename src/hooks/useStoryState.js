@@ -13,6 +13,15 @@ import { buildStoryEdgesFromNodes } from "../utils/nodeGraphLinks";
 import { normalizeStoryNodes } from "../utils/nodeHelpers";
 import { miniGamePayloadToNodeData } from "../utils/miniGameFromNode";
 import { createStoryUndoHistory } from "../utils/storyUndoHistory";
+import {
+  createBlankGoToChoice,
+  createNarrativeDestinationNode,
+  fanOutPositions,
+  getNextChoiceLabelStart,
+  isChoiceUnconnected,
+  parseChoiceCount,
+  resolveOpenPosition,
+} from "../utils/choicePathGenerator";
 
 function makeNodeId() {
   return `node_${Math.random().toString(36).slice(2, 10)}`;
@@ -435,6 +444,247 @@ export default function useStoryState() {
     );
   }
 
+  /**
+   * Append N blank go-to choices to the selected narrative node (no destinations).
+   * @param {unknown} rawCount
+   * @returns {{ ok: boolean, message?: string, added?: number }}
+   */
+  function addMultipleChoicesToSelectedNode(rawCount) {
+    if (!selectedNodeId) {
+      return { ok: false, message: "Select a narrative block first." };
+    }
+
+    const parsed = parseChoiceCount(rawCount);
+    if (!parsed.ok) {
+      return { ok: false, message: parsed.message };
+    }
+
+    const sourceNode = storyStateRef.current.nodes.find(
+      (node) => node.id === selectedNodeId
+    );
+    if (!sourceNode) {
+      return { ok: false, message: "Select a narrative block first." };
+    }
+    if ((sourceNode.data?.blockType || "narrative") !== "narrative") {
+      return {
+        ok: false,
+        message: "Choice path tools are for narrative blocks.",
+      };
+    }
+
+    const count = parsed.count;
+    recordHistory({ immediate: true });
+    setNodesState((prev) =>
+      prev.map((node) => {
+        if (node.id !== selectedNodeId) return node;
+
+        const existingChoices = node.data?.choices || [];
+        let nextNumber = getNextChoiceLabelStart(existingChoices);
+        const addedChoices = Array.from({ length: count }, () => {
+          const choice = createBlankGoToChoice(`Choice ${nextNumber}`);
+          nextNumber += 1;
+          return choice;
+        });
+
+        return {
+          ...node,
+          data: {
+            ...node.data,
+            choices: [...existingChoices, ...addedChoices],
+          },
+        };
+      })
+    );
+
+    return {
+      ok: true,
+      added: count,
+      message: `Added ${count} ${count === 1 ? "choice" : "choices"}.`,
+    };
+  }
+
+  /**
+   * For each unconnected choice on the selected narrative node, create a destination
+   * node and wire targetNodeId. Existing connections are left untouched.
+   * @returns {{ ok: boolean, message?: string, created?: number }}
+   */
+  function generateDestinationNodesForSelectedNode() {
+    if (!selectedNodeId) {
+      return { ok: false, message: "Select a narrative block first." };
+    }
+
+    const sourceNode = storyStateRef.current.nodes.find(
+      (node) => node.id === selectedNodeId
+    );
+    if (!sourceNode) {
+      return { ok: false, message: "Select a narrative block first." };
+    }
+    if ((sourceNode.data?.blockType || "narrative") !== "narrative") {
+      return {
+        ok: false,
+        message: "Choice path tools are for narrative blocks.",
+      };
+    }
+
+    const existingChoices = sourceNode.data?.choices || [];
+    if (existingChoices.length === 0) {
+      return { ok: false, message: "Add at least one choice first." };
+    }
+
+    const unconnectedIndexes = existingChoices
+      .map((choice, index) => (isChoiceUnconnected(choice) ? index : -1))
+      .filter((index) => index >= 0);
+
+    if (unconnectedIndexes.length === 0) {
+      return { ok: false, message: "All choices already have destinations." };
+    }
+
+    const occupied = storyStateRef.current.nodes.map((node) => node.position);
+    const draftPositions = fanOutPositions(
+      sourceNode.position,
+      unconnectedIndexes.length
+    );
+    const resolvedPositions = [];
+    for (const draft of draftPositions) {
+      const next = resolveOpenPosition(draft, [...occupied, ...resolvedPositions]);
+      resolvedPositions.push(next);
+    }
+
+    const destinationByChoiceIndex = new Map();
+    const newNodes = unconnectedIndexes.map((choiceIndex, order) => {
+      const choice = existingChoices[choiceIndex];
+      const nodeId = makeNodeId();
+      const title = choice?.label?.trim() || "New Block";
+      destinationByChoiceIndex.set(choiceIndex, nodeId);
+      return createNarrativeDestinationNode({
+        id: nodeId,
+        title,
+        position: resolvedPositions[order],
+      });
+    });
+
+    recordHistory({ immediate: true });
+    setNodesState((prev) => {
+      const nextNodes = prev.map((node) => {
+        if (node.id !== selectedNodeId) return node;
+
+        const nextChoices = (node.data?.choices || []).map((choice, index) => {
+          const targetId = destinationByChoiceIndex.get(index);
+          if (!targetId || !isChoiceUnconnected(choice)) {
+            return choice;
+          }
+
+          return {
+            ...choice,
+            targetNodeId: targetId,
+          };
+        });
+
+        return {
+          ...node,
+          data: {
+            ...node.data,
+            choices: nextChoices,
+          },
+        };
+      });
+
+      return [...nextNodes, ...newNodes];
+    });
+
+    const created = newNodes.length;
+    return {
+      ok: true,
+      created,
+      message: `Generated ${created} destination ${created === 1 ? "node" : "nodes"}.`,
+    };
+  }
+
+  /**
+   * Add N new choices and create+connect a destination for each new choice only.
+   * Does not fill destinations for pre-existing unconnected choices.
+   * @param {unknown} rawCount
+   */
+  function generateChoicePathsForSelectedNode(rawCount) {
+    if (!selectedNodeId) {
+      return { ok: false, message: "Select a narrative block first." };
+    }
+
+    const parsed = parseChoiceCount(rawCount);
+    if (!parsed.ok) {
+      return { ok: false, message: parsed.message };
+    }
+
+    const sourceNode = storyStateRef.current.nodes.find(
+      (node) => node.id === selectedNodeId
+    );
+    if (!sourceNode) {
+      return { ok: false, message: "Select a narrative block first." };
+    }
+    if ((sourceNode.data?.blockType || "narrative") !== "narrative") {
+      return {
+        ok: false,
+        message: "Choice path tools are for narrative blocks.",
+      };
+    }
+
+    const count = parsed.count;
+    const existingChoices = sourceNode.data?.choices || [];
+    let nextNumber = getNextChoiceLabelStart(existingChoices);
+
+    const occupied = storyStateRef.current.nodes.map((node) => node.position);
+    const draftPositions = fanOutPositions(sourceNode.position, count);
+    const resolvedPositions = [];
+    for (const draft of draftPositions) {
+      const next = resolveOpenPosition(draft, [...occupied, ...resolvedPositions]);
+      resolvedPositions.push(next);
+    }
+
+    const newChoices = [];
+    const newNodes = [];
+
+    for (let index = 0; index < count; index += 1) {
+      const label = `Choice ${nextNumber}`;
+      nextNumber += 1;
+      const nodeId = makeNodeId();
+      newNodes.push(
+        createNarrativeDestinationNode({
+          id: nodeId,
+          title: label,
+          position: resolvedPositions[index],
+        })
+      );
+      newChoices.push({
+        ...createBlankGoToChoice(label),
+        targetNodeId: nodeId,
+      });
+    }
+
+    recordHistory({ immediate: true });
+    setNodesState((prev) => {
+      const nextNodes = prev.map((node) => {
+        if (node.id !== selectedNodeId) return node;
+
+        return {
+          ...node,
+          data: {
+            ...node.data,
+            choices: [...(node.data?.choices || []), ...newChoices],
+          },
+        };
+      });
+
+      return [...nextNodes, ...newNodes];
+    });
+
+    return {
+      ok: true,
+      added: count,
+      created: count,
+      message: `Generated ${count} choice ${count === 1 ? "path" : "paths"}.`,
+    };
+  }
+
   function updateChoiceOnSelectedNode(index, field, value) {
     if (!selectedNodeId) return;
 
@@ -649,6 +899,9 @@ export default function useStoryState() {
     applyMiniGameToSelectedNode,
     deleteSelectedNode,
     addChoiceToSelectedNode,
+    addMultipleChoicesToSelectedNode,
+    generateDestinationNodesForSelectedNode,
+    generateChoicePathsForSelectedNode,
     updateChoiceOnSelectedNode,
     removeChoiceFromSelectedNode,
     connectNodesFromHandle,
