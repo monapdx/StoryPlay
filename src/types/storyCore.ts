@@ -41,11 +41,23 @@ export interface Effect {
 export type StoryVariables = Record<string, unknown>;
 
 /**
+ * Author-defined player-facing labels for a story variable.
+ * Matches the existing JSDoc / editor variableMeta shape.
+ */
+export interface VariablePlayerMeta {
+  playerLabel?: string;
+  playerDescription?: string;
+  icon?: string;
+}
+
+export type VariableMetaMap = Record<string, VariablePlayerMeta>;
+
+/**
  * Empty project shape from createBlankStory — not a full Story model.
  */
 export interface BlankStoryProject {
   nodes: unknown[];
   variables: StoryVariables;
-  variableMeta: Record<string, unknown>;
+  variableMeta: VariableMetaMap;
   characters: StoryCharacter[];
 }

@@ -1,5 +1,7 @@
+import type { VariableMetaMap } from "../../types/storyCore";
+
 /** Player-facing stat labels for the Guild audition demo. */
-const guildVariableMeta = {
+const guildVariableMeta: VariableMetaMap = {
   reputation: {
     playerLabel: "Reputation",
     playerDescription: "How the guild sees you",

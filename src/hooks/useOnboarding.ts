@@ -1,11 +1,28 @@
 import { useCallback, useState } from "react";
 import { ONBOARDING_STEPS } from "../data/onboardingSteps";
+import type { OnboardingStep } from "../types/onboarding";
 import {
   isOnboardingComplete,
   setOnboardingComplete,
 } from "../utils/onboardingStorage";
 
-export default function useOnboarding() {
+export interface UseOnboardingResult {
+  steps: readonly OnboardingStep[];
+  step: OnboardingStep | null;
+  stepIndex: number;
+  stepCount: number;
+  isActive: boolean;
+  isLastStep: boolean;
+  shouldAutoStart: boolean;
+  start: () => void;
+  restart: () => void;
+  skip: () => void;
+  complete: () => void;
+  next: () => void;
+  back: () => void;
+}
+
+export default function useOnboarding(): UseOnboardingResult {
   const [isActive, setIsActive] = useState(false);
   const [stepIndex, setStepIndex] = useState(0);
 

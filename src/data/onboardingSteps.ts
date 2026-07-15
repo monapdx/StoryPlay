@@ -1,5 +1,7 @@
+import type { OnboardingStep } from "../types/onboarding";
+
 /** Guided tour steps — `target` is a CSS selector for `[data-onboarding="…"]` hooks. */
-export const ONBOARDING_STEPS = [
+export const ONBOARDING_STEPS: OnboardingStep[] = [
   {
     id: "canvas",
     target: '[data-onboarding="canvas"]',

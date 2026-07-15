@@ -1,36 +1,29 @@
-/**
- * Player-facing labels for story variables (author-defined in the editor).
- *
- * @typedef {{
- *   playerLabel?: string,
- *   playerDescription?: string,
- *   icon?: string
- * }} VariablePlayerMeta
- */
+import type {
+  VariableMetaMap,
+  VariablePlayerMeta,
+} from "../types/storyCore";
 
-/**
- * @param {unknown} meta
- * @returns {Record<string, VariablePlayerMeta>}
- */
-export function normalizeVariableMeta(meta) {
+export type { VariableMetaMap, VariablePlayerMeta };
+
+export function normalizeVariableMeta(meta: unknown): VariableMetaMap {
   if (!meta || typeof meta !== "object" || Array.isArray(meta)) {
     return {};
   }
 
-  /** @type {Record<string, VariablePlayerMeta>} */
-  const next = {};
+  const next: VariableMetaMap = {};
 
   for (const [key, entry] of Object.entries(meta)) {
     if (!key || typeof key !== "string") continue;
     if (!entry || typeof entry !== "object" || Array.isArray(entry)) continue;
 
+    const record = entry as Record<string, unknown>;
     const playerLabel =
-      typeof entry.playerLabel === "string" ? entry.playerLabel.trim() : "";
+      typeof record.playerLabel === "string" ? record.playerLabel.trim() : "";
     const playerDescription =
-      typeof entry.playerDescription === "string"
-        ? entry.playerDescription.trim()
+      typeof record.playerDescription === "string"
+        ? record.playerDescription.trim()
         : "";
-    const icon = typeof entry.icon === "string" ? entry.icon.trim() : "";
+    const icon = typeof record.icon === "string" ? record.icon.trim() : "";
 
     if (!playerLabel && !playerDescription && !icon) continue;
 
@@ -44,13 +37,11 @@ export function normalizeVariableMeta(meta) {
   return next;
 }
 
-/**
- * @param {Record<string, VariablePlayerMeta>} meta
- * @param {string} key
- * @param {Partial<VariablePlayerMeta>} patch
- * @returns {Record<string, VariablePlayerMeta>}
- */
-export function patchVariableMeta(meta, key, patch) {
+export function patchVariableMeta(
+  meta: VariableMetaMap | unknown,
+  key: string,
+  patch: Partial<VariablePlayerMeta>
+): VariableMetaMap {
   if (!key) return normalizeVariableMeta(meta);
 
   const safe = normalizeVariableMeta(meta);
@@ -70,13 +61,11 @@ export function patchVariableMeta(meta, key, patch) {
   return { ...safe, [key]: normalized[key] };
 }
 
-/**
- * @param {Record<string, VariablePlayerMeta>} meta
- * @param {string} oldKey
- * @param {string} newKey
- * @returns {Record<string, VariablePlayerMeta>}
- */
-export function renameVariableMetaKey(meta, oldKey, newKey) {
+export function renameVariableMetaKey(
+  meta: VariableMetaMap | unknown,
+  oldKey: string,
+  newKey: string
+): VariableMetaMap {
   if (!oldKey || !newKey || oldKey === newKey) {
     return normalizeVariableMeta(meta);
   }
@@ -91,12 +80,10 @@ export function renameVariableMetaKey(meta, oldKey, newKey) {
   return next;
 }
 
-/**
- * @param {Record<string, VariablePlayerMeta>} meta
- * @param {string} key
- * @returns {Record<string, VariablePlayerMeta>}
- */
-export function deleteVariableMetaKey(meta, key) {
+export function deleteVariableMetaKey(
+  meta: VariableMetaMap | unknown,
+  key: string
+): VariableMetaMap {
   if (!key) return normalizeVariableMeta(meta);
   const safe = normalizeVariableMeta(meta);
   if (!safe[key]) return safe;
@@ -105,12 +92,10 @@ export function deleteVariableMetaKey(meta, key) {
   return next;
 }
 
-/**
- * @param {string} key
- * @param {Record<string, VariablePlayerMeta>} [meta]
- * @returns {string | null}
- */
-export function getAuthoredPlayerLabel(key, meta) {
+export function getAuthoredPlayerLabel(
+  key: string,
+  meta?: VariableMetaMap | unknown
+): string | null {
   const entry = normalizeVariableMeta(meta)[key];
   return entry?.playerLabel || null;
 }
