@@ -10,6 +10,7 @@
     "package:itch": "npm run build:itch && node scripts/package-itch-zip.mjs",
     "deploy:itch": "npm run build:itch && node scripts/deploy-itch.mjs",
     "verify:itch": "node scripts/verify-itch-embed.mjs",
+    "typecheck": "tsc --noEmit",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -18,7 +19,10 @@
     "reactflow": "^11.11.4"
   },
   "devDependencies": {
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.3",
+    "typescript": "^7.0.2",
     "vite": "^8.1.0"
   }
 }

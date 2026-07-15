@@ -3,7 +3,14 @@
  * Convention: "#/play" player, "#/docs" documentation, "#/" editor.
  */
 
-export function parseHashRoute() {
+export type AppRoute = "play" | "docs" | "editor";
+
+export interface ParsedHashRoute {
+  route: AppRoute;
+  docsSectionId: string | null;
+}
+
+export function parseHashRoute(): ParsedHashRoute {
   const raw = window.location.hash || "";
   const path = raw.replace(/^#/, "").split("?")[0] || "/";
 
@@ -21,18 +28,20 @@ export function parseHashRoute() {
 }
 
 /** @deprecated Prefer parseHashRoute() */
-export function getHashRoute() {
+export function getHashRoute(): AppRoute {
   return parseHashRoute().route;
 }
 
-export function getDocsSectionId() {
+export function getDocsSectionId(): string | null {
   return parseHashRoute().docsSectionId;
 }
 
-export function setEditorHash() {
+export function setEditorHash(): void {
   window.location.hash = "#/";
 }
 
-export function setDocsHash(sectionId) {
-  window.location.hash = sectionId ? `#/docs/${encodeURIComponent(sectionId)}` : "#/docs";
+export function setDocsHash(sectionId?: string | null): void {
+  window.location.hash = sectionId
+    ? `#/docs/${encodeURIComponent(sectionId)}`
+    : "#/docs";
 }

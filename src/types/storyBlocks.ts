@@ -12,6 +12,7 @@ export interface BaseStoryBlock {
   id: string;
   title?: string;
   prompt?: string;
+  content?: string;
   autoAdvance?: boolean;
   submitLabel?: string;
 }
