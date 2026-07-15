@@ -1,8 +1,14 @@
+interface EditorEmptyStateProps {
+  onAddNode: () => void;
+  onOpenTutorial: () => void;
+  onOpenTemplates: () => void;
+}
+
 export default function EditorEmptyState({
   onAddNode,
   onOpenTutorial,
   onOpenTemplates,
-}) {
+}: EditorEmptyStateProps) {
   return (
     <div className="editor-empty-state" aria-live="polite">
       <div className="editor-empty-state__card">

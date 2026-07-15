@@ -1,6 +1,15 @@
 /**
  * Shared undo/redo control for editor toolbars.
  */
+interface UndoRedoButtonsProps {
+  onUndo: () => void;
+  onRedo: () => void;
+  canUndo?: boolean;
+  canRedo?: boolean;
+  className?: string;
+  buttonClassName?: string;
+}
+
 export default function UndoRedoButtons({
   onUndo,
   onRedo,
@@ -8,7 +17,7 @@ export default function UndoRedoButtons({
   canRedo = false,
   className = "",
   buttonClassName = "header-button",
-}) {
+}: UndoRedoButtonsProps) {
   return (
     <div
       className={["undo-redo-buttons", className].filter(Boolean).join(" ")}
