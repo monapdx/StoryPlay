@@ -16,7 +16,7 @@ Design visually, preview instantly, organize characters and variables, validate 
 
 ## Screenshot
 
-<img src="https://raw.githubusercontent.com/monapdx/StoryPlay/refs/heads/main/screenshot.png">
+<img src="https://raw.githubusercontent.com/monapdx/StoryPlay/refs/heads/main/screenshots/new-story.png">
 
 ## Mini-game blocks
 
