@@ -3,30 +3,25 @@
  * @see schemas/storyplay-export.v1.schema.json
  */
 
+import type {
+  NormalizedStory,
+  StoryPlayExportDocument,
+  StoryPlayImportSummary,
+  StoryPlayValidationResult,
+} from "../types/story";
 import { normalizeStoryNodes } from "./nodeHelpers";
+
+export type { StoryPlayImportSummary, StoryPlayValidationResult };
 
 export const STORYPLAY_EXPORT_FORMAT_VERSION = 1;
 
 export const SUPPORTED_FORMAT_VERSIONS = [STORYPLAY_EXPORT_FORMAT_VERSION];
 
-/**
- * @typedef {object} StoryPlayImportSummary
- * @property {number} nodeCount
- * @property {number} variableCount
- * @property {number} characterCount
- * @property {string | null} exportedAt
- * @property {number} formatVersion
- */
-
-/**
- * @param {unknown} value
- * @returns {value is Record<string, unknown>}
- */
-function isPlainObject(value) {
+function isPlainObject(value: unknown): value is Record<string, unknown> {
   return value != null && typeof value === "object" && !Array.isArray(value);
 }
 
-function cloneJson(value) {
+function cloneJson<T>(value: T): T {
   try {
     if (typeof structuredClone === "function") {
       return structuredClone(value);
@@ -34,15 +29,15 @@ function cloneJson(value) {
   } catch {
     /* fall through */
   }
-  return JSON.parse(JSON.stringify(value));
+  return JSON.parse(JSON.stringify(value)) as T;
 }
 
 /**
  * Apply safe defaults so exports from the live editor round-trip through import.
- * @param {unknown} project
- * @returns {Record<string, unknown>}
  */
-export function canonicalizeStoryPlayProject(project) {
+export function canonicalizeStoryPlayProject(
+  project: unknown
+): Record<string, unknown> {
   if (!isPlainObject(project)) return {};
 
   const next = cloneJson(project);
@@ -59,13 +54,12 @@ export function canonicalizeStoryPlayProject(project) {
 
 /**
  * Validate raw parsed JSON against the StoryPlay export envelope (blocking errors only).
- *
- * @param {unknown} project
- * @returns {{ errors: string[], warnings: string[] }}
  */
-export function validateStoryPlayProjectShape(project) {
-  const errors = [];
-  const warnings = [];
+export function validateStoryPlayProjectShape(
+  project: unknown
+): StoryPlayValidationResult {
+  const errors: string[] = [];
+  const warnings: string[] = [];
 
   if (!isPlainObject(project)) {
     errors.push("Project file must be a JSON object.");
@@ -110,7 +104,7 @@ export function validateStoryPlayProjectShape(project) {
   }
 
   if (
-    Array.isArray(story?.nodes) &&
+    Array.isArray(story.nodes) &&
     story.nodes.length === 0 &&
     errors.length === 0
   ) {
@@ -120,12 +114,8 @@ export function validateStoryPlayProjectShape(project) {
   return { errors, warnings };
 }
 
-/**
- * @param {unknown[]} nodes
- * @param {string[]} errors
- */
-function validateNodesShape(nodes, errors) {
-  const seenIds = new Set();
+function validateNodesShape(nodes: unknown[], errors: string[]): void {
+  const seenIds = new Set<string>();
 
   nodes.forEach((node, index) => {
     const label = `Node at index ${index}`;
@@ -171,25 +161,23 @@ function validateNodesShape(nodes, errors) {
 
 /**
  * Validate graph references after normalization. Returns blocking errors only.
- *
- * @param {unknown[]} nodes
- * @returns {string[]}
  */
-export function validateStoryGraphReferences(nodes) {
-  const errors = [];
+export function validateStoryGraphReferences(nodes: unknown): string[] {
+  const errors: string[] = [];
   if (!Array.isArray(nodes)) return errors;
 
   const nodeIds = new Set(
     nodes
       .filter((node) => isPlainObject(node) && typeof node.id === "string")
-      .map((node) => node.id)
+      .map((node) => (node as { id: string }).id)
   );
 
   for (const node of nodes) {
     if (!isPlainObject(node) || typeof node.id !== "string") continue;
 
     const data = isPlainObject(node.data) ? node.data : {};
-    const nodeLabel = data.title || node.id;
+    const nodeLabel =
+      typeof data.title === "string" && data.title ? data.title : node.id;
 
     const choices = Array.isArray(data.choices) ? data.choices : [];
     choices.forEach((choice, choiceIndex) => {
@@ -204,12 +192,14 @@ export function validateStoryGraphReferences(nodes) {
       }
       if (!nodeIds.has(targetId)) {
         errors.push(
-          `Node "${nodeLabel}": choice "${choice.label || choiceIndex + 1}" points to missing node "${targetId}".`
+          `Node "${nodeLabel}": choice "${
+            typeof choice.label === "string" ? choice.label : choiceIndex + 1
+          }" points to missing node "${targetId}".`
         );
       }
     });
 
-    for (const field of ["continueNodeId", "successNodeId", "failureNodeId"]) {
+    for (const field of ["continueNodeId", "successNodeId", "failureNodeId"] as const) {
       const refId = data[field];
       if (refId == null || refId === "") continue;
       if (typeof refId !== "string") {
@@ -227,12 +217,10 @@ export function validateStoryGraphReferences(nodes) {
   return errors;
 }
 
-/**
- * @param {Record<string, unknown>} project
- * @param {{ variables: Record<string, unknown>, characters: unknown[], nodes: unknown[] }} story
- * @returns {StoryPlayImportSummary}
- */
-export function buildStoryPlayImportSummary(project, story) {
+export function buildStoryPlayImportSummary(
+  project: Record<string, unknown> | StoryPlayExportDocument,
+  story: Pick<NormalizedStory, "variables" | "characters" | "nodes">
+): StoryPlayImportSummary {
   return {
     formatVersion:
       typeof project.formatVersion === "number" ? project.formatVersion : 0,

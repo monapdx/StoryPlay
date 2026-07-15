@@ -11,23 +11,25 @@ import {
   migrateStoryPlayProject,
   UnsupportedFormatVersionError,
 } from "./projectMigrations";
+import type {
+  NormalizedStory,
+  StoryPlayExportDocument,
+  StoryPlayImportSummary,
+} from "../types/story";
 
 export class StoryPlayImportError extends Error {
-  /**
-   * @param {string} message
-   * @param {{ cause?: unknown }} [options]
-   */
-  constructor(message, options = {}) {
-    super(message, options);
+  cause?: unknown;
+
+  constructor(message: string, options: { cause?: unknown } = {}) {
+    super(message);
     this.name = "StoryPlayImportError";
+    if (options.cause !== undefined) {
+      this.cause = options.cause;
+    }
   }
 }
 
-/**
- * @param {string} text
- * @returns {unknown}
- */
-export function parseStoryPlayProjectJson(text) {
+export function parseStoryPlayProjectJson(text: unknown): unknown {
   if (typeof text !== "string" || !text.trim()) {
     throw new StoryPlayImportError("Project file is empty.");
   }
@@ -42,7 +44,7 @@ export function parseStoryPlayProjectJson(text) {
   }
 }
 
-function cloneJson(value) {
+function cloneJson<T>(value: T): T {
   try {
     if (typeof structuredClone === "function") {
       return structuredClone(value);
@@ -50,19 +52,20 @@ function cloneJson(value) {
   } catch {
     /* fall through */
   }
-  return JSON.parse(JSON.stringify(value));
+  return JSON.parse(JSON.stringify(value)) as T;
 }
 
 /**
  * Fill safe defaults without inventing missing node ids or repairing broken links.
- *
- * @param {Record<string, unknown>} story
- * @returns {{ variables: Record<string, unknown>, variableMeta: Record<string, object>, characters: import("./storyEntities").StoryCharacter[], nodes: unknown[] }}
  */
-export function normalizeImportedStory(story) {
-  const safeStory = cloneJson(story);
+export function normalizeImportedStory(story: unknown): NormalizedStory {
+  const safeStory = cloneJson(story) as Record<string, unknown>;
 
-  if (!safeStory.variables || typeof safeStory.variables !== "object" || Array.isArray(safeStory.variables)) {
+  if (
+    !safeStory.variables ||
+    typeof safeStory.variables !== "object" ||
+    Array.isArray(safeStory.variables)
+  ) {
     safeStory.variables = {};
   }
 
@@ -80,25 +83,27 @@ export function normalizeImportedStory(story) {
     safeStory.nodes = safeStory.nodes.map((node) => normalizeStoryNode(node));
   }
 
-  return safeStory;
+  // Preserve any extra story keys from the clone (same as pre-TS behavior).
+  return safeStory as unknown as NormalizedStory;
+}
+
+export interface PrepareStoryPlayImportResult {
+  ok: boolean;
+  errors: string[];
+  warnings: string[];
+  summary: StoryPlayImportSummary | null;
+  story: NormalizedStory | null;
+  project: Record<string, unknown> | null;
 }
 
 /**
  * Parse, validate, migrate, and normalize a StoryPlay export for import preview.
  * Does not mutate editor state.
- *
- * @param {string} fileText
- * @returns {{
- *   ok: boolean,
- *   errors: string[],
- *   warnings: string[],
- *   summary: import("./projectSchema").StoryPlayImportSummary | null,
- *   story: { variables: Record<string, unknown>, variableMeta?: Record<string, object>, characters: unknown[], nodes: unknown[] } | null,
- *   project: Record<string, unknown> | null
- * }}
  */
-export function prepareStoryPlayImport(fileText) {
-  let raw;
+export function prepareStoryPlayImport(
+  fileText: string
+): PrepareStoryPlayImportResult {
+  let raw: unknown;
 
   try {
     raw = parseStoryPlayProjectJson(fileText);
@@ -118,7 +123,8 @@ export function prepareStoryPlayImport(fileText) {
   }
 
   const canonical = canonicalizeStoryPlayProject(raw);
-  const { errors: shapeErrors, warnings } = validateStoryPlayProjectShape(canonical);
+  const { errors: shapeErrors, warnings } =
+    validateStoryPlayProjectShape(canonical);
   const errors = [...shapeErrors];
 
   if (errors.length > 0) {
@@ -132,7 +138,7 @@ export function prepareStoryPlayImport(fileText) {
     };
   }
 
-  let project;
+  let project: Record<string, unknown>;
   try {
     project = migrateStoryPlayProject(canonical);
   } catch (error) {
@@ -152,17 +158,12 @@ export function prepareStoryPlayImport(fileText) {
     };
   }
 
-  const story = normalizeImportedStory(
-    /** @type {Record<string, unknown>} */ (project.story)
-  );
+  const story = normalizeImportedStory(project.story);
 
   const referenceErrors = validateStoryGraphReferences(story.nodes);
   errors.push(...referenceErrors);
 
-  const summary = buildStoryPlayImportSummary(
-    /** @type {Record<string, unknown>} */ (project),
-    story
-  );
+  const summary = buildStoryPlayImportSummary(project, story);
 
   return {
     ok: errors.length === 0,
@@ -176,10 +177,8 @@ export function prepareStoryPlayImport(fileText) {
 
 /**
  * Read a File object as UTF-8 text.
- * @param {File} file
- * @returns {Promise<string>}
  */
-export function readProjectFileAsText(file) {
+export function readProjectFileAsText(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => {
@@ -191,3 +190,5 @@ export function readProjectFileAsText(file) {
     reader.readAsText(file);
   });
 }
+
+export type { StoryPlayExportDocument, StoryPlayImportSummary };

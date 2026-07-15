@@ -8,10 +8,18 @@ import { normalizeVariableMeta } from "./storyVariables";
 import { STORYPLAY_EXPORT_FORMAT_VERSION } from "./projectSchema";
 import { normalizeStoryNode } from "./nodeHelpers";
 import { resolveNodesTextForExport } from "./storyReferences";
+import type {
+  StoryCharacter,
+  StoryNode,
+  StoryPlayExportDocument,
+  StoryPlayExportMeta,
+  StoryVariables,
+  VariableMetaMap,
+} from "../types/story";
 
 export { STORYPLAY_EXPORT_FORMAT_VERSION };
 
-function cloneJson(value) {
+function cloneJson<T>(value: T): T {
   try {
     if (typeof structuredClone === "function") {
       return structuredClone(value);
@@ -19,46 +27,47 @@ function cloneJson(value) {
   } catch {
     /* fall through */
   }
-  return JSON.parse(JSON.stringify(value));
+  return JSON.parse(JSON.stringify(value)) as T;
 }
 
-function cloneNodeForExport(node, { cleanGraphIssues }) {
+function cloneNodeForExport(
+  node: unknown,
+  { cleanGraphIssues }: { cleanGraphIssues: boolean }
+): StoryNode {
   const next = cloneJson(node);
 
   if (
     cleanGraphIssues &&
     next &&
     typeof next === "object" &&
+    !Array.isArray(next) &&
+    "data" in next &&
     next.data &&
     typeof next.data === "object" &&
     !Array.isArray(next.data) &&
     Object.prototype.hasOwnProperty.call(next.data, "graphIssues")
   ) {
-    const { graphIssues: _removed, ...restData } = next.data;
-    next.data = restData;
+    const data = next.data as Record<string, unknown>;
+    const { graphIssues: _removed, ...restData } = data;
+    (next as { data: Record<string, unknown> }).data = restData;
   }
 
   return normalizeStoryNode(next);
 }
 
+export interface SerializeStoryPlayExportOptions {
+  nodes?: unknown[];
+  variables?: StoryVariables | Record<string, unknown>;
+  variableMeta?: VariableMetaMap | Record<string, unknown>;
+  characters?: StoryCharacter[] | unknown[];
+  meta?: StoryPlayExportMeta | Record<string, unknown> | null;
+  includeExportedAt?: boolean;
+  cleanGraphIssues?: boolean;
+  resolveReferences?: boolean;
+}
+
 /**
  * Serialize current story state into StoryPlay export v1 shape.
- *
- * @param {object} params
- * @param {object[]} [params.nodes] - React Flow nodes from useStoryState
- * @param {Record<string, unknown>} [params.variables] - variables map from useStoryState
- * @param {Record<string, { playerLabel?: string, playerDescription?: string, icon?: string }>} [params.variableMeta] - player-facing stat labels
- * @param {object[]} [params.characters] - character registry from useStoryState
- * @param {object} [params.meta] - Optional envelope metadata (title, author, description, startNodeId)
- * @param {boolean} [params.includeExportedAt=true] - Set ISO `exportedAt` on the document
- * @param {boolean} [params.cleanGraphIssues=true] - Omit `data.graphIssues` from each node (editor-only)
- * @param {boolean} [params.resolveReferences=true] - Resolve {{character:…}} tokens in exported text fields
- * @returns {{
- *   formatVersion: number,
- *   exportedAt?: string,
- *   meta?: object,
- *   story: { variables: Record<string, unknown>, variableMeta?: object, characters: object[], nodes: unknown[] }
- * }}
  */
 export function serializeStoryPlayExportV1({
   nodes = [],
@@ -69,7 +78,7 @@ export function serializeStoryPlayExportV1({
   includeExportedAt = true,
   cleanGraphIssues = true,
   resolveReferences = true,
-} = {}) {
+}: SerializeStoryPlayExportOptions = {}): StoryPlayExportDocument {
   const safeNodes = Array.isArray(nodes) ? nodes : [];
   const safeVariables =
     variables && typeof variables === "object" && !Array.isArray(variables)
@@ -78,17 +87,18 @@ export function serializeStoryPlayExportV1({
   const safeCharacters = normalizeCharacters(characters);
   const safeVariableMeta = normalizeVariableMeta(variableMeta);
 
-  let storyNodes = safeNodes.map((node) => cloneNodeForExport(node, { cleanGraphIssues }));
+  let storyNodes = safeNodes.map((node) =>
+    cloneNodeForExport(node, { cleanGraphIssues })
+  );
 
   if (resolveReferences) {
     storyNodes = resolveNodesTextForExport(storyNodes, {
       characters: safeCharacters,
       variables: safeVariables,
-    });
+    }) as StoryNode[];
   }
 
-  /** @type {Record<string, unknown>} */
-  const storyPayload = {
+  const storyPayload: StoryPlayExportDocument["story"] = {
     variables: cloneJson(safeVariables),
     characters: cloneJson(safeCharacters),
     nodes: storyNodes,
@@ -98,8 +108,7 @@ export function serializeStoryPlayExportV1({
     storyPayload.variableMeta = cloneJson(safeVariableMeta);
   }
 
-  /** @type {Record<string, unknown>} */
-  const doc = {
+  const doc: StoryPlayExportDocument = {
     formatVersion: STORYPLAY_EXPORT_FORMAT_VERSION,
     story: storyPayload,
   };
@@ -111,7 +120,7 @@ export function serializeStoryPlayExportV1({
   if (meta != null && typeof meta === "object" && !Array.isArray(meta)) {
     const metaKeys = Object.keys(meta);
     if (metaKeys.length > 0) {
-      doc.meta = cloneJson(meta);
+      doc.meta = cloneJson(meta) as StoryPlayExportMeta;
     }
   }
 
@@ -120,17 +129,17 @@ export function serializeStoryPlayExportV1({
 
 /**
  * Serialize and trigger a browser download of the v1 JSON export.
- * @param {Parameters<typeof serializeStoryPlayExportV1>[0]} options
- * @returns {ReturnType<typeof serializeStoryPlayExportV1>}
  */
-export function downloadStoryPlayExportV1(options = {}) {
+export function downloadStoryPlayExportV1(
+  options: SerializeStoryPlayExportOptions = {}
+): StoryPlayExportDocument {
   const payload = serializeStoryPlayExportV1(options);
   const json = JSON.stringify(payload, null, 2);
   const blob = new Blob([json], { type: "application/json;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `storyplay-export-${new Date().toISOString().replaceAll(":", "-")}.json`;
+  a.download = `storyplay-export-${new Date().toISOString().replace(/:/g, "-")}.json`;
   document.body.appendChild(a);
   a.click();
   a.remove();
