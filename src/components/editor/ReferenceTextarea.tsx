@@ -1,5 +1,19 @@
 import { useRef } from "react";
-import { buildCharacterNameToken, renderStoryText } from "../../utils/storyReferences";
+import {
+  buildCharacterNameToken,
+  renderStoryText,
+} from "../../utils/storyReferences";
+import type { StoryCharacter } from "../../types/storyCore";
+
+interface ReferenceTextareaProps {
+  value: string;
+  onChange: (nextValue: string) => void;
+  characters?: StoryCharacter[];
+  placeholder?: string;
+  className?: string;
+  insertLabel?: string;
+  previewLabel?: string;
+}
 
 export default function ReferenceTextarea({
   value,
@@ -9,10 +23,10 @@ export default function ReferenceTextarea({
   className = "form-textarea",
   insertLabel = "Insert character",
   previewLabel = "Preview",
-}) {
-  const textareaRef = useRef(null);
+}: ReferenceTextareaProps) {
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  function insertCharacterReference(characterId) {
+  function insertCharacterReference(characterId: string) {
     if (!characterId || !textareaRef.current) return;
 
     const token = buildCharacterNameToken(characterId);
@@ -36,7 +50,10 @@ export default function ReferenceTextarea({
   return (
     <div className="reference-textarea">
       <div className="reference-textarea__toolbar">
-        <label className="reference-textarea__insert-label" htmlFor="reference-character-select">
+        <label
+          className="reference-textarea__insert-label"
+          htmlFor="reference-character-select"
+        >
           {insertLabel}
         </label>
         <select
@@ -58,7 +75,9 @@ export default function ReferenceTextarea({
           ))}
         </select>
         {characters.length === 0 && (
-          <span className="reference-textarea__hint muted">No characters yet.</span>
+          <span className="reference-textarea__hint muted">
+            No characters yet.
+          </span>
         )}
       </div>
 
@@ -72,7 +91,9 @@ export default function ReferenceTextarea({
 
       {showPreview && (
         <div className="reference-textarea__preview">
-          <span className="reference-textarea__preview-label">{previewLabel}</span>
+          <span className="reference-textarea__preview-label">
+            {previewLabel}
+          </span>
           <p className="reference-textarea__preview-text">{preview || "—"}</p>
         </div>
       )}

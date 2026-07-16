@@ -158,8 +158,7 @@ export default function usePlayState(
 
   useEffect(() => {
     if (!currentPlayNode) return;
-    // playerVariableStats.js is still untyped; narrow at this boundary.
-    const exposure = getNodeVariableExposure(currentPlayNode) as string[];
+    const exposure = getNodeVariableExposure(currentPlayNode);
     if (!exposure.length) return;
 
     setRevealedVariableKeys((prev) => {

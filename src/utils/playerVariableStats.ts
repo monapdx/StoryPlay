@@ -1,8 +1,41 @@
+import type { StoryNodeData } from "../types/story";
+import type {
+  StoryVariables,
+  VariableMetaMap,
+  VariablePlayerMeta,
+} from "../types/storyCore";
 import { STORY_REFERENCE_TOKEN_REGEX } from "./storyReferences";
 
-/** @typedef {{ label: string, description: string, icon: string }} PlayerVariableDisplay */
+export interface PlayerVariableDisplay {
+  label: string;
+  description: string;
+  icon: string;
+}
 
-const KNOWN_DISPLAY = /** @type {Record<string, PlayerVariableDisplay>} */ ({
+export interface VisiblePlayerStat {
+  key: string;
+  value: unknown;
+  display: PlayerVariableDisplay;
+}
+
+export interface GetVisiblePlayerStatsParams {
+  playVariables?: StoryVariables;
+  initialVariables?: StoryVariables;
+  revealedKeys?: string[];
+  activeNodeExposure?: string[];
+  nodes?: ReadonlyArray<PlayerStatNodeSource | null | undefined>;
+  variableMeta?: VariableMetaMap;
+}
+
+/**
+ * Minimal node shape for player-stat exposure / display lookup.
+ * Compatible with StoryNode; data and option rows stay loose for legacy graphs.
+ */
+export interface PlayerStatNodeSource {
+  data?: StoryNodeData | null;
+}
+
+const KNOWN_DISPLAY: Record<string, PlayerVariableDisplay> = {
   reputation: {
     label: "Reputation",
     description: "How the guild sees you",
@@ -63,28 +96,29 @@ const KNOWN_DISPLAY = /** @type {Record<string, PlayerVariableDisplay>} */ ({
     description: "Study of routes and histories",
     icon: "📜",
   },
-});
+};
 
-const PREP_SUFFIX_LABELS = {
+const PREP_SUFFIX_LABELS: Record<string, string> = {
   combat: "Combat drills",
   social: "Social recon",
   lore: "Lore & maps",
 };
 
-/**
- * @param {string} key
- */
-function humanizeVariableKey(key) {
+/** Option row fields read from `data.options` (typed as unknown[] on StoryNodeData). */
+interface PlayerStatOptionSource {
+  id?: unknown;
+  label?: unknown;
+  description?: unknown;
+}
+
+function humanizeVariableKey(key: unknown): string {
   return String(key || "")
     .replace(/_/g, " ")
     .replace(/([a-z])([A-Z])/g, "$1 $2")
     .replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
-/**
- * @param {unknown} value
- */
-export function isEmptyPlayerStatValue(value) {
+export function isEmptyPlayerStatValue(value: unknown): boolean {
   if (value === null || value === undefined) return true;
   if (typeof value === "number") return value === 0;
   if (typeof value === "boolean") return value === false;
@@ -94,22 +128,22 @@ export function isEmptyPlayerStatValue(value) {
   return false;
 }
 
-/**
- * @param {unknown[]} nodes
- * @param {string} variableKey
- * @returns {PlayerVariableDisplay | null}
- */
-function lookupDisplayFromNodes(nodes, variableKey) {
+function lookupDisplayFromNodes(
+  nodes: ReadonlyArray<PlayerStatNodeSource | null | undefined> | null | undefined,
+  variableKey: string
+): PlayerVariableDisplay | null {
   for (const node of nodes || []) {
     const data = node?.data || {};
     const prefix = data.variablePrefix;
 
     if (data.blockType === "choiceWeighting" && prefix) {
-      for (const option of data.options || []) {
+      for (const rawOption of data.options || []) {
+        const option = rawOption as PlayerStatOptionSource;
         const optionKey = `${prefix}${option.id}`;
         if (optionKey === variableKey) {
           return {
-            label: option.label || humanizeVariableKey(option.id),
+            label: (option.label ||
+              humanizeVariableKey(option.id)) as string,
             description: "Preparation you assigned",
             icon: "📊",
           };
@@ -141,14 +175,12 @@ function lookupDisplayFromNodes(nodes, variableKey) {
   return null;
 }
 
-/**
- * @param {string} key
- * @param {unknown[]} [nodes]
- * @param {Record<string, import("./storyVariables").VariablePlayerMeta>} [variableMeta]
- * @returns {PlayerVariableDisplay}
- */
-export function getPlayerVariableDisplay(key, nodes = [], variableMeta = {}) {
-  const authored = variableMeta?.[key];
+export function getPlayerVariableDisplay(
+  key: string,
+  nodes: ReadonlyArray<PlayerStatNodeSource | null | undefined> = [],
+  variableMeta: VariableMetaMap = {}
+): PlayerVariableDisplay {
+  const authored: VariablePlayerMeta | undefined = variableMeta?.[key];
   if (authored?.playerLabel) {
     return {
       label: authored.playerLabel,
@@ -157,8 +189,9 @@ export function getPlayerVariableDisplay(key, nodes = [], variableMeta = {}) {
     };
   }
 
-  if (KNOWN_DISPLAY[key]) {
-    return KNOWN_DISPLAY[key];
+  const known = KNOWN_DISPLAY[key];
+  if (known) {
+    return known;
   }
 
   const fromNodes = lookupDisplayFromNodes(nodes, key);
@@ -173,11 +206,11 @@ export function getPlayerVariableDisplay(key, nodes = [], variableMeta = {}) {
 
 /**
  * Collect variable keys referenced in a node's authoring data.
- * @param {object | null | undefined} node
- * @returns {string[]}
  */
-export function getNodeVariableExposure(node) {
-  const keys = new Set();
+export function getNodeVariableExposure(
+  node: PlayerStatNodeSource | null | undefined
+): string[] {
+  const keys = new Set<string>();
   const data = node?.data || {};
 
   const textFields = [
@@ -208,7 +241,8 @@ export function getNodeVariableExposure(node) {
     collectVariableTokensFromText(choice?.response, keys);
   }
 
-  for (const option of data.options || []) {
+  for (const rawOption of data.options || []) {
+    const option = rawOption as PlayerStatOptionSource | null | undefined;
     collectVariableTokensFromText(option?.label, keys);
     collectVariableTokensFromText(option?.description, keys);
   }
@@ -219,7 +253,8 @@ export function getNodeVariableExposure(node) {
   if (data.resultVariable) keys.add(data.resultVariable);
 
   if (data.blockType === "choiceWeighting" && data.variablePrefix) {
-    for (const option of data.options || []) {
+    for (const rawOption of data.options || []) {
+      const option = rawOption as PlayerStatOptionSource | null | undefined;
       if (option?.id) keys.add(`${data.variablePrefix}${option.id}`);
     }
   }
@@ -234,15 +269,11 @@ export function getNodeVariableExposure(node) {
   return [...keys];
 }
 
-/**
- * @param {unknown} text
- * @param {Set<string>} keys
- */
-function collectVariableTokensFromText(text, keys) {
+function collectVariableTokensFromText(text: unknown, keys: Set<string>) {
   if (typeof text !== "string" || !text.includes("{{")) return;
 
   const regex = new RegExp(STORY_REFERENCE_TOKEN_REGEX.source, "g");
-  let match;
+  let match: RegExpExecArray | null;
   while ((match = regex.exec(text)) !== null) {
     const type = match[1];
     const id = match[2];
@@ -254,26 +285,14 @@ function collectVariableTokensFromText(text, keys) {
   }
 }
 
-/**
- * @param {Record<string, unknown>} initialVariables
- * @returns {string[]}
- */
-export function getInitiallyRevealedVariableKeys(initialVariables = {}) {
+export function getInitiallyRevealedVariableKeys(
+  initialVariables: StoryVariables = {}
+): string[] {
   return Object.entries(initialVariables)
     .filter(([, value]) => !isEmptyPlayerStatValue(value))
     .map(([key]) => key);
 }
 
-/**
- * @param {object} params
- * @param {Record<string, unknown>} params.playVariables
- * @param {Record<string, unknown>} params.initialVariables
- * @param {string[]} params.revealedKeys
- * @param {string[]} [params.activeNodeExposure]
- * @param {unknown[]} [params.nodes]
- * @param {Record<string, import("./storyVariables").VariablePlayerMeta>} [params.variableMeta]
- * @returns {Array<{ key: string, value: unknown, display: PlayerVariableDisplay }>}
- */
 export function getVisiblePlayerStats({
   playVariables = {},
   initialVariables = {},
@@ -281,7 +300,7 @@ export function getVisiblePlayerStats({
   activeNodeExposure = [],
   nodes = [],
   variableMeta = {},
-}) {
+}: GetVisiblePlayerStatsParams): VisiblePlayerStat[] {
   const revealed = new Set(revealedKeys);
   const activeExposure = new Set(activeNodeExposure);
   const keys = new Set([
@@ -289,7 +308,7 @@ export function getVisiblePlayerStats({
     ...Object.keys(playVariables || {}),
   ]);
 
-  const visible = [];
+  const visible: VisiblePlayerStat[] = [];
 
   for (const key of keys) {
     const value = Object.prototype.hasOwnProperty.call(playVariables, key)
@@ -312,13 +331,12 @@ export function getVisiblePlayerStats({
   return visible.sort((a, b) => a.display.label.localeCompare(b.display.label));
 }
 
-/**
- * @param {string} key
- * @param {unknown} value
- * @param {unknown[]} [nodes]
- * @param {Record<string, import("./storyVariables").VariablePlayerMeta>} [variableMeta]
- */
-export function formatPlayerStatValue(key, value, nodes = [], variableMeta = {}) {
+export function formatPlayerStatValue(
+  key: string,
+  value: unknown,
+  nodes: ReadonlyArray<PlayerStatNodeSource | null | undefined> = [],
+  variableMeta: VariableMetaMap = {}
+): string {
   if (typeof value === "boolean") {
     return value ? "Yes" : "No";
   }
@@ -331,13 +349,16 @@ export function formatPlayerStatValue(key, value, nodes = [], variableMeta = {})
   }
 
   if (value && typeof value === "object") {
-    const entries = Object.entries(value).filter(([, amount]) => Number(amount) > 0);
+    const entries = Object.entries(value).filter(
+      ([, amount]) => Number(amount) > 0
+    );
     if (entries.length === 0) return "—";
 
     return entries
       .map(([part, amount]) => {
         const fullKey = key === "prepAllocation" ? `prep_${part}` : part;
-        const label = getPlayerVariableDisplay(fullKey, nodes, variableMeta).label;
+        const label = getPlayerVariableDisplay(fullKey, nodes, variableMeta)
+          .label;
         return `${label}: ${amount}`;
       })
       .join(" · ");

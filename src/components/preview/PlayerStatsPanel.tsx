@@ -1,11 +1,19 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import type { StoryVariables, VariableMetaMap } from "../../types/storyCore";
+import type { UsePlayStateResult } from "../../hooks/usePlayState";
 import {
   formatPlayerStatValue,
   getNodeVariableExposure,
   getVisiblePlayerStats,
+  type PlayerStatNodeSource,
 } from "../../utils/playerVariableStats";
 
-function AnimatedStatNumber({ value, className = "" }) {
+interface AnimatedStatNumberProps {
+  value: unknown;
+  className?: string;
+}
+
+function AnimatedStatNumber({ value, className = "" }: AnimatedStatNumberProps) {
   const [display, setDisplay] = useState(() => Number(value) || 0);
   const prevValueRef = useRef(Number(value) || 0);
   const rafRef = useRef(0);
@@ -22,7 +30,7 @@ function AnimatedStatNumber({ value, className = "" }) {
     const start = performance.now();
     const duration = 520;
 
-    function tick(now) {
+    function tick(now: number) {
       const progress = Math.min(1, (now - start) / duration);
       const eased = 1 - (1 - progress) ** 3;
       setDisplay(Math.round(from + (target - from) * eased));
@@ -44,7 +52,21 @@ function AnimatedStatNumber({ value, className = "" }) {
   return <span className={className}>{display}</span>;
 }
 
-function StatValue({ statKey, value, nodes, variableMeta, changed }) {
+interface StatValueProps {
+  statKey: string;
+  value: unknown;
+  nodes: ReadonlyArray<PlayerStatNodeSource | null | undefined>;
+  variableMeta: VariableMetaMap;
+  changed?: boolean;
+}
+
+function StatValue({
+  statKey,
+  value,
+  nodes,
+  variableMeta,
+  changed,
+}: StatValueProps) {
   const formatted = formatPlayerStatValue(statKey, value, nodes, variableMeta);
   const isNumber = typeof value === "number";
 
@@ -69,6 +91,16 @@ function StatValue({ statKey, value, nodes, variableMeta, changed }) {
   );
 }
 
+interface PlayerStatsPanelProps {
+  playVariables?: StoryVariables;
+  initialVariables?: StoryVariables;
+  revealedVariableKeys?: string[];
+  changedVariableKeys?: string[];
+  nodes?: ReadonlyArray<PlayerStatNodeSource | null | undefined>;
+  variableMeta?: VariableMetaMap;
+  currentPlayNode?: UsePlayStateResult["currentPlayNode"] | PlayerStatNodeSource | null;
+}
+
 export default function PlayerStatsPanel({
   playVariables = {},
   initialVariables = {},
@@ -77,7 +109,7 @@ export default function PlayerStatsPanel({
   nodes = [],
   variableMeta = {},
   currentPlayNode = null,
-}) {
+}: PlayerStatsPanelProps) {
   const activeNodeExposure = useMemo(() => {
     if (!currentPlayNode) return [];
     return getNodeVariableExposure(currentPlayNode);
@@ -103,7 +135,7 @@ export default function PlayerStatsPanel({
     ]
   );
 
-  const [enteredKeys, setEnteredKeys] = useState(() => new Set());
+  const [enteredKeys, setEnteredKeys] = useState(() => new Set<string>());
   const prevVisibleKeysRef = useRef(new Set(stats.map((stat) => stat.key)));
 
   useEffect(() => {

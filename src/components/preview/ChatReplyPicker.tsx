@@ -1,11 +1,27 @@
 import { renderStoryText } from "../../utils/storyReferences";
+import type { StoryCharacter } from "../../types/storyCore";
 
-export default function ChatReplyPicker({
+/** Minimal choice fields rendered by the reply picker buttons. */
+interface ChatReplyPickerChoice {
+  id?: string;
+  label?: unknown;
+}
+
+interface ChatReplyPickerProps<T extends ChatReplyPickerChoice = ChatReplyPickerChoice> {
+  choices: T[];
+  characters?: StoryCharacter[];
+  disabled?: boolean;
+  onSelect: (choice: T) => void;
+}
+
+export default function ChatReplyPicker<
+  T extends ChatReplyPickerChoice = ChatReplyPickerChoice,
+>({
   choices,
   characters = [],
   disabled = false,
   onSelect,
-}) {
+}: ChatReplyPickerProps<T>) {
   if (choices.length === 0) return null;
 
   const storyState = { characters };
