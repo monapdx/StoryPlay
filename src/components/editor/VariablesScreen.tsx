@@ -1,10 +1,27 @@
 import VariableEditor from "./VariableEditor";
 import { setDocsHash } from "../../utils/hashRoute";
+import type { UseStoryStateResult } from "../../hooks/useStoryState";
+import type { StoryVariables, VariableMetaMap } from "../../types/story";
 
 /**
  * Edge-to-edge workspace for global story variables (same object as editor / preview / export).
  * Includes demo switcher, export, and mini-game entry so the main app header can be hidden here.
  */
+export interface VariablesScreenProps {
+  variables: StoryVariables;
+  setVariables: UseStoryStateResult["setVariables"];
+  variableMeta: VariableMetaMap;
+  setVariableMeta: UseStoryStateResult["setVariableMeta"];
+  onBack: () => void;
+  activeTemplateLabel?: string;
+  onOpenTemplates: () => void;
+  onExport: () => void;
+  onImport: () => void;
+  onOpenMiniGameEditor: () => void;
+  canOpenMiniGameEditor: boolean;
+  miniGameEditorTitle: string;
+}
+
 export default function VariablesScreen({
   variables,
   setVariables,
@@ -18,7 +35,7 @@ export default function VariablesScreen({
   onOpenMiniGameEditor,
   canOpenMiniGameEditor,
   miniGameEditorTitle,
-}) {
+}: VariablesScreenProps) {
   const count = Object.keys(variables || {}).length;
 
   return (

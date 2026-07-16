@@ -1,5 +1,18 @@
 import CharacterManager from "./CharacterManager";
 import { setDocsHash } from "../../utils/hashRoute";
+import type { UseStoryStateResult } from "../../hooks/useStoryState";
+import type { StoryCharacter, StoryNode } from "../../types/story";
+
+export interface CharactersScreenProps {
+  characters: StoryCharacter[];
+  nodes: StoryNode[];
+  onBack: () => void;
+  onAddCharacter: UseStoryStateResult["addCharacter"];
+  onUpdateCharacter: UseStoryStateResult["updateCharacter"];
+  onDeleteCharacter: UseStoryStateResult["deleteCharacter"];
+  onOpenTemplates: () => void;
+  activeTemplateLabel: string;
+}
 
 export default function CharactersScreen({
   characters,
@@ -10,7 +23,7 @@ export default function CharactersScreen({
   onDeleteCharacter,
   onOpenTemplates,
   activeTemplateLabel,
-}) {
+}: CharactersScreenProps) {
   return (
     <div className="variables-screen variables-screen--edgeless characters-screen">
       <div className="variables-screen-topbar">

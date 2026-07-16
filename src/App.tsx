@@ -44,12 +44,7 @@ import {
   type PrepareStoryPlayImportResult,
 } from "./utils/importStoryPlayProject";
 import type { MiniGameEditorDraft } from "./hooks/useMiniGameEditorState";
-import type {
-  StoryCharacter,
-  StoryNode,
-  StoryVariables,
-  VariableMetaMap,
-} from "./types/story";
+import type { StoryVariables } from "./types/story";
 
 declare global {
   interface Window {
@@ -81,39 +76,9 @@ type SidebarEditorAppProps = UseStoryStateResult & {
   onOpenVariables?: () => void;
 };
 
-type VariablesScreenAppProps = {
-  variables: StoryVariables;
-  setVariables: UseStoryStateResult["setVariables"];
-  variableMeta: VariableMetaMap;
-  setVariableMeta: UseStoryStateResult["setVariableMeta"];
-  onBack: () => void;
-  activeTemplateLabel: string;
-  onOpenTemplates: () => void;
-  onExport: () => void;
-  onImport: () => void;
-  onOpenMiniGameEditor: () => void;
-  canOpenMiniGameEditor: boolean;
-  miniGameEditorTitle: string;
-};
-
-type CharactersScreenAppProps = {
-  characters: StoryCharacter[];
-  nodes: StoryNode[];
-  onBack: () => void;
-  onAddCharacter: UseStoryStateResult["addCharacter"];
-  onUpdateCharacter: UseStoryStateResult["updateCharacter"];
-  onDeleteCharacter: UseStoryStateResult["deleteCharacter"];
-  onOpenTemplates: () => void;
-  activeTemplateLabel: string;
-};
-
 const StoryCanvasView = StoryCanvas as unknown as ComponentType<StoryCanvasAppProps>;
 const SidebarEditorView =
   SidebarEditor as unknown as ComponentType<SidebarEditorAppProps>;
-const VariablesScreenView =
-  VariablesScreen as unknown as ComponentType<VariablesScreenAppProps>;
-const CharactersScreenView =
-  CharactersScreen as unknown as ComponentType<CharactersScreenAppProps>;
 
 function EditorApp() {
   const story = useStoryState();
@@ -452,7 +417,7 @@ function EditorApp() {
       />
 
       {activeScreen === "variables" ? (
-        <VariablesScreenView
+        <VariablesScreen
           variables={story.variables}
           setVariables={story.setVariables}
           variableMeta={story.variableMeta}
@@ -467,7 +432,7 @@ function EditorApp() {
           miniGameEditorTitle={miniGameEditorTitle}
         />
       ) : activeScreen === "characters" ? (
-        <CharactersScreenView
+        <CharactersScreen
           characters={story.characters}
           nodes={story.nodes}
           onBack={handleCloseCharactersWorkspace}

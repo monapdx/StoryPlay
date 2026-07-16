@@ -238,7 +238,7 @@ export default function StoryCanvas({
       <div className="canvas-searchbar-wrap">
         <NodeSearchBar
           nodes={nodes}
-          onSelectNode={(nodeId) => setSelectedNodeId?.(nodeId)}
+          onJumpToNode={(nodeId) => setSelectedNodeId?.(nodeId)}
         />
       </div>
 

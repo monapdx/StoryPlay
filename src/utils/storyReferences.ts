@@ -24,7 +24,7 @@ export interface StoryRenderStateInput {
 }
 
 /** Node fields scanned for character reference tokens. */
-interface CharacterReferenceScanNode {
+export interface CharacterReferenceScanNode {
   data?: {
     content?: unknown;
     title?: unknown;
