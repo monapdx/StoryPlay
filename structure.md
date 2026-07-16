@@ -1,3 +1,9 @@
+# Repository structure
+
+Canonical layout after the TypeScript migration. Application source under `src/` is TypeScript (`.ts` / `.tsx`). There are **no** remaining `.js` / `.jsx` modules under `src/`.
+
+Planned concepts that are **not** present as modules (ideas only): standalone preview widgets (health/gold/countdown/chat), a separate `NodeBehaviorRenderer`, empty stub editors (`ChoiceEditor`, `WidgetEditor`, etc.), and a legacy `storySamples/` catalog. Live demos live under `src/data/` and `src/data/demo/`.
+
 ```
 StoryPlay/
 ├── .github/
@@ -8,59 +14,124 @@ StoryPlay/
 ├── index.html
 ├── package-lock.json
 ├── package.json
-├── screenshot.png
+├── schemas/
+│   └── storyplay-export.v1.schema.json
+├── scripts/
+│   ├── deploy-itch.mjs
+│   ├── package-itch-zip.mjs
+│   └── verify-itch-embed.mjs
 ├── src/
-│   ├── App.jsx
-│   ├── components/
-│   │   ├── canvas/
-│   │   │   ├── NodeSearchBar.jsx
-│   │   │   ├── StoryCanvas.jsx
-│   │   │   ├── StoryEdge.jsx
-│   │   │   └── StoryNode.jsx
-│   │   ├── editor/
-│   │   │   ├── ChoiceConditionsEditor.jsx
-│   │   │   ├── ChoiceEditor.jsx
-│   │   │   ├── ChoiceEffectsEditor.jsx
-│   │   │   ├── ChoiceRow.jsx
-│   │   │   ├── ChoicesEditor.jsx
-│   │   │   ├── NodeSearchBar.jsx
-│   │   │   ├── SidebarEditor.jsx
-│   │   │   ├── StoryCanvas.jsx
-│   │   │   ├── StoryDiagnostics.jsx
-│   │   │   ├── StoryEdge.jsx
-│   │   │   ├── StoryNode.jsx
-│   │   │   ├── VariableEditor.jsx
-│   │   │   └── WidgetEditor.jsx
-│   │   ├── preview/
-│   │   │   ├── BlockRenderer.jsx
-│   │   │   ├── ChoicePreviewList.jsx
-│   │   │   ├── NodeBehaviorRenderer.jsx
-│   │   │   ├── PlayChoiceButton.jsx
-│   │   │   └── StoryPreview.jsx
-│   │   └── widgets/
-│   │       ├── ChatWidget.jsx
-│   │       ├── CountdownWidget.jsx
-│   │       ├── GoldWidget.jsx
-│   │       └── HealthWidget.jsx
-│   ├── data/
-│   │   └── sampleStory.js
-│   ├── hooks/
-│   │   ├── usePlayState.js
-│   │   ├── usePreviewState.js
-│   │   └── useStoryState.js
-│   ├── main.jsx
+│   ├── App.tsx
+│   ├── main.tsx
 │   ├── style.css
+│   ├── docs.css
+│   ├── vite-env.d.ts
+│   ├── components/
+│   │   ├── blocks/
+│   │   │   ├── ChoiceWeightingBlockView.tsx
+│   │   │   ├── MiniGameTest.tsx
+│   │   │   ├── PersuasionBlockView.tsx
+│   │   │   └── TraitPickerBlockView.tsx
+│   │   ├── canvas/
+│   │   │   ├── NodeSearchBar.tsx
+│   │   │   ├── StoryCanvas.tsx
+│   │   │   ├── StoryEdge.tsx
+│   │   │   └── StoryNode.tsx
+│   │   ├── docs/
+│   │   │   └── DocumentationScreen.tsx
+│   │   ├── editor/
+│   │   │   ├── ChoiceConditionsEditor.tsx
+│   │   │   ├── ChoiceEffectsEditor.tsx
+│   │   │   ├── ChoiceRow.tsx
+│   │   │   ├── ChoicesEditor.tsx
+│   │   │   ├── ImportProjectModal.tsx
+│   │   │   ├── ReferenceTextarea.tsx
+│   │   │   ├── SidebarEditor.tsx
+│   │   │   ├── StoryDiagnostics.tsx
+│   │   │   ├── UndoRedoButtons.tsx
+│   │   │   ├── VariableEditor.tsx
+│   │   │   └── VariablesScreen.tsx
+│   │   ├── entities/
+│   │   │   ├── CharacterManager.tsx
+│   │   │   └── CharactersScreen.tsx
+│   │   ├── minigame/
+│   │   │   ├── MiniGameConfigPanel.tsx
+│   │   │   ├── MiniGameEditor.tsx
+│   │   │   ├── MiniGameEditorHeader.tsx
+│   │   │   ├── MiniGameEditorInspector.tsx
+│   │   │   ├── MiniGameEditorPreview.tsx
+│   │   │   ├── MiniGameEditorShell.tsx
+│   │   │   ├── MiniGameEditorSidebar.tsx
+│   │   │   ├── MiniGameLogicPanel.tsx
+│   │   │   ├── MiniGamePreview.tsx
+│   │   │   └── MiniGameToolbar.tsx
+│   │   ├── onboarding/
+│   │   │   ├── EditorEmptyState.tsx
+│   │   │   ├── OnboardingTour.tsx
+│   │   │   └── StarterTemplateModal.tsx
+│   │   ├── player/
+│   │   │   └── PlayerPage.tsx
+│   │   └── preview/
+│   │       ├── ChatBubbleContent.tsx
+│   │       ├── ChatReplyPicker.tsx
+│   │       ├── PlayChoiceButton.tsx
+│   │       ├── PlayerStatsPanel.tsx
+│   │       └── StoryPreview.tsx
+│   ├── data/
+│   │   ├── demo/
+│   │   │   ├── crossroadsStory.ts
+│   │   │   ├── guildAuditionStory.ts
+│   │   │   ├── guildVariableMeta.ts
+│   │   │   ├── marketDayStory.ts
+│   │   │   └── timedNerveStory.ts
+│   │   ├── docs/
+│   │   │   ├── catalog.ts
+│   │   │   └── sections.tsx
+│   │   ├── demoStoriesCatalog.ts
+│   │   ├── onboardingDemo.ts
+│   │   ├── onboardingSteps.ts
+│   │   └── sampleStory.ts
+│   ├── hooks/
+│   │   ├── useHashRoute.ts
+│   │   ├── useMiniGameEditorState.ts
+│   │   ├── useOnboarding.ts
+│   │   ├── usePlayState.ts
+│   │   └── useStoryState.ts
+│   ├── types/
+│   │   ├── choiceKinds.ts
+│   │   ├── demoStories.ts
+│   │   ├── minigameExamples.ts
+│   │   ├── minigames.ts
+│   │   ├── onboarding.ts
+│   │   ├── story.ts
+│   │   ├── storyBlocks.ts
+│   │   └── storyCore.ts
 │   └── utils/
-│       ├── conditions.js
-│       ├── edgeHelpers.js
-│       ├── effects.js
-│       ├── exportProject.js
-│       ├── graphHealth.js
-│       ├── importProject.js
-│       ├── nodeHelpers.js
-│       ├── storyLogic.js
-│       └── storyModel.js
-├── storyplay-social-preview.png
+│       ├── blankStory.ts
+│       ├── chatPlay.ts
+│       ├── choiceKinds.ts
+│       ├── choicePathGenerator.ts
+│       ├── graphHealth.ts
+│       ├── hashRoute.ts
+│       ├── importStoryPlayProject.ts
+│       ├── miniGameFromNode.ts
+│       ├── nodeGraphLinks.ts
+│       ├── nodeHelpers.ts
+│       ├── onboardingPosition.ts
+│       ├── onboardingStorage.ts
+│       ├── playEntryNode.ts
+│       ├── playerVariableStats.ts
+│       ├── projectMigrations.ts
+│       ├── projectSchema.ts
+│       ├── serializeStoryPlayExport.ts
+│       ├── storyEntities.ts
+│       ├── storyLogic.ts
+│       ├── storyPreviewStorage.ts
+│       ├── storyProjectStorage.ts
+│       ├── storyReferences.ts
+│       ├── storyUndoHistory.ts
+│       └── storyVariables.ts
+├── structure.md
 ├── structure.json
 ├── tree.txt
 └── vite.config.js

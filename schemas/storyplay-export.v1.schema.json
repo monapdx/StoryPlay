@@ -146,7 +146,7 @@
         },
         "behavior": {
           "type": "object",
-          "description": "Reserved for NodeBehaviorRenderer; default { kind: \"none\", config: {} }.",
+          "description": "Reserved node behavior payload; default { kind: \"none\", config: {} }.",
           "additionalProperties": true
         },
         "timerSeconds": {

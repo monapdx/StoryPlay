@@ -46,15 +46,11 @@ The repo is organized around a few clear responsibilities:
   - choices editing
   - conditions/effects editing
   - variable editing
-  - widget editing
 
 - `src/components/preview/`
   - playable story mode
   - preview rendering
   - choice interaction
-
-- `src/components/widgets/`
-  - reusable in-story widgets like health, gold, countdown, and chat
 
 - `src/hooks/`
   - state management for story editing and play state
@@ -65,9 +61,14 @@ The repo is organized around a few clear responsibilities:
   - import/export logic
   - node/edge helper functions
 
-- `src/data/sampleStory.js`
-  - canonical demo story data
+- `src/data/sampleStory.ts`
+  - canonical demo story data (Escape Room template)
   - useful reference for story shape and expected schema
+
+Planned / not present as modules:
+- standalone in-story widgets (health, gold, countdown, chat cards)
+- a separate node-behavior renderer component
+- treat README “puzzle widgets” and similar items as directional ideas
 
 ---
 
@@ -246,7 +247,7 @@ For most tasks, inspect these first:
 - edge/node helper utilities
 
 ### For schema/debugging
-- `src/data/sampleStory.js`
+- `src/data/sampleStory.ts`
 - import/export utilities
 - conditions/effects/story logic utilities
 

@@ -50,7 +50,7 @@ export interface StoryNodePosition {
   y: number;
 }
 
-/** Reserved NodeBehaviorRenderer payload; mostly unused today. */
+/** Reserved node `behavior` payload; no dedicated renderer module today. */
 export interface StoryNodeBehavior {
   kind?: string;
   config?: Record<string, unknown>;
