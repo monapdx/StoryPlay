@@ -1,11 +1,13 @@
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import type { OnboardingStep, OnboardingStepPlacement } from "../../types/onboarding";
+import type { OnboardingStep } from "../../types/onboarding";
 import {
   computeCenteredTooltipPosition,
   computeTooltipPosition,
   getSpotlightRect,
   getViewportMetrics,
+  type SpotlightRect,
+  type TooltipPlacement,
 } from "../../utils/onboardingPosition";
 
 const TARGET_RETRY_LIMIT = 24;
@@ -22,21 +24,11 @@ export interface OnboardingTourProps {
   onSkip: () => void;
 }
 
-/** Includes "center" from computeCenteredTooltipPosition when no target. */
-type TourTooltipPlacement = OnboardingStepPlacement | "center";
-
-interface SpotlightRect {
-  top: number;
-  left: number;
-  width: number;
-  height: number;
-}
-
 interface TourLayout {
   spotlight: SpotlightRect | null;
   tooltipTop: number;
   tooltipLeft: number;
-  placement: TourTooltipPlacement;
+  placement: TooltipPlacement;
   ready: boolean;
 }
 
@@ -97,11 +89,7 @@ export default function OnboardingTour({
           tooltipWidth,
           tooltipHeight,
           viewport
-        ) as {
-          top: number;
-          left: number;
-          placement: TourTooltipPlacement;
-        };
+        );
         setLayout({
           spotlight: null,
           tooltipTop: centered.top,
@@ -119,17 +107,10 @@ export default function OnboardingTour({
         tooltipHeight,
         preferredPlacement: step.placement || "bottom",
         viewport,
-      }) as {
-        top: number;
-        left: number;
-        placement: TourTooltipPlacement;
-      };
+      });
 
       setLayout({
-        spotlight: getSpotlightRect(
-          targetRect,
-          step.spotlightPadding
-        ) as SpotlightRect,
+        spotlight: getSpotlightRect(targetRect, step.spotlightPadding),
         tooltipTop: positioned.top,
         tooltipLeft: positioned.left,
         placement: positioned.placement,

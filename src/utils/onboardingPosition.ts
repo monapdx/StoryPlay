@@ -6,16 +6,66 @@ export const TOOLTIP_GAP = 14;
 
 export const SPOTLIGHT_PADDING = 8;
 
-const PLACEMENTS = ["bottom", "top", "right", "left"];
+export type TooltipPlacement = "top" | "bottom" | "left" | "right" | "center";
 
-/**
- * @typedef {"top" | "bottom" | "left" | "right" | "center"} TooltipPlacement
- */
+/** Edge placements considered when flipping the tooltip around a target. */
+export type EdgePlacement = "top" | "bottom" | "left" | "right";
+
+/** Visual viewport metrics used for clamping and overflow scoring. */
+export interface ViewportMetrics {
+  width: number;
+  height: number;
+  offsetTop: number;
+  offsetLeft: number;
+}
+
+/** Absolute top/left card position in viewport coordinates. */
+export interface CardPosition {
+  top: number;
+  left: number;
+}
+
+/** Measured tour-card size passed into placement helpers. */
+export interface TourCardSize {
+  tooltipWidth: number;
+  tooltipHeight: number;
+}
+
+/** Spotlight hole geometry (padded target bounds). */
+export interface SpotlightRect {
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+}
+
+/** Result of tooltip placement (edge or centered). */
+export interface TooltipPositionResult extends CardPosition {
+  placement: TooltipPlacement;
+}
+
+/** Inputs for target-anchored tooltip placement. */
+export interface ComputeTooltipPositionOptions {
+  targetRect: DOMRectReadOnly;
+  tooltipWidth: number;
+  tooltipHeight: number;
+  preferredPlacement?: TooltipPlacement;
+  viewport?: ViewportMetrics;
+  margin?: number;
+  gap?: number;
+}
+
+interface ScoredTooltipCandidate extends CardPosition {
+  placement: TooltipPlacement;
+  score: number;
+}
+
+const PLACEMENTS: EdgePlacement[] = ["bottom", "top", "right", "left"];
 
 /**
  * @returns {{ width: number, height: number, offsetTop: number, offsetLeft: number }}
  */
-export function getViewportMetrics() {
+export function getViewportMetrics(): ViewportMetrics {
   if (typeof window === "undefined") {
     return { width: 1024, height: 768, offsetTop: 0, offsetLeft: 0 };
   }
@@ -42,7 +92,10 @@ export function getViewportMetrics() {
  * @param {DOMRect} targetRect
  * @param {number} padding
  */
-export function getSpotlightRect(targetRect, padding = SPOTLIGHT_PADDING) {
+export function getSpotlightRect(
+  targetRect: DOMRectReadOnly,
+  padding: number = SPOTLIGHT_PADDING
+): SpotlightRect {
   return {
     top: targetRect.top - padding,
     left: targetRect.left - padding,
@@ -55,11 +108,16 @@ export function getSpotlightRect(targetRect, padding = SPOTLIGHT_PADDING) {
  * @param {{ top: number, left: number }} pos
  * @param {number} width
  * @param {number} height
- * @param {number} viewportWidth
- * @param {number} viewportHeight
+ * @param {{ width: number, height: number, offsetTop: number, offsetLeft: number }} metrics
  * @param {number} margin
  */
-function getOverflowScore(pos, width, height, metrics, margin) {
+function getOverflowScore(
+  pos: CardPosition,
+  width: number,
+  height: number,
+  metrics: ViewportMetrics,
+  margin: number
+): number {
   const minTop = metrics.offsetTop + margin;
   const minLeft = metrics.offsetLeft + margin;
   const maxBottom = metrics.offsetTop + metrics.height - margin;
@@ -80,7 +138,13 @@ function getOverflowScore(pos, width, height, metrics, margin) {
  * @param {{ width: number, height: number, offsetTop: number, offsetLeft: number }} metrics
  * @param {number} margin
  */
-function clampToViewport(pos, width, height, metrics, margin) {
+function clampToViewport(
+  pos: CardPosition,
+  width: number,
+  height: number,
+  metrics: ViewportMetrics,
+  margin: number
+): CardPosition {
   const minLeft = metrics.offsetLeft + margin;
   const minTop = metrics.offsetTop + margin;
   const maxLeft = Math.max(minLeft, metrics.offsetLeft + metrics.width - width - margin);
@@ -99,7 +163,13 @@ function clampToViewport(pos, width, height, metrics, margin) {
  * @param {number} tooltipHeight
  * @param {number} gap
  */
-function positionForPlacement(placement, targetRect, tooltipWidth, tooltipHeight, gap) {
+function positionForPlacement(
+  placement: TooltipPlacement,
+  targetRect: DOMRectReadOnly,
+  tooltipWidth: number,
+  tooltipHeight: number,
+  gap: number
+): CardPosition {
   switch (placement) {
     case "top":
       return {
@@ -146,16 +216,15 @@ export function computeTooltipPosition({
   viewport,
   margin = VIEWPORT_MARGIN,
   gap = TOOLTIP_GAP,
-}) {
+}: ComputeTooltipPositionOptions): TooltipPositionResult {
   const metrics = viewport || getViewportMetrics();
 
-  const order = [
+  const order: TooltipPlacement[] = [
     preferredPlacement,
     ...PLACEMENTS.filter((placement) => placement !== preferredPlacement),
   ];
 
-  /** @type {{ top: number, left: number, placement: TooltipPlacement, score: number }[]} */
-  const candidates = [];
+  const candidates: ScoredTooltipCandidate[] = [];
 
   for (const placement of order) {
     const raw = positionForPlacement(
@@ -200,11 +269,11 @@ export function computeTooltipPosition({
  * @param {number} [margin]
  */
 export function computeCenteredTooltipPosition(
-  tooltipWidth,
-  tooltipHeight,
-  viewport,
-  margin = VIEWPORT_MARGIN
-) {
+  tooltipWidth: number,
+  tooltipHeight: number,
+  viewport?: ViewportMetrics,
+  margin: number = VIEWPORT_MARGIN
+): TooltipPositionResult {
   const metrics = viewport || getViewportMetrics();
   const clamped = clampToViewport(
     {

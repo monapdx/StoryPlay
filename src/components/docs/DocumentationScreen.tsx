@@ -1,23 +1,12 @@
-import { useEffect, type MouseEvent, type ReactNode } from "react";
-import { getDocSection, getDocSectionsByGroup } from "../../data/docs/catalog";
+import { useEffect, type MouseEvent } from "react";
+import {
+  getDocSection,
+  getDocSectionsByGroup,
+  type DocSectionMeta,
+} from "../../data/docs/catalog";
 import { renderDocSection } from "../../data/docs/sections";
 import { setDocsHash, setEditorHash } from "../../utils/hashRoute";
 import "../../docs.css";
-
-/** Catalog entry shape from `data/docs/catalog` (JS). */
-interface DocSectionMeta {
-  id: string;
-  group: string;
-  title: string;
-  summary: string;
-  featured?: boolean;
-}
-
-interface DocGroupWithSections {
-  id: string;
-  label: string;
-  sections: DocSectionMeta[];
-}
 
 export interface DocumentationScreenProps {
   sectionId?: string | null;
@@ -33,7 +22,7 @@ interface DocsArticleProps {
 }
 
 function DocsNav({ activeSectionId }: DocsNavProps) {
-  const groups = getDocSectionsByGroup() as DocGroupWithSections[];
+  const groups = getDocSectionsByGroup();
 
   return (
     <nav className="docs-sidebar__nav" aria-label="Documentation topics">
@@ -72,7 +61,7 @@ function DocsNav({ activeSectionId }: DocsNavProps) {
 }
 
 function DocsLanding() {
-  const featured = getDocSection("your-first-story") as DocSectionMeta | null;
+  const featured = getDocSection("your-first-story");
 
   return (
     <div className="docs-landing">
@@ -101,7 +90,7 @@ function DocsLanding() {
 }
 
 function DocsArticle({ sectionId, section }: DocsArticleProps) {
-  const content = renderDocSection(sectionId) as ReactNode | null;
+  const content = renderDocSection(sectionId);
 
   return (
     <article className="docs-article">
@@ -125,9 +114,7 @@ function DocsArticle({ sectionId, section }: DocsArticleProps) {
 export default function DocumentationScreen({
   sectionId = null,
 }: DocumentationScreenProps) {
-  const section = sectionId
-    ? (getDocSection(sectionId) as DocSectionMeta | null)
-    : null;
+  const section = sectionId ? getDocSection(sectionId) : null;
   const isLanding = !sectionId;
 
   useEffect(() => {

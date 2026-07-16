@@ -4,7 +4,6 @@ import {
   useRef,
   useState,
   type ChangeEvent,
-  type ComponentType,
 } from "react";
 import StoryCanvas from "./components/canvas/StoryCanvas";
 import SidebarEditor from "./components/editor/SidebarEditor";
@@ -55,19 +54,6 @@ declare global {
 }
 
 type EditorActiveScreen = "editor" | "variables" | "characters";
-
-/**
- * App-side props for still-JS SidebarEditor. allowJs infers
- * `onboardingStepId = null` as only `null`, rejecting real step id strings.
- */
-type SidebarEditorAppProps = UseStoryStateResult & {
-  onboardingStepId?: string | null;
-  onOpenMiniGameEditor?: () => void;
-  onOpenVariables?: () => void;
-};
-
-const SidebarEditorView =
-  SidebarEditor as unknown as ComponentType<SidebarEditorAppProps>;
 
 function EditorApp() {
   const story = useStoryState();
@@ -574,7 +560,7 @@ function EditorApp() {
             </section>
 
             <aside className="panel sidebar-panel custom-scrollbar" data-onboarding="sidebar">
-              <SidebarEditorView
+              <SidebarEditor
                 {...story}
                 onboardingStepId={onboarding.isActive ? onboarding.step?.id : null}
                 onOpenMiniGameEditor={handleOpenMiniGameEditor}
