@@ -15,7 +15,7 @@ export interface RecordBeforeMutationOptions {
  * (story editor state, mini-game editor bag, etc.).
  */
 export interface StoryUndoHistoryApi<TSnapshot = unknown> {
-  subscribe: (listener: (version: number) => void) => () => boolean;
+  subscribe: (listener: (version: number) => void) => () => void;
   recordBeforeMutation: (
     snapshot: TSnapshot,
     options?: RecordBeforeMutationOptions
@@ -130,9 +130,9 @@ export function createStoryUndoHistory<TSnapshot = unknown>({
     if (past.length === 0) return null;
 
     future.push(cloneStorySnapshot(currentSnapshot));
-    const previous = past.pop();
+    const previous = past.pop() as TSnapshot;
     notify();
-    return previous ?? null;
+    return previous;
   }
 
   function redo(currentSnapshot: TSnapshot): TSnapshot | null {
@@ -140,9 +140,9 @@ export function createStoryUndoHistory<TSnapshot = unknown>({
     if (future.length === 0) return null;
 
     past.push(cloneStorySnapshot(currentSnapshot));
-    const next = future.pop();
+    const next = future.pop() as TSnapshot;
     notify();
-    return next ?? null;
+    return next;
   }
 
   function canUndo() {

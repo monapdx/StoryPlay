@@ -12,7 +12,10 @@ import {
   buildMiniGameFromSelectedNode,
   isSupportedMiniGameBlock,
 } from "../utils/miniGameFromNode";
-import { createStoryUndoHistory } from "../utils/storyUndoHistory";
+import {
+  createStoryUndoHistory,
+  type StoryUndoHistoryApi,
+} from "../utils/storyUndoHistory";
 
 /** Editor list item for choice-weighting drafts (not WeightedOption). */
 export interface MiniGameEditorChoiceWeightingOption {
@@ -208,20 +211,6 @@ export interface UseMiniGameEditorStateResult {
 interface MiniGameEditorHistorySnapshot {
   draft: MiniGameEditorDraft | null;
   selectedItemId: string | null;
-}
-
-interface StoryUndoHistoryApi {
-  subscribe: (listener: () => void) => () => void;
-  recordBeforeMutation: (
-    snapshot: unknown,
-    options?: { immediate?: boolean }
-  ) => void;
-  clear: () => void;
-  undo: (currentSnapshot: unknown) => unknown;
-  redo: (currentSnapshot: unknown) => unknown;
-  canUndo: () => boolean;
-  canRedo: () => boolean;
-  runApplying: (callback: () => void) => void;
 }
 
 function makeId(prefix = "item"): string {
@@ -483,9 +472,11 @@ export default function useMiniGameEditorState({
   const [advancedJson, setAdvancedJson] = useState("");
   const [advancedJsonError, setAdvancedJsonError] = useState("");
 
-  const historyRef = useRef<StoryUndoHistoryApi | null>(null);
+  const historyRef =
+    useRef<StoryUndoHistoryApi<MiniGameEditorHistorySnapshot> | null>(null);
   if (!historyRef.current) {
-    historyRef.current = createStoryUndoHistory() as StoryUndoHistoryApi;
+    historyRef.current =
+      createStoryUndoHistory<MiniGameEditorHistorySnapshot>();
   }
   const [historyVersion, setHistoryVersion] = useState(0);
 
@@ -533,15 +524,14 @@ export default function useMiniGameEditorState({
     return nextItems[0]?.id ?? null;
   }
 
-  function restoreEditorSnapshot(snapshot: unknown) {
-    const snap = snapshot as MiniGameEditorHistorySnapshot | null | undefined;
-    if (!snap?.draft) return;
+  function restoreEditorSnapshot(snapshot: MiniGameEditorHistorySnapshot) {
+    if (!snapshot.draft) return;
 
     historyRef.current!.runApplying(() => {
-      const nextDraft = clone(snap.draft);
+      const nextDraft = clone(snapshot.draft);
       setDraft(nextDraft);
       setSelectedItemId(
-        resolveSelectedItemId(nextDraft, snap.selectedItemId)
+        resolveSelectedItemId(nextDraft, snapshot.selectedItemId)
       );
       setPreviewState(null);
     });

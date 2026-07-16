@@ -95,6 +95,8 @@ export interface StoryNodeData {
   enterEffects?: Effect[];
   /** Editor-only diagnostics; clean exports strip this. */
   graphIssues?: unknown[];
+  /** Editor-only flag for the guided-tour scaffold node. */
+  isOnboardingScaffold?: boolean;
   isStart?: boolean;
   behavior?: StoryNodeBehavior;
 
