@@ -4,20 +4,30 @@ import usePlayState from "../../hooks/usePlayState";
 import {
   loadStoryForPreview,
   STORYPLAY_PREVIEW_BROADCAST_CHANNEL,
+  type StoryPreviewSnapshot,
 } from "../../utils/storyPreviewStorage";
 import { setEditorHash } from "../../utils/hashRoute";
 import {
   getNodesSignature,
   resolvePlayEntryNodeId,
 } from "../../utils/playEntryNode";
+import type { StoryNode } from "../../types/story";
+import type { StoryCharacter } from "../../types/storyCore";
+
+/**
+ * Player page takes no route props — App mounts it for `#/play`.
+ */
+export type PlayerPageProps = Record<string, never>;
 
 export default function PlayerPage() {
-  const [snapshot, setSnapshot] = useState(() => loadStoryForPreview());
-  const playEntryNodeIdRef = useRef(null);
+  const [snapshot, setSnapshot] = useState<StoryPreviewSnapshot | null>(() =>
+    loadStoryForPreview()
+  );
+  const playEntryNodeIdRef = useRef<string | null>(null);
   const lastNodesSignatureRef = useRef("");
 
   useEffect(() => {
-    let bc;
+    let bc: BroadcastChannel | undefined;
     try {
       bc = new BroadcastChannel(STORYPLAY_PREVIEW_BROADCAST_CHANNEL);
       bc.onmessage = () => {
@@ -29,7 +39,9 @@ export default function PlayerPage() {
           lastNodesSignatureRef.current &&
           nextSignature !== lastNodesSignatureRef.current
         ) {
-          playEntryNodeIdRef.current = resolvePlayEntryNodeId(nextSnapshot.nodes);
+          playEntryNodeIdRef.current = resolvePlayEntryNodeId(
+            nextSnapshot.nodes
+          );
         }
 
         lastNodesSignatureRef.current = nextSignature;
@@ -47,10 +59,10 @@ export default function PlayerPage() {
     };
   }, []);
 
-  const nodes = snapshot?.nodes ?? [];
+  const nodes = (snapshot?.nodes ?? []) as StoryNode[];
   const variables = snapshot?.variables ?? {};
   const variableMeta = snapshot?.variableMeta ?? {};
-  const characters = snapshot?.characters ?? [];
+  const characters = (snapshot?.characters ?? []) as StoryCharacter[];
 
   if (playEntryNodeIdRef.current == null && nodes.length > 0) {
     playEntryNodeIdRef.current = resolvePlayEntryNodeId(nodes);
@@ -67,7 +79,9 @@ export default function PlayerPage() {
     standalone: true,
   });
 
-  const hasStory = Boolean(snapshot && Array.isArray(snapshot.nodes) && snapshot.nodes.length > 0);
+  const hasStory = Boolean(
+    snapshot && Array.isArray(snapshot.nodes) && snapshot.nodes.length > 0
+  );
 
   return (
     <div className="player-page">
@@ -81,7 +95,8 @@ export default function PlayerPage() {
           ← Back to editor
         </button>
         <span className="player-page-toolbar-meta">
-          StoryPlay · Play mode · refreshes when the editor updates the preview snapshot
+          StoryPlay · Play mode · refreshes when the editor updates the preview
+          snapshot
         </span>
       </header>
 
@@ -89,11 +104,17 @@ export default function PlayerPage() {
         <div className="player-page-empty">
           <h1 className="player-page-empty-title">No story to play yet</h1>
           <p className="player-page-empty-text">
-            This page loads the snapshot saved when you choose <strong>Play</strong> from the
-            editor. After that, the editor tab can push debounced updates here automatically while you keep
-            working. You can also click <strong>Play</strong> again anytime for an immediate refresh.
+            This page loads the snapshot saved when you choose{" "}
+            <strong>Play</strong> from the editor. After that, the editor tab can
+            push debounced updates here automatically while you keep working. You
+            can also click <strong>Play</strong> again anytime for an immediate
+            refresh.
           </p>
-          <button type="button" className="toolbar-button" onClick={() => setEditorHash()}>
+          <button
+            type="button"
+            className="toolbar-button"
+            onClick={() => setEditorHash()}
+          >
             Go to editor (#/)
           </button>
         </div>

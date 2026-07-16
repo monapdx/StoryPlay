@@ -2,9 +2,53 @@
  * Bridge between story node `data` (editor / React Flow) and the mini-game editor payload shape.
  */
 
-export function canonicalMiniGameBlockType(node) {
-  if (!node?.data) return null;
-  const raw = node.data.blockType;
+import type {
+  MiniGameEditorChoiceWeightingConfig,
+  MiniGameEditorChoiceWeightingDraft,
+  MiniGameEditorDraft,
+  MiniGameEditorPersuasionChoice,
+  MiniGameEditorPersuasionConfig,
+  MiniGameEditorPersuasionDraft,
+  MiniGameEditorTraitOption,
+  MiniGameEditorTraitPickerConfig,
+  MiniGameEditorTraitPickerDraft,
+  MiniGameEditorChoiceWeightingOption,
+} from "../hooks/useMiniGameEditorState";
+import type { MiniGameBlockType } from "../types/minigames";
+import type { StoryNodeData } from "../types/story";
+
+/**
+ * Loose node shape accepted at the boundary (incomplete/legacy data tolerated).
+ * Not a full StoryNode — only `data` is read.
+ */
+export type MiniGameSourceNode = {
+  data?: StoryNodeData | null;
+} | null;
+
+/** Config bag read when mapping a saved draft back onto node data. */
+type MiniGameEditorConfigSource = Partial<
+  MiniGameEditorChoiceWeightingConfig &
+    MiniGameEditorPersuasionConfig &
+    MiniGameEditorTraitPickerConfig
+>;
+
+/**
+ * Loose editor payload / draft input for draft→node mapping.
+ * Prefer MiniGameEditorDraft from save; unknown/legacy objects still accepted.
+ */
+export type MiniGameEditorPayloadSource = {
+  type?: unknown;
+  title?: unknown;
+  prompt?: unknown;
+  config?: MiniGameEditorConfigSource;
+};
+
+export function canonicalMiniGameBlockType(
+  node: unknown
+): MiniGameBlockType | null {
+  const source = node as MiniGameSourceNode | undefined;
+  if (!source?.data) return null;
+  const raw = source.data.blockType;
   if (typeof raw !== "string") return null;
   const t = raw.trim();
   if (t === "traitPicker" || t === "persuasion" || t === "choiceWeighting") {
@@ -13,35 +57,45 @@ export function canonicalMiniGameBlockType(node) {
   return null;
 }
 
-export function isSupportedMiniGameBlock(node) {
+export function isSupportedMiniGameBlock(node: unknown): boolean {
   return canonicalMiniGameBlockType(node) != null;
 }
 
-export function buildMiniGameFromSelectedNode(selectedNode) {
+/**
+ * Build an editor draft-shaped payload from a story node.
+ * Options/choices are passed through as stored on the node (may be incomplete);
+ * useMiniGameEditorState normalizes them after open.
+ */
+export function buildMiniGameFromSelectedNode(
+  selectedNode: unknown
+): MiniGameEditorDraft | null {
   if (!selectedNode) return null;
 
   const blockType = canonicalMiniGameBlockType(selectedNode);
   if (!blockType) return null;
 
-  const data = selectedNode.data || {};
+  const source = selectedNode as MiniGameSourceNode;
+  const data = source?.data || {};
 
   switch (blockType) {
-    case "traitPicker":
-      return {
+    case "traitPicker": {
+      const draft: MiniGameEditorTraitPickerDraft = {
         title: data.title || "Trait Picker",
         type: "traitPicker",
         prompt: data.content || "",
         config: {
-          options: data.options || [],
+          options: (data.options || []) as MiniGameEditorTraitOption[],
           minSelections: data.minSelections ?? 0,
           maxSelections: data.maxSelections ?? 2,
           traitListVariable: data.traitListVariable || "",
           continueNodeId: data.continueNodeId || "",
         },
       };
+      return draft;
+    }
 
-    case "persuasion":
-      return {
+    case "persuasion": {
+      const draft: MiniGameEditorPersuasionDraft = {
         title: data.title || "Persuasion",
         type: "persuasion",
         prompt: data.content || "",
@@ -57,17 +111,19 @@ export function buildMiniGameFromSelectedNode(selectedNode) {
           successVariable: data.successVariable || "",
           successNodeId: data.successNodeId || "",
           failureNodeId: data.failureNodeId || "",
-          choices: data.choices || [],
+          choices: (data.choices || []) as MiniGameEditorPersuasionChoice[],
         },
       };
+      return draft;
+    }
 
-    case "choiceWeighting":
-      return {
+    case "choiceWeighting": {
+      const draft: MiniGameEditorChoiceWeightingDraft = {
         title: data.title || "Choice Weighting",
         type: "choiceWeighting",
         prompt: data.content || "",
         config: {
-          options: data.options || [],
+          options: (data.options || []) as MiniGameEditorChoiceWeightingOption[],
           totalPoints: data.totalPoints ?? 10,
           variablePrefix: data.variablePrefix || "",
           resultVariable: data.resultVariable || "",
@@ -75,6 +131,8 @@ export function buildMiniGameFromSelectedNode(selectedNode) {
           continueNodeId: data.continueNodeId || "",
         },
       };
+      return draft;
+    }
 
     default:
       return null;
@@ -83,18 +141,22 @@ export function buildMiniGameFromSelectedNode(selectedNode) {
 
 /**
  * Maps a mini-game editor payload back onto story node `data` fields.
+ * Returns a partial data patch (spread onto existing node.data); not a full node.
  */
-export function miniGamePayloadToNodeData(updatedMiniGame) {
+export function miniGamePayloadToNodeData(
+  updatedMiniGame: unknown
+): Partial<StoryNodeData> {
   if (!updatedMiniGame || typeof updatedMiniGame !== "object") {
     return {};
   }
 
-  const { type, title, prompt, config = {} } = updatedMiniGame;
+  const payload = updatedMiniGame as MiniGameEditorPayloadSource;
+  const { type, title, prompt, config = {} } = payload;
 
-  const patch = {
-    blockType: type,
-    title: title || "Mini-Game",
-    content: prompt || "",
+  const patch: Partial<StoryNodeData> = {
+    blockType: type as StoryNodeData["blockType"],
+    title: (title || "Mini-Game") as string,
+    content: (prompt || "") as string,
   };
 
   switch (type) {
