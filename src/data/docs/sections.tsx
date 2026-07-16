@@ -2,27 +2,35 @@
  * Per-section documentation content. Each renderer is keyed by catalog id.
  */
 
-function DocP({ children }) {
+import type { ReactNode } from "react";
+import type { DocSectionId } from "./catalog";
+
+type DocChildrenProps = { children?: ReactNode };
+type DocPreProps = { children?: ReactNode; title?: string };
+type DocCalloutProps = { children?: ReactNode; title?: string };
+type SectionRenderer = () => ReactNode;
+
+function DocP({ children }: DocChildrenProps) {
   return <p className="docs-p">{children}</p>;
 }
 
-function DocH3({ children }) {
+function DocH3({ children }: DocChildrenProps) {
   return <h3 className="docs-h3">{children}</h3>;
 }
 
-function DocUl({ children }) {
+function DocUl({ children }: DocChildrenProps) {
   return <ul className="docs-ul">{children}</ul>;
 }
 
-function DocOl({ children }) {
+function DocOl({ children }: DocChildrenProps) {
   return <ol className="docs-ol">{children}</ol>;
 }
 
-function DocCode({ children }) {
+function DocCode({ children }: DocChildrenProps) {
   return <code className="docs-inline-code">{children}</code>;
 }
 
-function DocPre({ children, title }) {
+function DocPre({ children, title }: DocPreProps) {
   return (
     <figure className="docs-code-block">
       {title ? <figcaption className="docs-code-block__title">{title}</figcaption> : null}
@@ -33,7 +41,7 @@ function DocPre({ children, title }) {
   );
 }
 
-function DocCallout({ title, children }) {
+function DocCallout({ title, children }: DocCalloutProps) {
   return (
     <aside className="docs-callout">
       {title ? <p className="docs-callout__title">{title}</p> : null}
@@ -469,9 +477,13 @@ Guard: She's in the square.`}</DocPre>
       </DocUl>
     </>
   ),
-};
+} satisfies Record<DocSectionId, SectionRenderer>;
 
-export function renderDocSection(sectionId) {
-  const render = SECTION_RENDERERS[sectionId];
+export function renderDocSection(
+  sectionId?: string | null
+): ReactNode | null {
+  const render = (
+    SECTION_RENDERERS as Partial<Record<string, SectionRenderer>>
+  )[sectionId as string];
   return render ? render() : null;
 }
