@@ -19,7 +19,7 @@ import ImportProjectModal from "./components/editor/ImportProjectModal";
 import useStoryState, {
   type UseStoryStateResult,
 } from "./hooks/useStoryState";
-import usePlayState, { type UsePlayStateResult } from "./hooks/usePlayState";
+import usePlayState from "./hooks/usePlayState";
 import useOnboarding from "./hooks/useOnboarding";
 import {
   downloadStoryPlayExportV1,
@@ -44,7 +44,6 @@ import {
   type PrepareStoryPlayImportResult,
 } from "./utils/importStoryPlayProject";
 import type { MiniGameEditorDraft } from "./hooks/useMiniGameEditorState";
-import type { StoryVariables } from "./types/story";
 
 declare global {
   interface Window {
@@ -58,15 +57,6 @@ declare global {
 type EditorActiveScreen = "editor" | "variables" | "characters";
 
 /**
- * App-side props for still-JS StoryCanvas. allowJs infers `characters = []` as
- * `never[]`, which rejects StoryCharacter[].
- */
-type StoryCanvasAppProps = UseStoryStateResult & {
-  currentPlayNodeId: UsePlayStateResult["currentPlayNodeId"];
-  playVariables: StoryVariables;
-};
-
-/**
  * App-side props for still-JS SidebarEditor. allowJs infers
  * `onboardingStepId = null` as only `null`, rejecting real step id strings.
  */
@@ -76,7 +66,6 @@ type SidebarEditorAppProps = UseStoryStateResult & {
   onOpenVariables?: () => void;
 };
 
-const StoryCanvasView = StoryCanvas as unknown as ComponentType<StoryCanvasAppProps>;
 const SidebarEditorView =
   SidebarEditor as unknown as ComponentType<SidebarEditorAppProps>;
 
@@ -570,7 +559,7 @@ function EditorApp() {
               .join(" ")}
           >
             <section className="panel canvas-panel" data-onboarding="canvas">
-              <StoryCanvasView
+              <StoryCanvas
                 {...story}
                 currentPlayNodeId={play.currentPlayNodeId}
                 playVariables={play.playVariables}

@@ -28,7 +28,7 @@ interface GraphHealthChoice {
 }
 
 /** Minimal node shape accepted by analyzeStoryGraph (legacy/incomplete tolerant). */
-interface GraphHealthNode {
+export interface GraphHealthNode {
   id: string;
   data?: {
     blockType?: string | null;
