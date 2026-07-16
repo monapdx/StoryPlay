@@ -1,11 +1,39 @@
-import { useEffect } from "react";
+import { useEffect, type MouseEvent, type ReactNode } from "react";
 import { getDocSection, getDocSectionsByGroup } from "../../data/docs/catalog";
 import { renderDocSection } from "../../data/docs/sections";
 import { setDocsHash, setEditorHash } from "../../utils/hashRoute";
 import "../../docs.css";
 
-function DocsNav({ activeSectionId }) {
-  const groups = getDocSectionsByGroup();
+/** Catalog entry shape from `data/docs/catalog` (JS). */
+interface DocSectionMeta {
+  id: string;
+  group: string;
+  title: string;
+  summary: string;
+  featured?: boolean;
+}
+
+interface DocGroupWithSections {
+  id: string;
+  label: string;
+  sections: DocSectionMeta[];
+}
+
+export interface DocumentationScreenProps {
+  sectionId?: string | null;
+}
+
+interface DocsNavProps {
+  activeSectionId: string | null | undefined;
+}
+
+interface DocsArticleProps {
+  sectionId: string | null | undefined;
+  section: DocSectionMeta | null;
+}
+
+function DocsNav({ activeSectionId }: DocsNavProps) {
+  const groups = getDocSectionsByGroup() as DocGroupWithSections[];
 
   return (
     <nav className="docs-sidebar__nav" aria-label="Documentation topics">
@@ -26,7 +54,7 @@ function DocsNav({ activeSectionId }) {
                       .filter(Boolean)
                       .join(" ")}
                     aria-current={isActive ? "page" : undefined}
-                    onClick={(event) => {
+                    onClick={(event: MouseEvent<HTMLAnchorElement>) => {
                       event.preventDefault();
                       setDocsHash(section.id);
                     }}
@@ -44,7 +72,7 @@ function DocsNav({ activeSectionId }) {
 }
 
 function DocsLanding() {
-  const featured = getDocSection("your-first-story");
+  const featured = getDocSection("your-first-story") as DocSectionMeta | null;
 
   return (
     <div className="docs-landing">
@@ -72,8 +100,8 @@ function DocsLanding() {
   );
 }
 
-function DocsArticle({ sectionId, section }) {
-  const content = renderDocSection(sectionId);
+function DocsArticle({ sectionId, section }: DocsArticleProps) {
+  const content = renderDocSection(sectionId) as ReactNode | null;
 
   return (
     <article className="docs-article">
@@ -94,8 +122,12 @@ function DocsArticle({ sectionId, section }) {
   );
 }
 
-export default function DocumentationScreen({ sectionId = null }) {
-  const section = sectionId ? getDocSection(sectionId) : null;
+export default function DocumentationScreen({
+  sectionId = null,
+}: DocumentationScreenProps) {
+  const section = sectionId
+    ? (getDocSection(sectionId) as DocSectionMeta | null)
+    : null;
   const isLanding = !sectionId;
 
   useEffect(() => {

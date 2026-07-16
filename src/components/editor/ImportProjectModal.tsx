@@ -1,12 +1,22 @@
 /**
  * Confirmation modal shown after a StoryPlay export file is parsed and validated.
  */
+import type { MouseEvent } from "react";
+import type { PrepareStoryPlayImportResult } from "../../utils/importStoryPlayProject";
+
+export interface ImportProjectModalProps {
+  open: boolean;
+  preview: PrepareStoryPlayImportResult | null;
+  onCancel: () => void;
+  onConfirm: () => void;
+}
+
 export default function ImportProjectModal({
   open,
   preview,
   onCancel,
   onConfirm,
-}) {
+}: ImportProjectModalProps) {
   if (!open || !preview) return null;
 
   const { summary, errors, warnings } = preview;
@@ -22,7 +32,7 @@ export default function ImportProjectModal({
     >
       <div
         className="starter-template-modal__panel import-project-modal__panel custom-scrollbar"
-        onClick={(event) => event.stopPropagation()}
+        onClick={(event: MouseEvent<HTMLDivElement>) => event.stopPropagation()}
       >
         <div className="starter-template-modal__head">
           <div>

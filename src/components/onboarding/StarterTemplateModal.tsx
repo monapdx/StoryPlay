@@ -1,10 +1,21 @@
+import type { MouseEvent } from "react";
+import type { DemoStoryCatalogEntry } from "../../types/demoStories";
+
+export interface StarterTemplateModalProps {
+  open: boolean;
+  demoStories: DemoStoryCatalogEntry[];
+  activeTemplateId: string | null;
+  onClose: () => void;
+  onSelectTemplate: (storyId: string) => void;
+}
+
 export default function StarterTemplateModal({
   open,
   demoStories,
   activeTemplateId,
   onClose,
   onSelectTemplate,
-}) {
+}: StarterTemplateModalProps) {
   if (!open) return null;
 
   return (
@@ -17,7 +28,7 @@ export default function StarterTemplateModal({
     >
       <div
         className="starter-template-modal__panel custom-scrollbar"
-        onClick={(event) => event.stopPropagation()}
+        onClick={(event: MouseEvent<HTMLDivElement>) => event.stopPropagation()}
       >
         <div className="starter-template-modal__head">
           <div>

@@ -17,11 +17,10 @@ import OnboardingTour from "./components/onboarding/OnboardingTour";
 import StarterTemplateModal from "./components/onboarding/StarterTemplateModal";
 import ImportProjectModal from "./components/editor/ImportProjectModal";
 import useStoryState, {
-  type DemoStoryCatalogEntry,
   type UseStoryStateResult,
 } from "./hooks/useStoryState";
 import usePlayState, { type UsePlayStateResult } from "./hooks/usePlayState";
-import useOnboarding, { type UseOnboardingResult } from "./hooks/useOnboarding";
+import useOnboarding from "./hooks/useOnboarding";
 import {
   downloadStoryPlayExportV1,
   serializeStoryPlayExportV1,
@@ -45,7 +44,6 @@ import {
   type PrepareStoryPlayImportResult,
 } from "./utils/importStoryPlayProject";
 import type { MiniGameEditorDraft } from "./hooks/useMiniGameEditorState";
-import type { OnboardingStep } from "./types/onboarding";
 import type {
   StoryCharacter,
   StoryNode,
@@ -83,26 +81,6 @@ type SidebarEditorAppProps = UseStoryStateResult & {
   onOpenVariables?: () => void;
 };
 
-/** App-side props for still-JS DocumentationScreen (`sectionId = null` inference). */
-type DocumentationScreenAppProps = {
-  sectionId?: string | null;
-};
-
-type StarterTemplateModalAppProps = {
-  open: boolean;
-  demoStories: DemoStoryCatalogEntry[];
-  activeTemplateId: string | null;
-  onClose: () => void;
-  onSelectTemplate: (storyId: string) => void;
-};
-
-type ImportProjectModalAppProps = {
-  open: boolean;
-  preview: PrepareStoryPlayImportResult | null;
-  onCancel: () => void;
-  onConfirm: () => void;
-};
-
 type VariablesScreenAppProps = {
   variables: StoryVariables;
   setVariables: UseStoryStateResult["setVariables"];
@@ -129,31 +107,13 @@ type CharactersScreenAppProps = {
   activeTemplateLabel: string;
 };
 
-type OnboardingTourAppProps = {
-  step: OnboardingStep | null;
-  stepIndex: number;
-  stepCount: number;
-  isLastStep: boolean;
-  onNext: UseOnboardingResult["next"];
-  onBack: UseOnboardingResult["back"];
-  onSkip: UseOnboardingResult["skip"];
-};
-
 const StoryCanvasView = StoryCanvas as unknown as ComponentType<StoryCanvasAppProps>;
 const SidebarEditorView =
   SidebarEditor as unknown as ComponentType<SidebarEditorAppProps>;
-const DocumentationScreenView =
-  DocumentationScreen as unknown as ComponentType<DocumentationScreenAppProps>;
-const StarterTemplateModalView =
-  StarterTemplateModal as unknown as ComponentType<StarterTemplateModalAppProps>;
-const ImportProjectModalView =
-  ImportProjectModal as unknown as ComponentType<ImportProjectModalAppProps>;
 const VariablesScreenView =
   VariablesScreen as unknown as ComponentType<VariablesScreenAppProps>;
 const CharactersScreenView =
   CharactersScreen as unknown as ComponentType<CharactersScreenAppProps>;
-const OnboardingTourView =
-  OnboardingTour as unknown as ComponentType<OnboardingTourAppProps>;
 
 function EditorApp() {
   const story = useStoryState();
@@ -466,7 +426,7 @@ function EditorApp() {
 
   return (
     <div className="app-shell">
-      <StarterTemplateModalView
+      <StarterTemplateModal
         open={isTemplateModalOpen}
         demoStories={story.demoStories}
         activeTemplateId={story.activeDemoStoryId}
@@ -484,7 +444,7 @@ function EditorApp() {
         onChange={handleImportFileSelected}
       />
 
-      <ImportProjectModalView
+      <ImportProjectModal
         open={importPreview != null}
         preview={importPreview}
         onCancel={handleCancelImport}
@@ -698,7 +658,7 @@ function EditorApp() {
           </main>
 
           {onboarding.isActive && activeScreen === "editor" && (
-            <OnboardingTourView
+            <OnboardingTour
               step={onboarding.step}
               stepIndex={onboarding.stepIndex}
               stepCount={onboarding.stepCount}
@@ -729,7 +689,7 @@ export default function App() {
     return <PlayerPage />;
   }
   if (route === "docs") {
-    return <DocumentationScreenView sectionId={docsSectionId} />;
+    return <DocumentationScreen sectionId={docsSectionId} />;
   }
   return <EditorApp />;
 }
