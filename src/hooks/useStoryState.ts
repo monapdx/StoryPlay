@@ -13,6 +13,7 @@ import {
   ONBOARDING_DEMO_CHOICES,
   ONBOARDING_SCAFFOLD_NODE_ID,
 } from "../data/onboardingDemo";
+import type { DemoStoryCatalogEntry } from "../types/demoStories";
 import type {
   NormalizedStory,
   StoryChoice,
@@ -48,6 +49,8 @@ import {
   type StoryUndoHistoryApi,
 } from "../utils/storyUndoHistory";
 import { normalizeVariableMeta } from "../utils/storyVariables";
+
+export type { DemoStoryCatalogEntry };
 
 /** Editor undo/redo snapshot — full working story bag plus selection / demo id. */
 export interface StoryStateSnapshot {
@@ -99,20 +102,6 @@ export interface ChoicePathToolSuccess {
 export type ChoicePathToolResult =
   | ChoicePathToolFailure
   | ChoicePathToolSuccess;
-
-/** Catalog entry shape exposed as `demoStories` (from JS catalog module). */
-export interface DemoStoryCatalogEntry {
-  id: string;
-  label: string;
-  tier: string;
-  blurb: string;
-  story: unknown;
-}
-
-/** Boundary result from JS `parseChoiceCount`. */
-type ParseChoiceCountResult =
-  | { ok: true; count: number }
-  | { ok: false; message: string };
 
 export interface UseStoryStateResult {
   nodes: StoryNode[];
@@ -376,7 +365,7 @@ export default function useStoryState(): UseStoryStateResult {
   const isDemoDirty = isStoryDirty;
 
   function loadDemoStory(storyId: string) {
-    const raw = cloneDemoStoryById(storyId) as StoryStateLoadSource | null;
+    const raw = cloneDemoStoryById(storyId);
     if (!raw) return;
 
     const next = normalizeInitialStory(raw);
@@ -639,7 +628,7 @@ export default function useStoryState(): UseStoryStateResult {
       return { ok: false, message: "Select a narrative block first." };
     }
 
-    const parsed = parseChoiceCount(rawCount) as ParseChoiceCountResult;
+    const parsed = parseChoiceCount(rawCount);
     if (!parsed.ok) {
       return { ok: false, message: parsed.message };
     }
@@ -668,9 +657,7 @@ export default function useStoryState(): UseStoryStateResult {
         const addedChoices: StoryChoice[] = Array.from(
           { length: count },
           () => {
-            const choice = createBlankGoToChoice(
-              `Choice ${nextNumber}`
-            ) as StoryChoice;
+            const choice = createBlankGoToChoice(`Choice ${nextNumber}`);
             nextNumber += 1;
             return choice;
           }
@@ -728,11 +715,9 @@ export default function useStoryState(): UseStoryStateResult {
       return { ok: false, message: "All choices already have destinations." };
     }
 
-    const occupied = storyStateRef.current.nodes.map(
-      (node) => node.position
-    ) as { x?: number; y?: number }[];
+    const occupied = storyStateRef.current.nodes.map((node) => node.position);
     const draftPositions = fanOutPositions(
-      sourceNode.position as { x?: number; y?: number },
+      sourceNode.position,
       unconnectedIndexes.length
     );
     const resolvedPositions: StoryNodePosition[] = [];
@@ -755,7 +740,7 @@ export default function useStoryState(): UseStoryStateResult {
           id: nodeId,
           title,
           position: resolvedPositions[order],
-        }) as StoryNode;
+        });
       }
     );
 
@@ -807,7 +792,7 @@ export default function useStoryState(): UseStoryStateResult {
       return { ok: false, message: "Select a narrative block first." };
     }
 
-    const parsed = parseChoiceCount(rawCount) as ParseChoiceCountResult;
+    const parsed = parseChoiceCount(rawCount);
     if (!parsed.ok) {
       return { ok: false, message: parsed.message };
     }
@@ -829,13 +814,8 @@ export default function useStoryState(): UseStoryStateResult {
     const existingChoices = sourceNode.data?.choices || [];
     let nextNumber = getNextChoiceLabelStart(existingChoices);
 
-    const occupied = storyStateRef.current.nodes.map(
-      (node) => node.position
-    ) as { x?: number; y?: number }[];
-    const draftPositions = fanOutPositions(
-      sourceNode.position as { x?: number; y?: number },
-      count
-    );
+    const occupied = storyStateRef.current.nodes.map((node) => node.position);
+    const draftPositions = fanOutPositions(sourceNode.position, count);
     const resolvedPositions: StoryNodePosition[] = [];
     for (const draft of draftPositions) {
       const next = resolveOpenPosition(draft, [
@@ -857,10 +837,10 @@ export default function useStoryState(): UseStoryStateResult {
           id: nodeId,
           title: label,
           position: resolvedPositions[index],
-        }) as StoryNode
+        })
       );
       newChoices.push({
-        ...(createBlankGoToChoice(label) as StoryChoice),
+        ...createBlankGoToChoice(label),
         targetNodeId: nodeId,
       });
     }
@@ -1104,7 +1084,7 @@ export default function useStoryState(): UseStoryStateResult {
     setSelectedNodeId,
     selectedNode,
     activeDemoStoryId,
-    demoStories: DEMO_STORIES as DemoStoryCatalogEntry[],
+    demoStories: DEMO_STORIES,
     loadDemoStory,
     resetToBlankStory,
     importStory,
