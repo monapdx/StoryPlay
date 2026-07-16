@@ -37,6 +37,8 @@
   --brand-coral: #fa606d;
   --brand-coral-soft: rgba(250, 96, 109, 0.2);
   --brand-coral-border: rgba(250, 96, 109, 0.48);
+  --brand-magenta-dark: #7a1848;
+  --brand-magenta-dark-hover: #921e56;
   --shadow-brand-purple: 0 4px 16px rgba(131, 61, 220, 0.32);
   --shadow-brand-coral: 0 4px 16px rgba(250, 96, 109, 0.28);
 
@@ -656,6 +658,7 @@ select {
   flex: 0 0 auto;
   width: 40px;
   height: 40px;
+  margin-top: 0;
   border-radius: 10px;
   object-fit: cover;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
@@ -672,6 +675,7 @@ select {
 .app-header h1 {
   margin: 0;
   font-size: 1.35rem;
+  line-height: 1;
 }
 
 .app-subtitle {
@@ -715,8 +719,8 @@ select {
 }
 
 .header-help-button {
-  border-color: var(--brand-coral);
-  background: var(--brand-coral);
+  border-color: var(--brand-magenta-dark);
+  background: var(--brand-magenta-dark);
   color: #fff;
   box-shadow: var(--shadow-soft);
 }
@@ -771,8 +775,8 @@ select {
 }
 
 .header-help-button:hover:not(:disabled) {
-  background: #ff7380;
-  border-color: #ff7380;
+  background: var(--brand-magenta-dark-hover);
+  border-color: var(--brand-magenta-dark-hover);
 }
 
 .header-help-button:hover:not(:disabled) > span,
@@ -796,19 +800,19 @@ select {
 }
 
 .header-help-button:focus-visible {
-  box-shadow: 0 0 0 3px rgba(250, 96, 109, 0.32);
+  box-shadow: 0 0 0 3px rgba(122, 24, 72, 0.4);
 }
 
 .header-button--active {
-  border-color: #ff7a45;
-  background: linear-gradient(90deg, #c026d3, #f831b1, #ff6b4a, #ff9a3c);
+  border-color: var(--brand-magenta-dark);
+  background: var(--brand-magenta-dark);
   color: #fff;
-  box-shadow: 0 0 0 2px rgba(192, 38, 211, 0.28);
+  box-shadow: 0 0 0 2px rgba(122, 24, 72, 0.35);
 }
 
 .header-button--active:hover:not(:disabled) {
-  background: linear-gradient(90deg, #d946ef, #ff45c0, #ff7a5c, #ffae55);
-  border-color: #ffae55;
+  background: var(--brand-magenta-dark-hover);
+  border-color: var(--brand-magenta-dark-hover);
   box-shadow:
     0 0 5px rgba(0, 255, 255, 0.5),
     0 0 5px rgba(255, 0, 234, 0.5);
