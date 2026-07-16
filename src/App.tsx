@@ -43,6 +43,7 @@ import {
   type PrepareStoryPlayImportResult,
 } from "./utils/importStoryPlayProject";
 import type { MiniGameEditorDraft } from "./hooks/useMiniGameEditorState";
+import storyplayIcon from "./assets/storyplay-icon.png";
 
 declare global {
   interface Window {
@@ -420,15 +421,25 @@ function EditorApp() {
       ) : (
         <>
           <header className="app-header">
-            <div>
-              <h1>StoryPlay</h1>
-              <p className="app-subtitle">Build Interactive Experiences Visually</p>
+            <div className="app-header__brand">
+              <img
+                className="app-header__logo"
+                src={storyplayIcon}
+                alt=""
+                width={40}
+                height={40}
+                decoding="async"
+              />
+              <div>
+                <h1>StoryPlay</h1>
+                <p className="app-subtitle">Build Interactive Experiences Visually</p>
 
-              <div className="app-project-status">
-                <span className="app-project-status__label">Project</span>
-                <span className="app-project-status__value">
-                  {getActiveTemplateLabel(story)}
-                </span>
+                <div className="app-project-status">
+                  <span className="app-project-status__label">Project</span>
+                  <span className="app-project-status__value">
+                    {getActiveTemplateLabel(story)}
+                  </span>
+                </div>
               </div>
             </div>
 
