@@ -1,6 +1,30 @@
-import { BaseEdge, EdgeLabelRenderer, getBezierPath } from "reactflow";
+import {
+  BaseEdge,
+  EdgeLabelRenderer,
+  getBezierPath,
+  type EdgeProps,
+} from "reactflow";
+import type { NodeGraphLinkKind } from "../../utils/nodeGraphLinks";
 
-function getEdgeVisuals(playState, selected) {
+/** Play highlight on canvas edges (from StoryCanvas edge hydration). */
+export type StoryCanvasEdgePlayState = "idle" | "reachable" | "blocked";
+
+/**
+ * Hydrated RF edge `data` bag passed by StoryCanvas — graph label/linkKind
+ * plus runtime playState. Not a persisted story schema type.
+ */
+export interface StoryCanvasEdgeData {
+  label?: string;
+  linkKind?: NodeGraphLinkKind;
+  playState?: StoryCanvasEdgePlayState;
+}
+
+export type StoryEdgeProps = EdgeProps<StoryCanvasEdgeData>;
+
+function getEdgeVisuals(
+  playState: string,
+  selected: boolean | undefined
+) {
   if (playState === "reachable") {
     return {
       stroke: "#22c55e",
@@ -40,7 +64,7 @@ export default function StoryEdge({
   targetPosition,
   selected,
   data,
-}) {
+}: StoryEdgeProps) {
   const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
     sourceY,
