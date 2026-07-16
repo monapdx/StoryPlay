@@ -1,3 +1,5 @@
+import type { StoryCharacter, StoryVariables } from "../types/storyCore";
+import type { StoryNode, StoryNodeData } from "../types/story";
 import { getCharacterById } from "./storyEntities";
 
 /** Matches {{type:id.field}} — optional whitespace tolerated (e.g. {{character: char_001.name}}). */
@@ -6,38 +8,67 @@ export const STORY_REFERENCE_TOKEN_REGEX =
 
 export const MISSING_CHARACTER_LABEL = "[Missing character]";
 
-/**
- * @param {string} characterId
- * @returns {string}
- */
-export function buildCharacterNameToken(characterId) {
-  return `{{character:${characterId}.name}}`;
+/** Normalized context used when resolving reference tokens. */
+export interface StoryRenderContext {
+  characters: StoryCharacter[];
+  variables: StoryVariables;
 }
 
 /**
- * @param {object} [storyState]
- * @param {import('./storyEntities.js').StoryCharacter[]} [storyState.characters]
- * @param {Record<string, unknown>} [storyState.variables]
- * @returns {{ characters: import('./storyEntities.js').StoryCharacter[], variables: Record<string, unknown> }}
+ * Loose authoring/play state accepted by render helpers.
+ * Malformed characters/variables are narrowed inside getStoryRenderContext.
  */
-export function getStoryRenderContext(storyState = {}) {
+export interface StoryRenderStateInput {
+  characters?: unknown;
+  variables?: unknown;
+}
+
+/** Node fields scanned for character reference tokens. */
+interface CharacterReferenceScanNode {
+  data?: {
+    content?: unknown;
+    title?: unknown;
+    prompt?: unknown;
+    choices?: ReadonlyArray<{
+      label?: unknown;
+      playerMessage?: unknown;
+      npcResponse?: unknown;
+      text?: unknown;
+      response?: unknown;
+    } | null | undefined> | null;
+    options?: ReadonlyArray<{
+      label?: unknown;
+      description?: unknown;
+    } | null | undefined> | null;
+  } | null;
+}
+
+const NODE_TEXT_FIELDS = ["content", "title", "prompt"] as const;
+
+export function buildCharacterNameToken(characterId: string): string {
+  return `{{character:${characterId}.name}}`;
+}
+
+export function getStoryRenderContext(
+  storyState: StoryRenderStateInput = {}
+): StoryRenderContext {
   return {
-    characters: Array.isArray(storyState.characters) ? storyState.characters : [],
+    characters: Array.isArray(storyState.characters)
+      ? (storyState.characters as StoryCharacter[])
+      : [],
     variables:
       storyState.variables && typeof storyState.variables === "object"
-        ? storyState.variables
+        ? (storyState.variables as StoryVariables)
         : {},
   };
 }
 
-/**
- * @param {string} type
- * @param {string} id
- * @param {string} field
- * @param {object} storyState
- * @returns {string}
- */
-export function resolveReferenceToken(type, id, field, storyState) {
+export function resolveReferenceToken(
+  type: string,
+  id: string,
+  field: string,
+  storyState?: StoryRenderStateInput
+): string {
   const ctx = getStoryRenderContext(storyState);
   const normalizedType = String(type || "").trim();
   const normalizedId = String(id || "").trim();
@@ -53,7 +84,9 @@ export function resolveReferenceToken(type, id, field, storyState) {
     if (normalizedField === "description") {
       const character = getCharacterById(ctx.characters, normalizedId);
       if (!character) return MISSING_CHARACTER_LABEL;
-      return String(character.description || "").trim() || MISSING_CHARACTER_LABEL;
+      return (
+        String(character.description || "").trim() || MISSING_CHARACTER_LABEL
+      );
     }
     return MISSING_CHARACTER_LABEL;
   }
@@ -83,27 +116,23 @@ export function resolveReferenceToken(type, id, field, storyState) {
 
 /**
  * Replace known reference tokens with current values. Plain text passes through unchanged.
- *
- * @param {string} text
- * @param {object} [storyState]
- * @returns {string}
+ * Accepts non-strings at the boundary — runtime historically coerced via String().
  */
-export function renderStoryText(text, storyState = {}) {
+export function renderStoryText(
+  text: unknown,
+  storyState: StoryRenderStateInput = {}
+): string {
   if (text == null) return "";
   if (typeof text !== "string") return String(text);
   if (!text.includes("{{")) return text;
 
-  return text.replace(STORY_REFERENCE_TOKEN_REGEX, (match, type, id, field) =>
+  return text.replace(STORY_REFERENCE_TOKEN_REGEX, (_match, type, id, field) =>
     resolveReferenceToken(type, id, field, storyState)
   );
 }
 
-/**
- * @param {string} text
- * @returns {Set<string>}
- */
-export function scanTextForCharacterIds(text) {
-  const ids = new Set();
+export function scanTextForCharacterIds(text: unknown): Set<string> {
+  const ids = new Set<string>();
   if (!text || typeof text !== "string") return ids;
 
   const regex = new RegExp(STORY_REFERENCE_TOKEN_REGEX.source, "g");
@@ -116,22 +145,17 @@ export function scanTextForCharacterIds(text) {
   return ids;
 }
 
-const NODE_TEXT_FIELDS = ["content", "title", "prompt"];
+export function countCharacterReferencesById(
+  nodes: CharacterReferenceScanNode[] = []
+): Record<string, number> {
+  const counts: Record<string, number> = {};
 
-/**
- * @param {object[]} nodes
- * @returns {Record<string, number>}
- */
-export function countCharacterReferencesById(nodes = []) {
-  /** @type {Record<string, number>} */
-  const counts = {};
-
-  function bump(id) {
+  function bump(id: string) {
     counts[id] = (counts[id] || 0) + 1;
   }
 
-  function scanText(text) {
-    for (const id of scanTextForCharacterIds(text)) {
+  function scanText(value: unknown) {
+    for (const id of scanTextForCharacterIds(value)) {
       bump(id);
     }
   }
@@ -157,27 +181,24 @@ export function countCharacterReferencesById(nodes = []) {
   return counts;
 }
 
-/**
- * @param {string} characterId
- * @param {object[]} nodes
- * @returns {number}
- */
-export function countCharacterReferences(characterId, nodes = []) {
+export function countCharacterReferences(
+  characterId: string,
+  nodes: CharacterReferenceScanNode[] = []
+): number {
   return countCharacterReferencesById(nodes)[characterId] || 0;
 }
 
 /**
  * Deep-clone nodes and resolve reference tokens in author-facing text fields (for export).
- *
- * @param {object[]} nodes
- * @param {object} storyState
- * @returns {object[]}
  */
-export function resolveNodesTextForExport(nodes = [], storyState = {}) {
+export function resolveNodesTextForExport(
+  nodes: StoryNode[] = [],
+  storyState: StoryRenderStateInput = {}
+): StoryNode[] {
   const ctx = getStoryRenderContext(storyState);
 
   return nodes.map((node) => {
-    const data = { ...(node.data || {}) };
+    const data: StoryNodeData = { ...(node.data || {}) };
 
     for (const field of NODE_TEXT_FIELDS) {
       if (typeof data[field] === "string") {
@@ -212,17 +233,23 @@ export function resolveNodesTextForExport(nodes = [], storyState = {}) {
     }
 
     if (Array.isArray(data.options)) {
-      data.options = data.options.map((option) => ({
-        ...option,
-        label:
-          typeof option?.label === "string"
-            ? renderStoryText(option.label, ctx)
-            : option?.label,
-        description:
-          typeof option?.description === "string"
-            ? renderStoryText(option.description, ctx)
-            : option?.description,
-      }));
+      data.options = data.options.map((rawOption) => {
+        const option = rawOption as {
+          label?: unknown;
+          description?: unknown;
+        };
+        return {
+          ...option,
+          label:
+            typeof option?.label === "string"
+              ? renderStoryText(option.label, ctx)
+              : option?.label,
+          description:
+            typeof option?.description === "string"
+              ? renderStoryText(option.description, ctx)
+              : option?.description,
+        };
+      });
     }
 
     return { ...node, data };

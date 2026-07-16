@@ -1,14 +1,39 @@
-import { renderStoryText } from "./storyReferences";
+import {
+  renderStoryText,
+  type StoryRenderStateInput,
+} from "./storyReferences";
+
+/** Minimal chat-reply choice fields used for the player bubble label. */
+interface ChatReplyChoiceSource {
+  playerMessage?: unknown;
+  label?: unknown;
+}
+
+export interface ChatLine {
+  id: string;
+  side: "incoming" | "outgoing";
+  speaker: string | null;
+  message: string;
+}
+
+export interface ChatLineRevealSequenceArgs<
+  T extends { message?: string | null } = ChatLine,
+> {
+  lines?: readonly T[];
+  onReveal?: (line: T, index: number) => void;
+  onTyping?: (isTyping: boolean) => void;
+  onDone?: () => void;
+  timers?: number[];
+}
 
 /**
  * Text shown in the player's outgoing chat bubble for a chat-reply choice.
  * Falls back to the reply button label when no dedicated player message is set.
- *
- * @param {object} choice
- * @param {object} [storyState]
- * @returns {string}
  */
-export function getChatReplyPlayerText(choice, storyState = {}) {
+export function getChatReplyPlayerText(
+  choice?: ChatReplyChoiceSource | null,
+  storyState: StoryRenderStateInput = {}
+): string {
   const raw = String(choice?.playerMessage || choice?.label || "").trim();
   return renderStoryText(raw, storyState) || "Reply";
 }
@@ -16,11 +41,8 @@ export function getChatReplyPlayerText(choice, storyState = {}) {
 /**
  * Index of the colon that separates "Speaker" from "message", ignoring colons inside
  * {{reference:tokens}} (e.g. {{character:char_abc.name}}).
- *
- * @param {string} line
- * @returns {number}
  */
-export function findSpeakerMessageColonIndex(line) {
+export function findSpeakerMessageColonIndex(line: string): number {
   let inReferenceToken = false;
 
   for (let index = 0; index < line.length; index += 1) {
@@ -46,12 +68,11 @@ export function findSpeakerMessageColonIndex(line) {
 
 /**
  * Split "Speaker: message" into parts. Outgoing lines use the fixed speaker "You".
- *
- * @param {string} line
- * @param {boolean} isYou
- * @returns {{ speaker: string | null, message: string }}
  */
-export function splitChatLine(line, isYou = false) {
+export function splitChatLine(
+  line: string,
+  isYou = false
+): { speaker: string | null; message: string } {
   if (isYou) {
     return {
       speaker: "You",
@@ -77,11 +98,8 @@ export function splitChatLine(line, isYou = false) {
  * Parse chat block content into ordered message lines.
  * Lines starting with "You:" are outgoing; all others are incoming.
  * Incoming lines use the first colon to separate speaker name from message.
- *
- * @param {string} content
- * @returns {{ id: string, side: "incoming" | "outgoing", speaker: string | null, message: string }[]}
  */
-export function parseChatLines(content = "") {
+export function parseChatLines(content = ""): ChatLine[] {
   return content
     .split("\n")
     .map((line) => line.trim())
@@ -106,14 +124,14 @@ export function parseChatLines(content = "") {
  * the first "You:" line so the player picks their response from Choices.
  * If there is no "You:" line, only the first incoming line plays so the
  * player is not stuck watching a long passive script.
- *
- * @param {{ side: string }[]} chatLines
- * @param {boolean} hasReplyChoices
  */
-export function getChatPrefaceLines(chatLines = [], hasReplyChoices = false) {
+export function getChatPrefaceLines<T extends { side: string }>(
+  chatLines: T[] = [] as T[],
+  hasReplyChoices = false
+): T[] {
   if (!hasReplyChoices) return chatLines;
 
-  const preface = [];
+  const preface: T[] = [];
   for (const line of chatLines) {
     if (line.side === "outgoing") break;
     preface.push(line);
@@ -132,22 +150,24 @@ export function getChatPrefaceLines(chatLines = [], hasReplyChoices = false) {
 /**
  * Animate chat lines appearing one-by-one (typing indicator between reveals).
  *
- * @returns {() => void} cleanup — clears scheduled timers
+ * @returns cleanup — clears scheduled timers
  */
-export function runChatLineRevealSequence({
+export function runChatLineRevealSequence<
+  T extends { message?: string | null },
+>({
   lines = [],
   onReveal,
   onTyping,
   onDone,
   timers = [],
-}) {
+}: ChatLineRevealSequenceArgs<T>): () => void {
   if (!lines.length) {
     onTyping?.(false);
     onDone?.();
     return () => {};
   }
 
-  const timerIds = [];
+  const timerIds: number[] = [];
   let cumulativeDelay = 450;
 
   lines.forEach((line, index) => {
