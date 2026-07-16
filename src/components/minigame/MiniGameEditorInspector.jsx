@@ -14,6 +14,12 @@ function getItemLabel(draft, item, index) {
   return item.label || `Option ${index + 1}`;
 }
 
+/**
+ * @param {{
+ *   editor: import("../../hooks/useMiniGameEditorState").UseMiniGameEditorStateResult,
+ *   nodes?: import("../../types/story").StoryNode[],
+ * }} props
+ */
 export default function MiniGameEditorInspector({ editor, nodes = [] }) {
   const { draft, items, selectedItem, selectedItemId } = editor;
 

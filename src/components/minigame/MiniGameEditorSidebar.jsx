@@ -2,6 +2,12 @@ import React from "react";
 import MiniGameConfigPanel from "./MiniGameConfigPanel";
 import MiniGameLogicPanel from "./MiniGameLogicPanel";
 
+/**
+ * @param {{
+ *   editor: import("../../hooks/useMiniGameEditorState").UseMiniGameEditorStateResult,
+ *   nodes?: import("../../types/story").StoryNode[],
+ * }} props
+ */
 export default function MiniGameEditorSidebar({ editor, nodes = [] }) {
   const draft = editor?.draft;
   const activeTab = editor?.activeTab || "config";

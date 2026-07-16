@@ -1,11 +1,27 @@
-import React from "react";
+import type {
+  MiniGameEditorDraft,
+  UseMiniGameEditorStateResult,
+} from "../../hooks/useMiniGameEditorState";
+import type { StoryNode } from "../../types/story";
 import MiniGameEditorHeader from "./MiniGameEditorHeader";
 import MiniGameToolbar from "./MiniGameToolbar";
 import MiniGameEditorSidebar from "./MiniGameEditorSidebar";
 import MiniGameEditorInspector from "./MiniGameEditorInspector";
 import MiniGameEditorPreview from "./MiniGameEditorPreview";
 
-export default function MiniGameEditorShell({ editor, nodes }) {
+/**
+ * Shell is only mounted when MiniGameEditor has a non-null draft.
+ * Nodes stay StoryNode[] at the boundary; sidebar/inspector remain JS.
+ */
+interface MiniGameEditorShellProps {
+  editor: UseMiniGameEditorStateResult & { draft: MiniGameEditorDraft };
+  nodes: StoryNode[];
+}
+
+export default function MiniGameEditorShell({
+  editor,
+  nodes,
+}: MiniGameEditorShellProps) {
   return (
     <div className="minigame-shell">
       <MiniGameEditorHeader editor={editor} />

@@ -1,6 +1,22 @@
-import React from "react";
+import type {
+  MiniGameEditorDraft,
+  UseMiniGameEditorStateResult,
+} from "../../hooks/useMiniGameEditorState";
 
-export default function MiniGameLogicPanel({ editor }) {
+/**
+ * Logic tab reads a live editor bag whose draft is already non-null
+ * (MiniGameEditorSidebar only mounts this after draft exists).
+ */
+interface MiniGameLogicPanelProps {
+  editor: Pick<
+    UseMiniGameEditorStateResult,
+    "validation" | "totalAssigned"
+  > & {
+    draft: MiniGameEditorDraft;
+  };
+}
+
+export default function MiniGameLogicPanel({ editor }: MiniGameLogicPanelProps) {
   const { draft, validation } = editor;
 
   return (
@@ -22,7 +38,8 @@ export default function MiniGameLogicPanel({ editor }) {
               {validation.exactTotalOk ? "✓" : "✕"} Point total
             </div>
             <p className="sidebar-hint">
-              Assigned: {editor.totalAssigned} / {Number(draft.config.totalPoints || 0)}
+              Assigned: {editor.totalAssigned} /{" "}
+              {Number(draft.config.totalPoints || 0)}
             </p>
           </>
         )}

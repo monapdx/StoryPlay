@@ -1,11 +1,230 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
+import type { MiniGameBlockType } from "../types/minigames";
 import {
   buildMiniGameFromSelectedNode,
   isSupportedMiniGameBlock,
 } from "../utils/miniGameFromNode";
 import { createStoryUndoHistory } from "../utils/storyUndoHistory";
 
-function makeId(prefix = "item") {
+/** Editor list item for choice-weighting drafts (not WeightedOption). */
+export interface MiniGameEditorChoiceWeightingOption {
+  id: string;
+  label: string;
+  value: number;
+  correct: boolean;
+  effects: unknown[];
+}
+
+/** Editor persuasion line — includes per-line node ids the runtime block omits. */
+export interface MiniGameEditorPersuasionChoice {
+  id: string;
+  text: string;
+  delta: number;
+  response: string;
+  successNodeId: string;
+  failureNodeId: string;
+}
+
+/** Editor trait row — includes `value`; canonical TraitOption uses effects instead. */
+export interface MiniGameEditorTraitOption {
+  id: string;
+  label: string;
+  value: string;
+  description: string;
+}
+
+export type MiniGameEditorItem =
+  | MiniGameEditorChoiceWeightingOption
+  | MiniGameEditorPersuasionChoice
+  | MiniGameEditorTraitOption;
+
+export interface MiniGameEditorChoiceWeightingConfig {
+  options: MiniGameEditorChoiceWeightingOption[];
+  totalPoints: number;
+  variablePrefix: string;
+  resultVariable: string;
+  lockExactTotal: boolean;
+  continueNodeId: string;
+}
+
+export interface MiniGameEditorPersuasionConfig {
+  targetName: string;
+  startScore: number;
+  minScore: number;
+  maxScore: number;
+  threshold: number;
+  maxTurns: number;
+  visibleMeter: boolean;
+  scoreVariable: string;
+  successVariable: string;
+  successNodeId: string;
+  failureNodeId: string;
+  choices: MiniGameEditorPersuasionChoice[];
+}
+
+export interface MiniGameEditorTraitPickerConfig {
+  options: MiniGameEditorTraitOption[];
+  minSelections: number;
+  maxSelections: number;
+  traitListVariable: string;
+  continueNodeId: string;
+}
+
+export interface MiniGameEditorChoiceWeightingDraft {
+  title: string;
+  type: "choiceWeighting";
+  prompt: string;
+  config: MiniGameEditorChoiceWeightingConfig;
+}
+
+export interface MiniGameEditorPersuasionDraft {
+  title: string;
+  type: "persuasion";
+  prompt: string;
+  config: MiniGameEditorPersuasionConfig;
+}
+
+export interface MiniGameEditorTraitPickerDraft {
+  title: string;
+  type: "traitPicker";
+  prompt: string;
+  config: MiniGameEditorTraitPickerConfig;
+}
+
+/**
+ * Normalized editable mini-game document used by the editor shell.
+ * Distinct from flat StoryPlayMiniGameBlock persisted/runtime shape.
+ */
+export type MiniGameEditorDraft =
+  | MiniGameEditorChoiceWeightingDraft
+  | MiniGameEditorPersuasionDraft
+  | MiniGameEditorTraitPickerDraft;
+
+export type MiniGameEditorTab = "config" | "logic" | "advanced";
+
+export interface MiniGameEditorValidation {
+  hasPrompt: boolean;
+  hasEnoughItems: boolean;
+  exactTotalOk: boolean;
+  isValid: boolean;
+}
+
+export interface MiniGameEditorPreviewPayload {
+  selectedIds?: string[];
+  selectedChoiceId?: string | null;
+}
+
+export interface ChoiceWeightingEditorPreviewResult {
+  type: "choiceWeighting";
+  score: number;
+  totalPoints: number;
+  lockExactTotal: boolean;
+  status: string;
+  selectedIds: string[];
+}
+
+export interface PersuasionEditorPreviewResult {
+  type: "persuasion";
+  selectedChoiceId: string | null;
+  scoreBefore: number;
+  scoreAfter: number;
+  success: boolean;
+  response: string;
+}
+
+export interface TraitPickerEditorPreviewResult {
+  type: "traitPicker";
+  selectedIds: string[];
+  selectedValues: string[];
+  count: number;
+  minSelections: number;
+  maxSelections: number;
+}
+
+export type MiniGameEditorPreviewResult =
+  | ChoiceWeightingEditorPreviewResult
+  | PersuasionEditorPreviewResult
+  | TraitPickerEditorPreviewResult;
+
+export interface UseMiniGameEditorStateParams {
+  open: boolean;
+  /** Editor payload, story node, or other legacy input — narrowed inside normalize. */
+  game: unknown;
+  onSave?: (draft: MiniGameEditorDraft) => void;
+  onClose?: () => void;
+}
+
+export interface UseMiniGameEditorStateResult {
+  draft: MiniGameEditorDraft | null;
+  setDraft: Dispatch<SetStateAction<MiniGameEditorDraft | null>>;
+  activeTab: MiniGameEditorTab;
+  setActiveTab: Dispatch<SetStateAction<MiniGameEditorTab>>;
+  selectedItemId: string | null;
+  setSelectedItemId: Dispatch<SetStateAction<string | null>>;
+  selectedItem: MiniGameEditorItem | null;
+  items: MiniGameEditorItem[];
+  previewState: MiniGameEditorPreviewResult | null;
+  totalAssigned: number;
+  validation: MiniGameEditorValidation;
+  isDirty: boolean;
+  advancedJson: string;
+  advancedJsonError: string;
+  setAdvancedJson: Dispatch<SetStateAction<string>>;
+  setAdvancedJsonError: Dispatch<SetStateAction<string>>;
+  updateDraft: (patch: Partial<{ title: string; prompt: string; type: MiniGameBlockType }>) => void;
+  updateConfig: (
+    patch: Partial<
+      MiniGameEditorChoiceWeightingConfig &
+        MiniGameEditorPersuasionConfig &
+        MiniGameEditorTraitPickerConfig
+    >
+  ) => void;
+  updateItem: (itemId: string, patch: Partial<MiniGameEditorItem>) => void;
+  addItem: () => void;
+  removeItem: (itemId: string) => void;
+  moveItem: (itemId: string, direction: "up" | "down") => void;
+  applyAdvancedJson: () => void;
+  runPreview: (
+    payload?: MiniGameEditorPreviewPayload
+  ) => MiniGameEditorPreviewResult | null;
+  handleSave: () => void;
+  handleBack: () => void;
+  handleDiscard: () => void;
+  handleClose: () => void;
+  undo: () => void;
+  redo: () => void;
+  canUndo: boolean;
+  canRedo: boolean;
+}
+
+interface MiniGameEditorHistorySnapshot {
+  draft: MiniGameEditorDraft | null;
+  selectedItemId: string | null;
+}
+
+interface StoryUndoHistoryApi {
+  subscribe: (listener: () => void) => () => void;
+  recordBeforeMutation: (
+    snapshot: unknown,
+    options?: { immediate?: boolean }
+  ) => void;
+  clear: () => void;
+  undo: (currentSnapshot: unknown) => unknown;
+  redo: (currentSnapshot: unknown) => unknown;
+  canUndo: () => boolean;
+  canRedo: () => boolean;
+  runApplying: (callback: () => void) => void;
+}
+
+function makeId(prefix = "item"): string {
   if (typeof crypto !== "undefined" && crypto.randomUUID) {
     return `${prefix}-${crypto.randomUUID()}`;
   }
@@ -13,7 +232,7 @@ function makeId(prefix = "item") {
   return `${prefix}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
-function createChoiceWeightingOption() {
+function createChoiceWeightingOption(): MiniGameEditorChoiceWeightingOption {
   return {
     id: makeId("option"),
     label: "",
@@ -23,7 +242,7 @@ function createChoiceWeightingOption() {
   };
 }
 
-function createPersuasionChoice() {
+function createPersuasionChoice(): MiniGameEditorPersuasionChoice {
   return {
     id: makeId("choice"),
     text: "",
@@ -34,7 +253,7 @@ function createPersuasionChoice() {
   };
 }
 
-function createTraitOption() {
+function createTraitOption(): MiniGameEditorTraitOption {
   return {
     id: makeId("trait"),
     label: "",
@@ -43,7 +262,21 @@ function createTraitOption() {
   };
 }
 
-export function createDefaultMiniGame(type = "choiceWeighting") {
+export function createDefaultMiniGame(
+  type: "traitPicker"
+): MiniGameEditorTraitPickerDraft;
+export function createDefaultMiniGame(
+  type: "persuasion"
+): MiniGameEditorPersuasionDraft;
+export function createDefaultMiniGame(
+  type?: "choiceWeighting"
+): MiniGameEditorChoiceWeightingDraft;
+export function createDefaultMiniGame(
+  type?: string
+): MiniGameEditorDraft;
+export function createDefaultMiniGame(
+  type: string = "choiceWeighting"
+): MiniGameEditorDraft {
   switch (type) {
     case "traitPicker":
       return {
@@ -87,7 +320,10 @@ export function createDefaultMiniGame(type = "choiceWeighting") {
         type: "choiceWeighting",
         prompt: "",
         config: {
-          options: [createChoiceWeightingOption(), createChoiceWeightingOption()],
+          options: [
+            createChoiceWeightingOption(),
+            createChoiceWeightingOption(),
+          ],
           totalPoints: 10,
           variablePrefix: "",
           resultVariable: "",
@@ -98,25 +334,26 @@ export function createDefaultMiniGame(type = "choiceWeighting") {
   }
 }
 
-function clone(value) {
+function clone<T>(value: T): T {
   try {
     return structuredClone(value);
   } catch {
-    return JSON.parse(JSON.stringify(value));
+    return JSON.parse(JSON.stringify(value)) as T;
   }
 }
 
-function normalizeChoiceWeighting(game) {
+function normalizeChoiceWeighting(game: unknown): MiniGameEditorChoiceWeightingDraft {
   const defaults = createDefaultMiniGame("choiceWeighting");
+  const source = (game || {}) as Partial<MiniGameEditorChoiceWeightingDraft>;
 
   const merged = {
     ...defaults,
-    ...clone(game || {}),
+    ...clone(source),
     config: {
       ...defaults.config,
-      ...(clone(game?.config) || {}),
+      ...(clone(source?.config) || {}),
     },
-  };
+  } as MiniGameEditorChoiceWeightingDraft;
 
   const options = Array.isArray(merged.config.options) ? merged.config.options : [];
   merged.config.options =
@@ -138,17 +375,18 @@ function normalizeChoiceWeighting(game) {
   return merged;
 }
 
-function normalizePersuasion(game) {
+function normalizePersuasion(game: unknown): MiniGameEditorPersuasionDraft {
   const defaults = createDefaultMiniGame("persuasion");
+  const source = (game || {}) as Partial<MiniGameEditorPersuasionDraft>;
 
   const merged = {
     ...defaults,
-    ...clone(game || {}),
+    ...clone(source),
     config: {
       ...defaults.config,
-      ...(clone(game?.config) || {}),
+      ...(clone(source?.config) || {}),
     },
-  };
+  } as MiniGameEditorPersuasionDraft;
 
   const choices = Array.isArray(merged.config.choices) ? merged.config.choices : [];
   merged.config.choices =
@@ -166,17 +404,18 @@ function normalizePersuasion(game) {
   return merged;
 }
 
-function normalizeTraitPicker(game) {
+function normalizeTraitPicker(game: unknown): MiniGameEditorTraitPickerDraft {
   const defaults = createDefaultMiniGame("traitPicker");
+  const source = (game || {}) as Partial<MiniGameEditorTraitPickerDraft>;
 
   const merged = {
     ...defaults,
-    ...clone(game || {}),
+    ...clone(source),
     config: {
       ...defaults.config,
-      ...(clone(game?.config) || {}),
+      ...(clone(source?.config) || {}),
     },
-  };
+  } as MiniGameEditorTraitPickerDraft;
 
   const options = Array.isArray(merged.config.options) ? merged.config.options : [];
   merged.config.options =
@@ -197,16 +436,19 @@ function normalizeTraitPicker(game) {
   return merged;
 }
 
-function normalizeMiniGame(game) {
-  let g = game;
-  if (g && typeof g === "object" && g.type === "storyNode") {
+function normalizeMiniGame(game: unknown): MiniGameEditorDraft {
+  let g: unknown = game;
+  if (g && typeof g === "object" && (g as { type?: unknown }).type === "storyNode") {
     if (isSupportedMiniGameBlock(g)) {
       const rebuilt = buildMiniGameFromSelectedNode(g);
       if (rebuilt) g = rebuilt;
     }
   }
 
-  const type = g?.type || "choiceWeighting";
+  const type =
+    (g && typeof g === "object"
+      ? (g as { type?: unknown }).type
+      : undefined) || "choiceWeighting";
 
   switch (type) {
     case "traitPicker":
@@ -224,23 +466,26 @@ export default function useMiniGameEditorState({
   game,
   onSave,
   onClose,
-}) {
+}: UseMiniGameEditorStateParams): UseMiniGameEditorStateResult {
   const normalizedGame = useMemo(() => {
     if (!game) return null;
     return normalizeMiniGame(game);
   }, [game]);
 
-  const [draft, setDraft] = useState(normalizedGame);
-  const [savedSnapshot, setSavedSnapshot] = useState(null);
-  const [activeTab, setActiveTab] = useState("config");
-  const [selectedItemId, setSelectedItemId] = useState(null);
-  const [previewState, setPreviewState] = useState(null);
+  const [draft, setDraft] = useState<MiniGameEditorDraft | null>(normalizedGame);
+  const [savedSnapshot, setSavedSnapshot] = useState<MiniGameEditorDraft | null>(
+    null
+  );
+  const [activeTab, setActiveTab] = useState<MiniGameEditorTab>("config");
+  const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
+  const [previewState, setPreviewState] =
+    useState<MiniGameEditorPreviewResult | null>(null);
   const [advancedJson, setAdvancedJson] = useState("");
   const [advancedJsonError, setAdvancedJsonError] = useState("");
 
-  const historyRef = useRef(null);
+  const historyRef = useRef<StoryUndoHistoryApi | null>(null);
   if (!historyRef.current) {
-    historyRef.current = createStoryUndoHistory();
+    historyRef.current = createStoryUndoHistory() as StoryUndoHistoryApi;
   }
   const [historyVersion, setHistoryVersion] = useState(0);
 
@@ -249,24 +494,31 @@ export default function useMiniGameEditorState({
   draftRef.current = draft;
   selectedItemIdRef.current = selectedItemId;
 
-  const editorSnapshotRef = useRef({
+  const editorSnapshotRef = useRef<MiniGameEditorHistorySnapshot>({
     draft,
     selectedItemId,
   });
   editorSnapshotRef.current = { draft, selectedItemId };
 
-  useEffect(() => historyRef.current.subscribe(() => {
-    setHistoryVersion((value) => value + 1);
-  }), []);
+  useEffect(
+    () =>
+      historyRef.current!.subscribe(() => {
+        setHistoryVersion((value) => value + 1);
+      }),
+    []
+  );
 
   function recordDraftHistory({ immediate = false } = {}) {
     if (!draftRef.current) return;
-    historyRef.current.recordBeforeMutation(editorSnapshotRef.current, {
+    historyRef.current!.recordBeforeMutation(editorSnapshotRef.current, {
       immediate,
     });
   }
 
-  function resolveSelectedItemId(nextDraft, preferredId) {
+  function resolveSelectedItemId(
+    nextDraft: MiniGameEditorDraft | null,
+    preferredId: string | null | undefined
+  ): string | null {
     if (!nextDraft) return null;
 
     const nextItems =
@@ -275,34 +527,35 @@ export default function useMiniGameEditorState({
         : nextDraft.config?.options || [];
 
     if (nextItems.some((item) => item.id === preferredId)) {
-      return preferredId;
+      return preferredId as string | null;
     }
 
     return nextItems[0]?.id ?? null;
   }
 
-  function restoreEditorSnapshot(snapshot) {
-    if (!snapshot?.draft) return;
+  function restoreEditorSnapshot(snapshot: unknown) {
+    const snap = snapshot as MiniGameEditorHistorySnapshot | null | undefined;
+    if (!snap?.draft) return;
 
-    historyRef.current.runApplying(() => {
-      const nextDraft = clone(snapshot.draft);
+    historyRef.current!.runApplying(() => {
+      const nextDraft = clone(snap.draft);
       setDraft(nextDraft);
       setSelectedItemId(
-        resolveSelectedItemId(nextDraft, snapshot.selectedItemId)
+        resolveSelectedItemId(nextDraft, snap.selectedItemId)
       );
       setPreviewState(null);
     });
   }
 
   const undo = useCallback(() => {
-    const previous = historyRef.current.undo(editorSnapshotRef.current);
+    const previous = historyRef.current!.undo(editorSnapshotRef.current);
     if (previous) {
       restoreEditorSnapshot(previous);
     }
   }, []);
 
   const redo = useCallback(() => {
-    const next = historyRef.current.redo(editorSnapshotRef.current);
+    const next = historyRef.current!.redo(editorSnapshotRef.current);
     if (next) {
       restoreEditorSnapshot(next);
     }
@@ -310,18 +563,18 @@ export default function useMiniGameEditorState({
 
   const canUndo = useMemo(() => {
     void historyVersion;
-    return historyRef.current.canUndo();
+    return historyRef.current!.canUndo();
   }, [historyVersion]);
 
   const canRedo = useMemo(() => {
     void historyVersion;
-    return historyRef.current.canRedo();
+    return historyRef.current!.canRedo();
   }, [historyVersion]);
 
   useEffect(() => {
     if (!open) return;
 
-    historyRef.current.clear();
+    historyRef.current!.clear();
 
     const nextDraft = normalizedGame || createDefaultMiniGame("choiceWeighting");
     setDraft(nextDraft);
@@ -347,7 +600,7 @@ export default function useMiniGameEditorState({
     setAdvancedJsonError("");
   }, [draft]);
 
-  const items = useMemo(() => {
+  const items = useMemo((): MiniGameEditorItem[] => {
     if (!draft) return [];
 
     switch (draft.type) {
@@ -372,7 +625,7 @@ export default function useMiniGameEditorState({
     );
   }, [draft]);
 
-  const validation = useMemo(() => {
+  const validation = useMemo((): MiniGameEditorValidation => {
     if (!draft) {
       return {
         hasPrompt: false,
@@ -431,26 +684,38 @@ export default function useMiniGameEditorState({
     return JSON.stringify(draft) !== JSON.stringify(savedSnapshot);
   }, [draft, savedSnapshot]);
 
-  function updateDraft(patch) {
+  function updateDraft(
+    patch: Partial<{ title: string; prompt: string; type: MiniGameBlockType }>
+  ) {
     recordDraftHistory();
-    setDraft((current) => ({
-      ...current,
-      ...patch,
-    }));
-  }
-
-  function updateConfig(patch) {
-    recordDraftHistory();
-    setDraft((current) => ({
-      ...current,
-      config: {
-        ...current.config,
+    setDraft((current) =>
+      ({
+        ...current,
         ...patch,
-      },
-    }));
+      }) as MiniGameEditorDraft
+    );
   }
 
-  function replaceItems(nextItems) {
+  function updateConfig(
+    patch: Partial<
+      MiniGameEditorChoiceWeightingConfig &
+        MiniGameEditorPersuasionConfig &
+        MiniGameEditorTraitPickerConfig
+    >
+  ) {
+    recordDraftHistory();
+    setDraft((current) =>
+      ({
+        ...current,
+        config: {
+          ...(current as MiniGameEditorDraft).config,
+          ...patch,
+        },
+      }) as MiniGameEditorDraft
+    );
+  }
+
+  function replaceItems(nextItems: MiniGameEditorItem[]) {
     setDraft((current) => {
       if (!current) return current;
 
@@ -459,7 +724,17 @@ export default function useMiniGameEditorState({
           ...current,
           config: {
             ...current.config,
-            choices: nextItems,
+            choices: nextItems as MiniGameEditorPersuasionChoice[],
+          },
+        };
+      }
+
+      if (current.type === "traitPicker") {
+        return {
+          ...current,
+          config: {
+            ...current.config,
+            options: nextItems as MiniGameEditorTraitOption[],
           },
         };
       }
@@ -468,45 +743,47 @@ export default function useMiniGameEditorState({
         ...current,
         config: {
           ...current.config,
-          options: nextItems,
+          options: nextItems as MiniGameEditorChoiceWeightingOption[],
         },
       };
     });
   }
 
-  function updateItem(itemId, patch) {
+  function updateItem(itemId: string, patch: Partial<MiniGameEditorItem>) {
     recordDraftHistory();
     replaceItems(
-      items.map((item) => (item.id === itemId ? { ...item, ...patch } : item))
+      items.map((item) =>
+        item.id === itemId ? ({ ...item, ...patch } as MiniGameEditorItem) : item
+      )
     );
   }
 
   function addItem() {
     recordDraftHistory({ immediate: true });
-    let nextItem = null;
+    let nextItem: MiniGameEditorItem | null = null;
 
-    if (draft.type === "persuasion") {
+    if (draft!.type === "persuasion") {
       nextItem = createPersuasionChoice();
-      replaceItems([...(draft.config.choices || []), nextItem]);
-    } else if (draft.type === "traitPicker") {
+      replaceItems([...(draft!.config.choices || []), nextItem]);
+    } else if (draft!.type === "traitPicker") {
       nextItem = createTraitOption();
-      replaceItems([...(draft.config.options || []), nextItem]);
+      replaceItems([...(draft!.config.options || []), nextItem]);
     } else {
       nextItem = createChoiceWeightingOption();
-      replaceItems([...(draft.config.options || []), nextItem]);
+      replaceItems([...(draft!.config.options || []), nextItem]);
     }
 
     setSelectedItemId(nextItem.id);
   }
 
-  function removeItem(itemId) {
+  function removeItem(itemId: string) {
     recordDraftHistory({ immediate: true });
     const nextItems = items.filter((item) => item.id !== itemId);
 
     if (nextItems.length === 0) {
-      if (draft.type === "persuasion") {
+      if (draft!.type === "persuasion") {
         nextItems.push(createPersuasionChoice());
-      } else if (draft.type === "traitPicker") {
+      } else if (draft!.type === "traitPicker") {
         nextItems.push(createTraitOption());
       } else {
         nextItems.push(createChoiceWeightingOption());
@@ -517,7 +794,7 @@ export default function useMiniGameEditorState({
     setSelectedItemId(nextItems[0]?.id ?? null);
   }
 
-  function moveItem(itemId, direction) {
+  function moveItem(itemId: string, direction: "up" | "down") {
     const index = items.findIndex((item) => item.id === itemId);
     if (index === -1) return;
 
@@ -534,7 +811,7 @@ export default function useMiniGameEditorState({
 
   function applyAdvancedJson() {
     try {
-      const parsed = JSON.parse(advancedJson);
+      const parsed: unknown = JSON.parse(advancedJson);
       const normalized = normalizeMiniGame(parsed);
       recordDraftHistory({ immediate: true });
       setDraft(normalized);
@@ -553,7 +830,9 @@ export default function useMiniGameEditorState({
     }
   }
 
-  function runPreview(payload = {}) {
+  function runPreview(
+    payload: MiniGameEditorPreviewPayload = {}
+  ): MiniGameEditorPreviewResult | null {
     if (!draft) return null;
 
     if (draft.type === "choiceWeighting") {
@@ -575,7 +854,7 @@ export default function useMiniGameEditorState({
       else if (!lockExactTotal && score >= totalPoints) status = "success";
       else if (score > totalPoints) status = "overflow";
 
-      const result = {
+      const result: ChoiceWeightingEditorPreviewResult = {
         type: "choiceWeighting",
         score,
         totalPoints,
@@ -605,7 +884,7 @@ export default function useMiniGameEditorState({
 
       const success = nextScore >= Number(draft.config.threshold || 0);
 
-      const result = {
+      const result: PersuasionEditorPreviewResult = {
         type: "persuasion",
         selectedChoiceId,
         scoreBefore: startScore,
@@ -624,10 +903,12 @@ export default function useMiniGameEditorState({
         selectedIds.includes(option.id)
       );
 
-      const result = {
+      const result: TraitPickerEditorPreviewResult = {
         type: "traitPicker",
         selectedIds,
-        selectedValues: selectedOptions.map((option) => option.value || option.label),
+        selectedValues: selectedOptions.map(
+          (option) => option.value || option.label
+        ),
         count: selectedOptions.length,
         minSelections: Number(draft.config.minSelections || 0),
         maxSelections: Number(draft.config.maxSelections || 0),
