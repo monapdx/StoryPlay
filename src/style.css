@@ -719,8 +719,8 @@ select {
 }
 
 .header-help-button {
-  border-color: var(--brand-magenta-dark);
-  background: var(--brand-magenta-dark);
+  border-color: var(--brand-purple);
+  background: var(--brand-purple);
   color: #fff;
   box-shadow: var(--shadow-soft);
 }
@@ -775,8 +775,8 @@ select {
 }
 
 .header-help-button:hover:not(:disabled) {
-  background: var(--brand-magenta-dark-hover);
-  border-color: var(--brand-magenta-dark-hover);
+  background: var(--brand-purple-bright);
+  border-color: var(--brand-purple-bright);
 }
 
 .header-help-button:hover:not(:disabled) > span,
@@ -800,19 +800,19 @@ select {
 }
 
 .header-help-button:focus-visible {
-  box-shadow: 0 0 0 3px rgba(122, 24, 72, 0.4);
+  box-shadow: 0 0 0 3px rgba(131, 61, 220, 0.3);
 }
 
 .header-button--active {
-  border-color: var(--brand-magenta-dark);
-  background: var(--brand-magenta-dark);
+  border-color: var(--brand-purple);
+  background: var(--brand-purple);
   color: #fff;
-  box-shadow: 0 0 0 2px rgba(122, 24, 72, 0.35);
+  box-shadow: 0 0 0 2px rgba(131, 61, 220, 0.28);
 }
 
 .header-button--active:hover:not(:disabled) {
-  background: var(--brand-magenta-dark-hover);
-  border-color: var(--brand-magenta-dark-hover);
+  background: var(--brand-purple-bright);
+  border-color: var(--brand-purple-bright);
   box-shadow:
     0 0 5px rgba(0, 255, 255, 0.5),
     0 0 5px rgba(255, 0, 234, 0.5);
