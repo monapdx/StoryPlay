@@ -447,20 +447,22 @@ function EditorApp() {
               <button
                 type="button"
                 className="header-help-button"
+                data-glitch="Tutorial"
                 onClick={onboarding.restart}
                 title="Replay the guided tour"
               >
-                Tutorial
+                <span>Tutorial</span>
               </button>
 
               <button
                 type="button"
                 className="header-button"
+                data-glitch="Templates"
                 data-onboarding="templates"
                 onClick={handleOpenTemplates}
                 title="Browse starter templates"
               >
-                Templates
+                <span>Templates</span>
               </button>
 
               <button
@@ -471,78 +473,86 @@ function EditorApp() {
                 ]
                   .filter(Boolean)
                   .join(" ")}
+                data-glitch="Preview"
                 data-onboarding="preview"
                 onClick={() => setIsQuickPreviewOpen((open) => !open)}
                 title="Show or hide a compact play preview beside the editor (full test: Play)"
                 aria-pressed={isQuickPreviewOpen}
               >
-                Preview
+                <span>Preview</span>
               </button>
 
               <button
                 type="button"
                 className="header-button"
+                data-glitch="Characters"
                 onClick={handleOpenCharactersWorkspace}
                 title="Manage reusable character names and references"
               >
-                Characters
+                <span>Characters</span>
               </button>
 
               <button
                 type="button"
                 className="header-button"
+                data-glitch="Variables"
                 data-onboarding="variables"
                 onClick={() => setActiveScreen("variables")}
                 title="Open full-screen variables workspace"
               >
-                Variables
+                <span>Variables</span>
               </button>
 
               <button
                 type="button"
                 className="header-button"
+                data-glitch="Play"
                 onClick={handlePlayInNewTab}
                 title="Open full-screen play mode in a new tab (#/play)"
               >
-                Play
+                <span>Play</span>
               </button>
 
               <button
                 type="button"
                 className="header-button"
+                data-glitch="Documentation"
                 onClick={() => setDocsHash()}
                 title="Open StoryPlay documentation"
               >
-                Documentation
+                <span>Documentation</span>
               </button>
 
               <button
                 type="button"
                 className="header-button"
+                data-glitch="Import"
                 onClick={handleOpenImportPicker}
                 title="Import a previously exported StoryPlay project (.json)"
               >
-                Import
+                <span>Import</span>
               </button>
 
               <button
                 type="button"
                 className="header-button"
+                data-glitch="Export"
                 data-onboarding="export"
                 onClick={handleExportStory}
                 title="Download story as StoryPlay export JSON (v1)"
               >
-                Export
+                <span>Export</span>
               </button>
 
               <button
                 type="button"
                 className="header-button"
+                data-glitch="Mini-Games"
                 onClick={handleOpenMiniGameEditor}
                 disabled={!canOpenMiniGameEditor}
                 title={miniGameEditorTitle}
               >
-                Mini-Games
+                <span>Mini-Games</span>
               </button>
             </div>
           </header>
