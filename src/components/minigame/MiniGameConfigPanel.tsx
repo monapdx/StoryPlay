@@ -1,6 +1,26 @@
-import React from "react";
+import type {
+  MiniGameEditorDraft,
+  UseMiniGameEditorStateResult,
+} from "../../hooks/useMiniGameEditorState";
+import type { StoryNode } from "../../types/story";
 
-export default function MiniGameConfigPanel({ editor, nodes = [] }) {
+/**
+ * Config tab — draft is non-null when sidebar mounts this panel.
+ */
+interface MiniGameConfigPanelProps {
+  editor: Pick<
+    UseMiniGameEditorStateResult,
+    "updateDraft" | "updateConfig" | "totalAssigned"
+  > & {
+    draft: MiniGameEditorDraft;
+  };
+  nodes?: StoryNode[];
+}
+
+export default function MiniGameConfigPanel({
+  editor,
+  nodes = [],
+}: MiniGameConfigPanelProps) {
   const { draft } = editor;
 
   return (
@@ -100,7 +120,8 @@ export default function MiniGameConfigPanel({ editor, nodes = [] }) {
           </div>
 
           <p className="sidebar-hint">
-            Assigned: {editor.totalAssigned} / {Number(draft.config.totalPoints || 0)}
+            Assigned: {editor.totalAssigned} /{" "}
+            {Number(draft.config.totalPoints || 0)}
           </p>
         </>
       )}
@@ -127,7 +148,9 @@ export default function MiniGameConfigPanel({ editor, nodes = [] }) {
                 type="number"
                 value={draft.config.startScore ?? 50}
                 onChange={(event) =>
-                  editor.updateConfig({ startScore: Number(event.target.value || 0) })
+                  editor.updateConfig({
+                    startScore: Number(event.target.value || 0),
+                  })
                 }
               />
             </div>
@@ -139,7 +162,9 @@ export default function MiniGameConfigPanel({ editor, nodes = [] }) {
                 type="number"
                 value={draft.config.threshold ?? 75}
                 onChange={(event) =>
-                  editor.updateConfig({ threshold: Number(event.target.value || 0) })
+                  editor.updateConfig({
+                    threshold: Number(event.target.value || 0),
+                  })
                 }
               />
             </div>
@@ -151,7 +176,9 @@ export default function MiniGameConfigPanel({ editor, nodes = [] }) {
                 type="number"
                 value={draft.config.minScore ?? 0}
                 onChange={(event) =>
-                  editor.updateConfig({ minScore: Number(event.target.value || 0) })
+                  editor.updateConfig({
+                    minScore: Number(event.target.value || 0),
+                  })
                 }
               />
             </div>
@@ -163,7 +190,9 @@ export default function MiniGameConfigPanel({ editor, nodes = [] }) {
                 type="number"
                 value={draft.config.maxScore ?? 100}
                 onChange={(event) =>
-                  editor.updateConfig({ maxScore: Number(event.target.value || 0) })
+                  editor.updateConfig({
+                    maxScore: Number(event.target.value || 0),
+                  })
                 }
               />
             </div>
@@ -175,7 +204,9 @@ export default function MiniGameConfigPanel({ editor, nodes = [] }) {
                 type="number"
                 value={draft.config.maxTurns ?? 3}
                 onChange={(event) =>
-                  editor.updateConfig({ maxTurns: Number(event.target.value || 0) })
+                  editor.updateConfig({
+                    maxTurns: Number(event.target.value || 0),
+                  })
                 }
               />
             </div>

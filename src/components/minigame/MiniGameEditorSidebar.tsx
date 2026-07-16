@@ -1,14 +1,20 @@
-import React from "react";
+import type {
+  MiniGameEditorDraft,
+  UseMiniGameEditorStateResult,
+} from "../../hooks/useMiniGameEditorState";
+import type { StoryNode } from "../../types/story";
 import MiniGameConfigPanel from "./MiniGameConfigPanel";
 import MiniGameLogicPanel from "./MiniGameLogicPanel";
 
-/**
- * @param {{
- *   editor: import("../../hooks/useMiniGameEditorState").UseMiniGameEditorStateResult,
- *   nodes?: import("../../types/story").StoryNode[],
- * }} props
- */
-export default function MiniGameEditorSidebar({ editor, nodes = [] }) {
+interface MiniGameEditorSidebarProps {
+  editor: UseMiniGameEditorStateResult;
+  nodes?: StoryNode[];
+}
+
+export default function MiniGameEditorSidebar({
+  editor,
+  nodes = [],
+}: MiniGameEditorSidebarProps) {
   const draft = editor?.draft;
   const activeTab = editor?.activeTab || "config";
 
@@ -20,6 +26,13 @@ export default function MiniGameEditorSidebar({ editor, nodes = [] }) {
       </div>
     );
   }
+
+  const editorWithDraft: UseMiniGameEditorStateResult & {
+    draft: MiniGameEditorDraft;
+  } = {
+    ...editor,
+    draft,
+  };
 
   if (activeTab === "advanced") {
     return (
@@ -39,7 +52,9 @@ export default function MiniGameEditorSidebar({ editor, nodes = [] }) {
             }}
             aria-invalid={Boolean(editor.advancedJsonError)}
             aria-describedby={
-              editor.advancedJsonError ? "minigame-advanced-json-error" : undefined
+              editor.advancedJsonError
+                ? "minigame-advanced-json-error"
+                : undefined
             }
           />
         </div>
@@ -71,14 +86,14 @@ export default function MiniGameEditorSidebar({ editor, nodes = [] }) {
   if (activeTab === "logic") {
     return (
       <div className="minigame-sidebar">
-        <MiniGameLogicPanel editor={editor} />
+        <MiniGameLogicPanel editor={editorWithDraft} />
       </div>
     );
   }
 
   return (
     <div className="minigame-sidebar">
-      <MiniGameConfigPanel editor={editor} nodes={nodes} />
+      <MiniGameConfigPanel editor={editorWithDraft} nodes={nodes} />
     </div>
   );
 }

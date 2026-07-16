@@ -1,9 +1,22 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import type {
+  MiniGameEditorDraft,
+  UseMiniGameEditorStateResult,
+} from "../../hooks/useMiniGameEditorState";
 
-export default function MiniGamePreview({ editor }) {
+/**
+ * Live preview pane — draft is non-null when the preview shell mounts this.
+ */
+interface MiniGamePreviewProps {
+  editor: Pick<UseMiniGameEditorStateResult, "previewState" | "runPreview"> & {
+    draft: MiniGameEditorDraft;
+  };
+}
+
+export default function MiniGamePreview({ editor }: MiniGamePreviewProps) {
   const { draft, previewState } = editor;
-  const [selectedIds, setSelectedIds] = useState([]);
-  const [selectedChoiceId, setSelectedChoiceId] = useState(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [selectedChoiceId, setSelectedChoiceId] = useState<string | null>(null);
 
   useEffect(() => {
     setSelectedIds([]);
@@ -18,7 +31,7 @@ export default function MiniGamePreview({ editor }) {
       .reduce((sum, option) => sum + Number(option.value || 0), 0);
   }, [draft, selectedIds]);
 
-  function toggleChoiceWeightingOption(optionId) {
+  function toggleChoiceWeightingOption(optionId: string) {
     setSelectedIds((current) =>
       current.includes(optionId)
         ? current.filter((id) => id !== optionId)
@@ -26,8 +39,12 @@ export default function MiniGamePreview({ editor }) {
     );
   }
 
-  function toggleTraitOption(optionId) {
-    const maxSelections = Number(draft.config.maxSelections || 0);
+  function toggleTraitOption(optionId: string) {
+    const maxSelections = Number(
+      (draft.type === "traitPicker"
+        ? draft.config.maxSelections
+        : undefined) || 0
+    );
 
     setSelectedIds((current) => {
       if (current.includes(optionId)) {
@@ -154,7 +171,8 @@ export default function MiniGamePreview({ editor }) {
             </div>
 
             <p className="sidebar-hint">
-              Selected: {selectedIds.length} / {Number(draft.config.maxSelections || 0)}
+              Selected: {selectedIds.length} /{" "}
+              {Number(draft.config.maxSelections || 0)}
             </p>
           </>
         )}

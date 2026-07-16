@@ -1,7 +1,24 @@
-import React from "react";
 import UndoRedoButtons from "../editor/UndoRedoButtons";
+import type { UseMiniGameEditorStateResult } from "../../hooks/useMiniGameEditorState";
 
-export default function MiniGameToolbar({ editor }) {
+interface MiniGameToolbarProps {
+  editor: Pick<
+    UseMiniGameEditorStateResult,
+    | "activeTab"
+    | "setActiveTab"
+    | "validation"
+    | "isDirty"
+    | "handleBack"
+    | "handleDiscard"
+    | "handleSave"
+    | "undo"
+    | "redo"
+    | "canUndo"
+    | "canRedo"
+  >;
+}
+
+export default function MiniGameToolbar({ editor }: MiniGameToolbarProps) {
   const { activeTab, setActiveTab, validation, isDirty } = editor;
 
   const statusMessage = !validation.isValid

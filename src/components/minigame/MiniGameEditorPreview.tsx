@@ -1,13 +1,11 @@
+import type {
+  MiniGameEditorDraft,
+  UseMiniGameEditorStateResult,
+} from "../../hooks/useMiniGameEditorState";
 import MiniGamePreview from "./MiniGamePreview";
 
-/**
- * Editor bag forwarded into MiniGamePreview (still JS).
- * Kept structural/minimal until useMiniGameEditorState is typed.
- */
 interface MiniGameEditorPreviewProps {
-  editor: {
-    draft: unknown;
-  };
+  editor: UseMiniGameEditorStateResult & { draft: MiniGameEditorDraft };
 }
 
 export default function MiniGameEditorPreview({
