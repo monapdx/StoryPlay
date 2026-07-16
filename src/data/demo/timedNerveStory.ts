@@ -1,4 +1,6 @@
 /** Moderate: timed block + variable drain on timeout. */
+import type { DemoStoryPayload } from "../../types/demoStories";
+
 const timedNerveStory = {
   variables: {
     calm: 10,
@@ -81,6 +83,6 @@ const timedNerveStory = {
       },
     },
   ],
-};
+} satisfies DemoStoryPayload;
 
 export default timedNerveStory;

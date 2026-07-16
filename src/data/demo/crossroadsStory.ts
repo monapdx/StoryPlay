@@ -1,4 +1,6 @@
 /** Simple linear fork: one decision, two endings. */
+import type { DemoStoryPayload } from "../../types/demoStories";
+
 const crossroadsStory = {
   variables: {},
 
@@ -61,6 +63,6 @@ const crossroadsStory = {
       },
     },
   ],
-};
+} satisfies DemoStoryPayload;
 
 export default crossroadsStory;

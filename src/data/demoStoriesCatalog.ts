@@ -12,7 +12,6 @@ export type { DemoStoryCatalogEntry, DemoStoryPayload };
 
 /**
  * Built-in demos for the editor. `story` is `{ variables, nodes }` (same as export / useStoryState).
- * Demo JS blobs are untyped; cast at the catalog boundary only.
  */
 export const DEMO_STORIES: DemoStoryCatalogEntry[] = [
   {
@@ -20,35 +19,35 @@ export const DEMO_STORIES: DemoStoryCatalogEntry[] = [
     label: "Crossroads",
     tier: "simple",
     blurb: "One fork, two endings—no variables.",
-    story: crossroadsStory as DemoStoryPayload,
+    story: crossroadsStory,
   },
   {
     id: "market-day",
     label: "Market Day",
     tier: "moderate",
     blurb: "Coins, chat merchant, conditional buy.",
-    story: marketDayStory as DemoStoryPayload,
+    story: marketDayStory,
   },
   {
     id: "timed-nerve",
     label: "Timed Nerve",
     tier: "moderate",
     blurb: "Short countdown with timeout effects.",
-    story: timedNerveStory as DemoStoryPayload,
+    story: timedNerveStory,
   },
   {
     id: "escape-room",
     label: "Escape Room",
     tier: "moderate",
     blurb: "Original demo: chat, timed desk, key logic.",
-    story: escapeRoomStory as DemoStoryPayload,
+    story: escapeRoomStory,
   },
   {
     id: "guild-audition",
     label: "Guild Audition",
     tier: "complex",
     blurb: "Trait picker → persuasion → point split → gated endings.",
-    story: guildAuditionStory as DemoStoryPayload,
+    story: guildAuditionStory,
   },
 ];
 

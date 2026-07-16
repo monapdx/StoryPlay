@@ -1,4 +1,6 @@
 /** Moderate: variables, chat merchant, conditional purchase. */
+import type { DemoStoryPayload } from "../../types/demoStories";
+
 const marketDayStory = {
   variables: {
     coins: 5,
@@ -176,6 +178,6 @@ const marketDayStory = {
       },
     },
   ],
-};
+} satisfies DemoStoryPayload;
 
 export default marketDayStory;

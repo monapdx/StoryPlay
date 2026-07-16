@@ -4,6 +4,7 @@
  * so preview can advance after trait/weighting.
  */
 import guildVariableMeta from "./guildVariableMeta";
+import type { DemoStoryPayload } from "../../types/demoStories";
 
 const guildAuditionStory = {
   variables: {
@@ -302,6 +303,6 @@ const guildAuditionStory = {
       },
     },
   ],
-};
+} satisfies DemoStoryPayload;
 
 export default guildAuditionStory;
