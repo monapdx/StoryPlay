@@ -2,6 +2,7 @@
  * Minimal shared contracts for Wave 1 typed utilities.
  * Not a full story schema — only shapes already defined by JSDoc / runtime usage.
  */
+import type { JsonValue } from "./generated/storyplayExportV1";
 
 export interface StoryCharacter {
   id: string;
@@ -22,7 +23,7 @@ export type ConditionOperator =
 export interface Condition {
   variable: string;
   operator: ConditionOperator | (string & {});
-  value?: unknown;
+  value?: string | number | boolean | null;
 }
 
 /** Actions handled by applyEffect; unknown actions leave variables unchanged. */
@@ -31,7 +32,7 @@ export type EffectAction = "set" | "add" | "subtract" | "toggle";
 export interface Effect {
   variable: string;
   action: EffectAction | (string & {});
-  value?: unknown;
+  value?: JsonValue;
 }
 
 /**

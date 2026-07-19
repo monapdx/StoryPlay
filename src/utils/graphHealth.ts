@@ -5,6 +5,7 @@ import {
   isBranchingGoToChoice,
   nodeHasOutgoingLinks,
 } from "./nodeGraphLinks";
+import { STORY_REFERENCE_TOKEN_REGEX } from "./storyReferences";
 
 export type GraphIssueSeverity = "error" | "warning" | "success";
 
@@ -25,6 +26,8 @@ interface GraphHealthChoice {
   choiceKind?: string | null;
   conditions?: Array<{ variable?: string }> | null;
   effects?: Array<{ variable?: string }> | null;
+  playerMessage?: unknown;
+  response?: unknown;
 }
 
 /** Minimal node shape accepted by analyzeStoryGraph (legacy/incomplete tolerant). */
@@ -39,8 +42,89 @@ export interface GraphHealthNode {
     successNodeId?: unknown;
     failureNodeId?: unknown;
     timeoutTargetNodeId?: unknown;
+    timeoutEffects?: Array<{ variable?: string }> | null;
     enterEffects?: Array<{ variable?: string }> | null;
+    content?: unknown;
+    prompt?: unknown;
+    minSelections?: unknown;
+    maxSelections?: unknown;
+    minScore?: unknown;
+    maxScore?: unknown;
+    startScore?: unknown;
+    threshold?: unknown;
+    maxTurns?: unknown;
+    totalPoints?: unknown;
+    lockExactTotal?: unknown;
+    traitListVariable?: unknown;
+    scoreVariable?: unknown;
+    successVariable?: unknown;
+    resultVariable?: unknown;
+    options?: Array<{
+      id?: unknown;
+      label?: unknown;
+      description?: unknown;
+      min?: unknown;
+      max?: unknown;
+      effects?: unknown;
+    }> | null;
   } | null;
+}
+
+function asFiniteNumber(value: unknown): number | null {
+  return typeof value === "number" && Number.isFinite(value) ? value : null;
+}
+
+function collectNodeText(data: NonNullable<GraphHealthNode["data"]>): unknown[] {
+  const text: unknown[] = [data.title, data.content, data.prompt];
+  for (const choice of data.choices || []) {
+    text.push(
+      choice.label,
+      choice.text,
+      choice.playerMessage,
+      choice.npcResponse,
+      choice.response
+    );
+  }
+  for (const option of data.options || []) {
+    text.push(option.label, option.description);
+  }
+  return text;
+}
+
+function findReferenceIssues(
+  value: unknown,
+  definedVariables: Set<string>
+): Array<{ code: string; message: string }> {
+  if (typeof value !== "string" || !value.includes("{{")) return [];
+
+  const validToken = new RegExp(STORY_REFERENCE_TOKEN_REGEX.source, "g");
+  const anchoredToken = new RegExp(`^(?:${STORY_REFERENCE_TOKEN_REGEX.source})$`);
+  const tokenCandidates = value.match(/\{\{[\s\S]*?\}\}/g) || [];
+  const issues: Array<{ code: string; message: string }> = [];
+
+  if (
+    tokenCandidates.some((token) => !anchoredToken.test(token)) ||
+    value.replace(validToken, "").includes("{{")
+  ) {
+    issues.push({
+      code: "malformed-reference",
+      message: "contains a malformed {{type:id.field}} reference.",
+    });
+  }
+
+  let match = validToken.exec(value);
+  while (match) {
+    const [, type, id] = match;
+    if (type === "variable" && !definedVariables.has(id)) {
+      issues.push({
+        code: "undefined-variable-reference",
+        message: `references undefined variable "${id}".`,
+      });
+    }
+    match = validToken.exec(value);
+  }
+
+  return issues;
 }
 
 export function analyzeStoryGraph(
@@ -169,6 +253,144 @@ export function analyzeStoryGraph(
           nodeId: node.id,
           code: "undefined-variable-enter-effect",
           message: `Node "${node.data?.title || node.id}" uses undefined variable "${effect.variable}" in enterEffects.`,
+        });
+      }
+    }
+
+    for (const effect of node.data?.timeoutEffects || []) {
+      if (effect.variable && !definedVariables.has(effect.variable)) {
+        issues.push({
+          severity: "warning",
+          nodeId: node.id,
+          code: "undefined-variable-timeout-effect",
+          message: `Node "${node.data?.title || node.id}" uses undefined variable "${effect.variable}" in timeoutEffects.`,
+        });
+      }
+    }
+
+    for (const field of [
+      "traitListVariable",
+      "scoreVariable",
+      "successVariable",
+      "resultVariable",
+    ] as const) {
+      const variable = node.data?.[field];
+      if (
+        typeof variable === "string" &&
+        variable &&
+        !definedVariables.has(variable)
+      ) {
+        issues.push({
+          severity: "warning",
+          nodeId: node.id,
+          code: "undefined-variable-output",
+          message: `Node "${node.data?.title || node.id}" writes to undefined variable "${variable}" via ${field}.`,
+        });
+      }
+    }
+
+    for (const option of node.data?.options || []) {
+      if (
+        option.effects &&
+        typeof option.effects === "object" &&
+        !Array.isArray(option.effects)
+      ) {
+        for (const variable of Object.keys(option.effects)) {
+          if (!definedVariables.has(variable)) {
+            issues.push({
+              severity: "warning",
+              nodeId: node.id,
+              code: "undefined-variable-option-effect",
+              message: `Option "${String(option.label || option.id || "Untitled option")}" writes to undefined variable "${variable}".`,
+            });
+          }
+        }
+      }
+    }
+
+    if (blockType === "traitPicker") {
+      const min = asFiniteNumber(node.data?.minSelections) ?? 0;
+      const max = asFiniteNumber(node.data?.maxSelections) ?? 2;
+      const optionCount = node.data?.options?.length ?? 0;
+      if (min < 0 || max < 0 || min > max || max > optionCount) {
+        issues.push({
+          severity: "warning",
+          nodeId: node.id,
+          code: "invalid-selection-limits",
+          message: `Trait picker "${node.data?.title || node.id}" has invalid selection limits (${min}–${max} for ${optionCount} options).`,
+        });
+      }
+    }
+
+    if (blockType === "persuasion") {
+      const min = asFiniteNumber(node.data?.minScore) ?? 0;
+      const max = asFiniteNumber(node.data?.maxScore) ?? 100;
+      const start = asFiniteNumber(node.data?.startScore) ?? 50;
+      const threshold = asFiniteNumber(node.data?.threshold) ?? 75;
+      const maxTurns = asFiniteNumber(node.data?.maxTurns) ?? 3;
+      if (
+        min > max ||
+        start < min ||
+        start > max ||
+        threshold < min ||
+        threshold > max ||
+        maxTurns <= 0
+      ) {
+        issues.push({
+          severity: "warning",
+          nodeId: node.id,
+          code: "impossible-score-range",
+          message: `Persuasion block "${node.data?.title || node.id}" has inconsistent score bounds, threshold, start score, or turn limit.`,
+        });
+      }
+    }
+
+    if (blockType === "choiceWeighting") {
+      const total = asFiniteNumber(node.data?.totalPoints) ?? 10;
+      const options = node.data?.options || [];
+      let minimumRequired = 0;
+      let maximumAllowed = 0;
+      let hasUnboundedMaximum = false;
+      let invalidOptionRange = false;
+
+      for (const option of options) {
+        const min = asFiniteNumber(option.min) ?? 0;
+        const max = asFiniteNumber(option.max);
+        minimumRequired += min;
+        if (max == null) hasUnboundedMaximum = true;
+        else maximumAllowed += max;
+        if (min < 0 || (max != null && (max < 0 || min > max))) {
+          invalidOptionRange = true;
+        }
+      }
+
+      if (
+        total < 0 ||
+        invalidOptionRange ||
+        minimumRequired > total ||
+        (node.data?.lockExactTotal === true &&
+          !hasUnboundedMaximum &&
+          maximumAllowed < total)
+      ) {
+        issues.push({
+          severity: "warning",
+          nodeId: node.id,
+          code: "impossible-weighting-range",
+          message: `Choice weighting block "${node.data?.title || node.id}" has an infeasible point budget or option range.`,
+        });
+      }
+    }
+
+    for (const value of node.data ? collectNodeText(node.data) : []) {
+      for (const referenceIssue of findReferenceIssues(
+        value,
+        definedVariables
+      )) {
+        issues.push({
+          severity: "warning",
+          nodeId: node.id,
+          code: referenceIssue.code,
+          message: `Node "${node.data?.title || node.id}" ${referenceIssue.message}`,
         });
       }
     }

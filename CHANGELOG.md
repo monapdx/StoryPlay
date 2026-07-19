@@ -178,17 +178,17 @@ All notable changes to this project are documented in this file.
 - Export serializes the same shape the app already uses: global `variables` and React Flow–style `nodes` (including `position` and full `data`). Graph edges are not stored; they remain implied by `data.choices[].targetNodeId` (and timed timeout targets) as in the editor.
 - `formatVersion` is `1`. Each export includes `exportedAt` (ISO timestamp) unless callers override serializer options. By default, `data.graphIssues` is removed from cloned nodes so the file is suitable as a portable story artifact rather than editor diagnostics.
 - **Export Game** calls `downloadStoryPlayExportV1({ nodes, variables, characters })`, which creates a temporary blob URL and saves a file such as `storyplay-export-<timestamp>.json`.
-- **Import Project** parses the same envelope, validates shape and graph references, runs migrations, shows a preview modal, and replaces editor state on confirm (also persists to `localStorage`).
+- **Import Project** parses the same envelope, validates the canonical JSON Schema plus graph integrity, runs migrations, shows a preview modal, and replaces editor state on confirm (also persists to `localStorage`).
 
 **Limitations**
 
 - **Assets** (images, audio, etc.) are not bundled; only JSON-serializable story data is exported.
 - **Start node** is not written automatically into `meta.startNodeId`; consumers still follow the same implicit rules as the app (for example, first node or selection) unless you extend the serializer to set `meta`.
 - **`enterEffects`** may exist on nodes but are not applied by the current play preview; exported stories preserve that field for fidelity, not guaranteed runtime behavior.
-- **JSON Schema** documents intended shape; strict validation at export time is not wired in yet.
+- **JSON Schema** is the persisted v1 source of truth. Import validation executes it, and `npm run schema:types` regenerates checked TypeScript wire types.
 
 **Next steps**
 
 - Optional **runtime-only** export mode (omit `position`, strip more editor-only fields) for smaller player bundles.
 - **ZIP** (or similar) packaging when binary assets and a standalone player are introduced.
-- **Validate** exports against the schema (or a shared Zod/JSON Schema step) before download.
+- Optional export-time self-validation for developer diagnostics; import already executes the canonical schema.

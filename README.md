@@ -92,7 +92,7 @@ New projects start **blank** (empty canvas). Load a starter from **Example stori
 
 ## Export
 
-The file includes `formatVersion`, optional `exportedAt`, and `story: { variables, characters, nodes }` (same shape as editor state). By default, reference tokens in text fields are resolved to current character names on export. **Edges** are not stored; they are implied by each node’s `choices[].targetNodeId`. Use **Import Project** to load a file back into the editor. See [CHANGELOG.md](CHANGELOG.md) for limitations and next steps.
+The file includes `formatVersion`, optional `exportedAt`, and `story: { variables, variableMeta?, characters?, nodes }` (same shape as editor state). Variables may hold JSON primitives, arrays, or objects used by mini-game results. Imports are checked against the canonical v1 JSON Schema and then receive separate graph-integrity validation. TypeScript wire types are generated with `npm run schema:types`. **Edges** are not stored; they are implied by node destinations such as `choices[].targetNodeId`, `continueNodeId`, and timeout/success/failure targets.
 
 ## Tech stack
 

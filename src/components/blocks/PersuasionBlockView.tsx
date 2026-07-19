@@ -84,7 +84,9 @@ export default function PersuasionBlockView({
   return (
     <div className="storyplay-block persuasion-block minigame-play">
       {block.title && <h3 className="minigame-play-heading">{block.title}</h3>}
-      {block.prompt && <p className="minigame-play-prompt">{block.prompt}</p>}
+      {(block.prompt ?? block.content) && (
+        <p className="minigame-play-prompt">{block.prompt ?? block.content}</p>
+      )}
       {block.targetName && (
         <p className="minigame-play-target">
           <span className="minigame-play-target__label">Target</span>

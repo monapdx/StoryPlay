@@ -1,10 +1,6 @@
-export type VariableValue =
-  | string
-  | number
-  | boolean
-  | string[]
-  | number[]
-  | Record<string, unknown>;
+import type { JsonValue } from "./generated/storyplayExportV1";
+
+export type VariableValue = JsonValue;
 
 export type VariablePatch = Record<string, VariableValue>;
 

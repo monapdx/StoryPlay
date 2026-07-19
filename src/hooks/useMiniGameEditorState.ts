@@ -8,6 +8,7 @@ import {
   type SetStateAction,
 } from "react";
 import type { MiniGameBlockType } from "../types/minigames";
+import type { VariablePatch } from "../types/storyBlocks";
 import {
   buildMiniGameFromSelectedNode,
   isSupportedMiniGameBlock,
@@ -42,6 +43,7 @@ export interface MiniGameEditorTraitOption {
   label: string;
   value: string;
   description: string;
+  effects?: VariablePatch;
 }
 
 export type MiniGameEditorItem =
@@ -414,6 +416,9 @@ function normalizeTraitPicker(game: unknown): MiniGameEditorTraitPickerDraft {
           label: option.label ?? "",
           value: option.value ?? "",
           description: option.description ?? "",
+          ...(option.effects && typeof option.effects === "object"
+            ? { effects: option.effects }
+            : {}),
         }))
       : [createTraitOption(), createTraitOption()];
 

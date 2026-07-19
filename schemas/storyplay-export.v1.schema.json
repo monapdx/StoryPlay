@@ -42,10 +42,13 @@
       "properties": {
         "variables": {
           "type": "object",
-          "description": "Initial variable store. Keys are identifiers; values are JSON primitives (string, number, boolean) as used by the editor and storyLogic.",
-          "additionalProperties": {
-            "type": ["string", "number", "boolean", "null"]
-          }
+          "description": "Initial variable store. Trait pickers and choice weighting may store arrays or objects, so values may be any JSON value.",
+          "additionalProperties": { "$ref": "#/$defs/jsonValue" }
+        },
+        "variableMeta": {
+          "type": "object",
+          "description": "Optional player-facing labels and descriptions for variables.",
+          "additionalProperties": { "$ref": "#/$defs/variableMeta" }
         },
         "characters": {
           "type": "array",
@@ -74,6 +77,31 @@
     }
   },
   "$defs": {
+    "jsonPrimitive": {
+      "type": ["string", "number", "boolean", "null"]
+    },
+    "jsonValue": {
+      "anyOf": [
+        { "$ref": "#/$defs/jsonPrimitive" },
+        {
+          "type": "array",
+          "items": { "$ref": "#/$defs/jsonValue" }
+        },
+        {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/jsonValue" }
+        }
+      ]
+    },
+    "variableMeta": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "playerLabel": { "type": "string" },
+        "playerDescription": { "type": "string" },
+        "icon": { "type": "string" }
+      }
+    },
     "storyNode": {
       "type": "object",
       "additionalProperties": true,
@@ -103,6 +131,19 @@
       }
     },
     "nodeData": {
+      "oneOf": [
+        { "$ref": "#/$defs/narrativeNodeData" },
+        { "$ref": "#/$defs/chatNodeData" },
+        { "$ref": "#/$defs/timedNodeData" },
+        { "$ref": "#/$defs/endingNodeData" },
+        { "$ref": "#/$defs/traitPickerNodeData" },
+        { "$ref": "#/$defs/persuasionNodeData" },
+        { "$ref": "#/$defs/choiceWeightingNodeData" },
+        { "$ref": "#/$defs/legacyNodeData" },
+        { "$ref": "#/$defs/unknownNodeData" }
+      ]
+    },
+    "nodeDataBase": {
       "type": "object",
       "additionalProperties": true,
       "description": "Block payload. blockType selects which other fields are meaningful. Unknown keys may appear for forward compatibility.",
@@ -114,21 +155,12 @@
         },
         "blockType": {
           "type": "string",
-          "enum": [
-            "narrative",
-            "chat",
-            "timed",
-            "ending",
-            "traitPicker",
-            "persuasion",
-            "choiceWeighting"
-          ],
-          "description": "Discriminator for preview/runtime behavior."
+          "description": "Discriminator for preview/runtime behavior. Known values receive block-specific validation; unknown strings remain forward compatible."
         },
         "choices": {
           "type": "array",
-          "description": "For narrative, chat, timed, ending: branching choices (targets + conditions + effects). For persuasion mini-games: persuasion line items (different shape); branching choices are not used in the sidebar for mini-game blocks.",
-          "items": { "$ref": "#/$defs/choice" }
+          "description": "Block-specific rows. Concrete nodeData branches select branching choices, chat replies, or persuasion lines.",
+          "items": { "type": "object" }
         },
         "enterEffects": {
           "type": "array",
@@ -149,6 +181,14 @@
           "description": "Reserved node behavior payload; default { kind: \"none\", config: {} }.",
           "additionalProperties": true
         },
+        "prompt": {
+          "type": "string",
+          "description": "Optional mini-game prompt. Existing blocks may use content instead."
+        },
+        "submitLabel": {
+          "type": "string",
+          "description": "Optional mini-game submit button label."
+        },
         "timerSeconds": {
           "type": "number",
           "description": "timed blocks: countdown length in seconds."
@@ -161,6 +201,10 @@
           "type": "array",
           "items": { "$ref": "#/$defs/effect" },
           "description": "timed blocks: effects applied on timeout navigation."
+        },
+        "continueNodeId": {
+          "type": "string",
+          "description": "traitPicker / choiceWeighting: node id to visit after completion."
         },
         "minSelections": {
           "type": "number",
@@ -215,13 +259,246 @@
         }
       }
     },
-    "choice": {
+    "narrativeNodeData": {
+      "allOf": [
+        { "$ref": "#/$defs/nodeDataBase" },
+        {
+          "properties": {
+            "blockType": { "const": "narrative" },
+            "choices": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/branchingChoice" }
+            }
+          },
+          "required": ["blockType"]
+        }
+      ]
+    },
+    "chatNodeData": {
+      "allOf": [
+        { "$ref": "#/$defs/nodeDataBase" },
+        {
+          "properties": {
+            "blockType": { "const": "chat" },
+            "choices": {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  { "$ref": "#/$defs/chatReply" },
+                  { "$ref": "#/$defs/branchingChoice" }
+                ]
+              }
+            }
+          },
+          "required": ["blockType"]
+        }
+      ]
+    },
+    "timedNodeData": {
+      "allOf": [
+        { "$ref": "#/$defs/nodeDataBase" },
+        {
+          "properties": {
+            "blockType": { "const": "timed" },
+            "choices": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/branchingChoice" }
+            }
+          },
+          "required": ["blockType"]
+        }
+      ]
+    },
+    "endingNodeData": {
+      "allOf": [
+        { "$ref": "#/$defs/nodeDataBase" },
+        {
+          "properties": {
+            "blockType": { "const": "ending" },
+            "choices": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/branchingChoice" }
+            }
+          },
+          "required": ["blockType"]
+        }
+      ]
+    },
+    "traitPickerNodeData": {
+      "allOf": [
+        { "$ref": "#/$defs/nodeDataBase" },
+        {
+          "properties": {
+            "blockType": { "const": "traitPicker" },
+            "options": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/traitOption" }
+            }
+          },
+          "required": ["blockType"]
+        }
+      ]
+    },
+    "persuasionNodeData": {
+      "allOf": [
+        { "$ref": "#/$defs/nodeDataBase" },
+        {
+          "properties": {
+            "blockType": { "const": "persuasion" },
+            "choices": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/persuasionLine" }
+            }
+          },
+          "required": ["blockType"]
+        }
+      ]
+    },
+    "choiceWeightingNodeData": {
+      "allOf": [
+        { "$ref": "#/$defs/nodeDataBase" },
+        {
+          "properties": {
+            "blockType": { "const": "choiceWeighting" },
+            "options": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/weightedOption" }
+            }
+          },
+          "required": ["blockType"]
+        }
+      ]
+    },
+    "legacyNodeData": {
+      "allOf": [
+        { "$ref": "#/$defs/nodeDataBase" },
+        {
+          "properties": {
+            "blockType": false,
+            "choices": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/branchingChoice" }
+            }
+          }
+        }
+      ]
+    },
+    "unknownNodeData": {
+      "allOf": [
+        { "$ref": "#/$defs/nodeDataBase" },
+        {
+          "properties": {
+            "blockType": {
+              "type": "string",
+              "not": {
+                "enum": [
+                  "narrative",
+                  "chat",
+                  "timed",
+                  "ending",
+                  "traitPicker",
+                  "persuasion",
+                  "choiceWeighting"
+                ]
+              }
+            }
+          },
+          "required": ["blockType"]
+        }
+      ]
+    },
+    "choiceBase": {
       "type": "object",
       "additionalProperties": true,
-      "description": "Branching choice (narrative/chat/timed/ending) OR persuasion line item when blockType is persuasion — same key \"choices\" on node data; shape differs by blockType.",
       "properties": {
         "id": { "type": "string" },
-        "label": { "type": "string", "description": "Branching: button label. Chat reply: reply button text." },
+        "conditions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/condition" }
+        },
+        "effects": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/effect" }
+        }
+      }
+    },
+    "branchingChoice": {
+      "allOf": [
+        { "$ref": "#/$defs/choiceBase" },
+        {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "label": { "type": "string" },
+            "choiceKind": { "const": "goTo" },
+            "targetNodeId": { "type": "string" }
+          }
+        }
+      ],
+      "description": "Branching choice. targetNodeId may be empty while authoring."
+    },
+    "chatReply": {
+      "allOf": [
+        { "$ref": "#/$defs/choiceBase" },
+        {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true,
+              "properties": {
+                "label": { "type": "string" },
+                "choiceKind": { "const": "chatReply" },
+                "playerMessage": { "type": "string" },
+                "npcResponse": { "type": "string" }
+              },
+              "required": ["npcResponse"]
+            },
+            {
+              "type": "object",
+              "additionalProperties": true,
+              "properties": {
+                "label": { "type": "string" },
+                "choiceKind": { "const": "chatReply" },
+                "playerMessage": { "type": "string" },
+                "npcResponse": { "type": "string" }
+              },
+              "required": ["choiceKind"]
+            }
+          ]
+        }
+      ],
+      "description": "Chat reply. Legacy files may omit choiceKind when npcResponse identifies the row."
+    },
+    "persuasionLine": {
+      "allOf": [
+        { "$ref": "#/$defs/choiceBase" },
+        {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "text": { "type": "string" },
+            "delta": { "type": "number" },
+            "once": { "type": "boolean" },
+            "response": { "type": "string" },
+            "successNodeId": { "type": "string" },
+            "failureNodeId": { "type": "string" }
+          },
+          "required": ["text", "delta"]
+        }
+      ]
+    },
+    "choice": {
+      "description": "Deprecated compatibility alias for the former combined choice definition.",
+      "anyOf": [
+        { "$ref": "#/$defs/branchingChoice" },
+        { "$ref": "#/$defs/chatReply" },
+        { "$ref": "#/$defs/persuasionLine" }
+      ]
+    },
+    "legacyChoiceProperties": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
         "choiceKind": {
           "type": "string",
           "enum": ["chatReply", "goTo"],
@@ -236,14 +513,6 @@
           "description": "Chat reply: NPC lines after the player speaks (Name: message format)."
         },
         "targetNodeId": { "type": "string", "description": "Branching: destination node id." },
-        "conditions": {
-          "type": "array",
-          "items": { "$ref": "#/$defs/condition" }
-        },
-        "effects": {
-          "type": "array",
-          "items": { "$ref": "#/$defs/effect" }
-        },
         "text": { "type": "string", "description": "persuasion: line button text." },
         "delta": { "type": "number", "description": "persuasion: score change." },
         "once": { "type": "boolean" },
@@ -270,6 +539,7 @@
           ]
         },
         "value": {
+          "$ref": "#/$defs/jsonPrimitive",
           "description": "Compared against variables[variable]; type should match variable type for sensible results."
         }
       }
@@ -285,6 +555,7 @@
           "enum": ["set", "add", "subtract", "toggle"]
         },
         "value": {
+          "$ref": "#/$defs/jsonValue",
           "description": "Required for set/add/subtract; toggle ignores value in storyLogic."
         }
       }
@@ -292,6 +563,7 @@
     "traitOption": {
       "type": "object",
       "additionalProperties": true,
+      "required": ["id", "label"],
       "properties": {
         "id": { "type": "string" },
         "label": { "type": "string" },
@@ -299,7 +571,7 @@
         "description": { "type": "string" },
         "effects": {
           "type": "object",
-          "additionalProperties": true,
+          "additionalProperties": { "$ref": "#/$defs/jsonValue" },
           "description": "Optional variable patch map applied when trait is selected (TraitPickerBlockView)."
         }
       }
@@ -307,6 +579,7 @@
     "weightedOption": {
       "type": "object",
       "additionalProperties": true,
+      "required": ["id", "label"],
       "properties": {
         "id": { "type": "string" },
         "label": { "type": "string" },
@@ -316,6 +589,7 @@
         "max": { "type": "number" },
         "effects": {
           "type": "array",
+          "items": { "$ref": "#/$defs/effect" },
           "description": "Editor-normalized effects on option (if present)."
         }
       }

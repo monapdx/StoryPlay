@@ -27,11 +27,18 @@ export interface ChoiceEffectsEditorProps {
 function getDefaultEffect(variables: StoryVariables): Effect {
   const firstVariable = Object.keys(variables || {})[0] || "";
   const firstValue = firstVariable ? variables[firstVariable] : "";
+  const editableValue =
+    firstValue == null ||
+    typeof firstValue === "string" ||
+    typeof firstValue === "number" ||
+    typeof firstValue === "boolean"
+      ? firstValue ?? null
+      : "";
 
   return {
     variable: firstVariable,
     action: typeof firstValue === "boolean" ? "toggle" : "set",
-    value: typeof firstValue === "number" ? 1 : firstValue,
+    value: typeof firstValue === "number" ? 1 : editableValue,
   };
 }
 

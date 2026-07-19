@@ -10,6 +10,7 @@ import type {
   StoryPlayValidationResult,
 } from "../types/story";
 import { normalizeStoryNodes } from "./nodeHelpers";
+import { validateStoryPlaySemantics } from "./storySemanticValidation";
 
 export type { StoryPlayImportSummary, StoryPlayValidationResult };
 
@@ -89,9 +90,10 @@ export function validateStoryPlayProjectShape(
     errors.push('"story.variables" must be an object.');
   }
 
-  if (!Object.prototype.hasOwnProperty.call(story, "characters")) {
-    errors.push('Missing required field "story.characters".');
-  } else if (!Array.isArray(story.characters)) {
+  if (
+    Object.prototype.hasOwnProperty.call(story, "characters") &&
+    !Array.isArray(story.characters)
+  ) {
     errors.push('"story.characters" must be an array.');
   }
 
@@ -115,8 +117,6 @@ export function validateStoryPlayProjectShape(
 }
 
 function validateNodesShape(nodes: unknown[], errors: string[]): void {
-  const seenIds = new Set<string>();
-
   nodes.forEach((node, index) => {
     const label = `Node at index ${index}`;
 
@@ -127,10 +127,6 @@ function validateNodesShape(nodes: unknown[], errors: string[]): void {
 
     if (typeof node.id !== "string" || !node.id.trim()) {
       errors.push(`${label} is missing a valid "id" string.`);
-    } else if (seenIds.has(node.id)) {
-      errors.push(`Duplicate node id "${node.id}".`);
-    } else {
-      seenIds.add(node.id);
     }
 
     if (typeof node.type !== "string" || !node.type.trim()) {
@@ -163,58 +159,11 @@ function validateNodesShape(nodes: unknown[], errors: string[]): void {
  * Validate graph references after normalization. Returns blocking errors only.
  */
 export function validateStoryGraphReferences(nodes: unknown): string[] {
-  const errors: string[] = [];
-  if (!Array.isArray(nodes)) return errors;
-
-  const nodeIds = new Set(
-    nodes
-      .filter((node) => isPlainObject(node) && typeof node.id === "string")
-      .map((node) => (node as { id: string }).id)
-  );
-
-  for (const node of nodes) {
-    if (!isPlainObject(node) || typeof node.id !== "string") continue;
-
-    const data = isPlainObject(node.data) ? node.data : {};
-    const nodeLabel =
-      typeof data.title === "string" && data.title ? data.title : node.id;
-
-    const choices = Array.isArray(data.choices) ? data.choices : [];
-    choices.forEach((choice, choiceIndex) => {
-      if (!isPlainObject(choice)) return;
-      const targetId = choice.targetNodeId;
-      if (targetId == null || targetId === "") return;
-      if (typeof targetId !== "string") {
-        errors.push(
-          `Node "${nodeLabel}": choice ${choiceIndex + 1} has an invalid targetNodeId.`
-        );
-        return;
-      }
-      if (!nodeIds.has(targetId)) {
-        errors.push(
-          `Node "${nodeLabel}": choice "${
-            typeof choice.label === "string" ? choice.label : choiceIndex + 1
-          }" points to missing node "${targetId}".`
-        );
-      }
-    });
-
-    for (const field of ["continueNodeId", "successNodeId", "failureNodeId"] as const) {
-      const refId = data[field];
-      if (refId == null || refId === "") continue;
-      if (typeof refId !== "string") {
-        errors.push(`Node "${nodeLabel}": "${field}" must be a string when set.`);
-        continue;
-      }
-      if (!nodeIds.has(refId)) {
-        errors.push(
-          `Node "${nodeLabel}": "${field}" points to missing node "${refId}".`
-        );
-      }
-    }
-  }
-
-  return errors;
+  return validateStoryPlaySemantics({
+    story: {
+      nodes: Array.isArray(nodes) ? nodes : [],
+    },
+  }).errors;
 }
 
 export function buildStoryPlayImportSummary(

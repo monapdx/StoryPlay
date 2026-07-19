@@ -1,0 +1,135 @@
+{
+  "formatVersion": 1,
+  "meta": {
+    "title": "All Blocks",
+    "startNodeId": "start"
+  },
+  "story": {
+    "variables": {
+      "score": 0,
+      "passed": false,
+      "traits": [],
+      "allocation": {}
+    },
+    "variableMeta": {
+      "score": {
+        "playerLabel": "Score"
+      }
+    },
+    "characters": [],
+    "nodes": [
+      {
+        "id": "start",
+        "type": "storyNode",
+        "position": { "x": 0, "y": 0 },
+        "data": {
+          "blockType": "narrative",
+          "title": "Start",
+          "content": "Begin",
+          "choices": [
+            { "id": "to-chat", "label": "Talk", "targetNodeId": "chat" }
+          ]
+        }
+      },
+      {
+        "id": "chat",
+        "type": "storyNode",
+        "position": { "x": 200, "y": 0 },
+        "data": {
+          "blockType": "chat",
+          "title": "Chat",
+          "choices": [
+            {
+              "id": "reply",
+              "label": "Hello",
+              "npcResponse": "Guide: Welcome."
+            },
+            {
+              "id": "leave-chat",
+              "choiceKind": "goTo",
+              "label": "Continue",
+              "targetNodeId": "timed"
+            }
+          ]
+        }
+      },
+      {
+        "id": "timed",
+        "type": "storyNode",
+        "position": { "x": 400, "y": 0 },
+        "data": {
+          "blockType": "timed",
+          "timerSeconds": 10,
+          "timeoutTargetNodeId": "traits",
+          "choices": [
+            { "id": "beat-timer", "label": "Act", "targetNodeId": "traits" }
+          ]
+        }
+      },
+      {
+        "id": "traits",
+        "type": "storyNode",
+        "position": { "x": 600, "y": 0 },
+        "data": {
+          "blockType": "traitPicker",
+          "minSelections": 1,
+          "maxSelections": 1,
+          "traitListVariable": "traits",
+          "continueNodeId": "persuasion",
+          "options": [
+            {
+              "id": "bold",
+              "label": "Bold",
+              "effects": { "score": 1 }
+            }
+          ]
+        }
+      },
+      {
+        "id": "persuasion",
+        "type": "storyNode",
+        "position": { "x": 800, "y": 0 },
+        "data": {
+          "blockType": "persuasion",
+          "startScore": 0,
+          "minScore": 0,
+          "maxScore": 10,
+          "threshold": 1,
+          "maxTurns": 2,
+          "scoreVariable": "score",
+          "successVariable": "passed",
+          "successNodeId": "weighting",
+          "failureNodeId": "ending",
+          "choices": [
+            { "id": "appeal", "text": "Make the case", "delta": 1 }
+          ]
+        }
+      },
+      {
+        "id": "weighting",
+        "type": "storyNode",
+        "position": { "x": 1000, "y": 0 },
+        "data": {
+          "blockType": "choiceWeighting",
+          "totalPoints": 2,
+          "resultVariable": "allocation",
+          "lockExactTotal": true,
+          "continueNodeId": "ending",
+          "options": [
+            { "id": "focus", "label": "Focus", "min": 0, "max": 2 }
+          ]
+        }
+      },
+      {
+        "id": "ending",
+        "type": "storyNode",
+        "position": { "x": 1200, "y": 0 },
+        "data": {
+          "blockType": "ending",
+          "title": "Done",
+          "choices": []
+        }
+      }
+    ]
+  }
+}

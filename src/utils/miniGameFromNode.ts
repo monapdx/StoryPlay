@@ -14,8 +14,15 @@ import type {
   MiniGameEditorTraitPickerDraft,
   MiniGameEditorChoiceWeightingOption,
 } from "../hooks/useMiniGameEditorState";
-import type { MiniGameBlockType } from "../types/minigames";
+import type {
+  MiniGameBlockType,
+  StoryPlayMiniGameBlock,
+  TraitOption,
+  WeightedOption,
+} from "../types/minigames";
 import type { StoryNodeData } from "../types/story";
+import type { JsonValue } from "../types/generated/storyplayExportV1";
+import type { VariablePatch } from "../types/storyBlocks";
 
 /**
  * Loose node shape accepted at the boundary (incomplete/legacy data tolerated).
@@ -59,6 +66,141 @@ export function canonicalMiniGameBlockType(
 
 export function isSupportedMiniGameBlock(node: unknown): boolean {
   return canonicalMiniGameBlockType(node) != null;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return value != null && typeof value === "object" && !Array.isArray(value);
+}
+
+function isJsonValue(value: unknown): value is JsonValue {
+  if (
+    value == null ||
+    typeof value === "string" ||
+    typeof value === "number" ||
+    typeof value === "boolean"
+  ) {
+    return true;
+  }
+  if (Array.isArray(value)) return value.every(isJsonValue);
+  return isRecord(value) && Object.values(value).every(isJsonValue);
+}
+
+function toVariablePatch(value: unknown): VariablePatch | undefined {
+  if (!isRecord(value)) return undefined;
+  const entries = Object.entries(value).filter(([, item]) => isJsonValue(item));
+  return Object.fromEntries(entries) as VariablePatch;
+}
+
+/**
+ * Adapt permissive persisted node data to the stricter play-view contracts.
+ * This replaces unsafe casts at the preview boundary while preserving v1 defaults.
+ */
+export function buildRuntimeMiniGameBlock(
+  nodeId: string,
+  data: StoryNodeData
+): StoryPlayMiniGameBlock | null {
+  const title = typeof data.title === "string" ? data.title : undefined;
+  const prompt =
+    typeof data.prompt === "string"
+      ? data.prompt
+      : typeof data.content === "string"
+        ? data.content
+        : undefined;
+  const submitLabel =
+    typeof data.submitLabel === "string" ? data.submitLabel : undefined;
+  const options = Array.isArray(data.options) ? data.options : [];
+
+  switch (data.blockType) {
+    case "traitPicker": {
+      const traitOptions: TraitOption[] = options
+        .filter(isRecord)
+        .map((option, index) => ({
+          id:
+            typeof option.id === "string" && option.id
+              ? option.id
+              : `trait-${index + 1}`,
+          label: typeof option.label === "string" ? option.label : "",
+          ...(typeof option.description === "string"
+            ? { description: option.description }
+            : {}),
+          ...(toVariablePatch(option.effects)
+            ? { effects: toVariablePatch(option.effects) }
+            : {}),
+        }));
+
+      return {
+        id: nodeId,
+        type: "traitPicker",
+        title,
+        prompt,
+        submitLabel,
+        minSelections: data.minSelections ?? 0,
+        maxSelections: data.maxSelections ?? 2,
+        traitListVariable: data.traitListVariable,
+        continueNodeId: data.continueNodeId,
+        options: traitOptions,
+      };
+    }
+
+    case "persuasion":
+      return {
+        id: nodeId,
+        type: "persuasion",
+        title,
+        prompt,
+        submitLabel,
+        autoAdvance: data.autoAdvance,
+        targetName: data.targetName,
+        startScore: data.startScore ?? 50,
+        minScore: data.minScore ?? 0,
+        maxScore: data.maxScore ?? 100,
+        threshold: data.threshold ?? 75,
+        maxTurns: data.maxTurns ?? 3,
+        visibleMeter: data.visibleMeter ?? true,
+        scoreVariable: data.scoreVariable,
+        successVariable: data.successVariable,
+        successNodeId: data.successNodeId,
+        failureNodeId: data.failureNodeId,
+        choices: (data.choices || []).map((choice, index) => ({
+          id: choice.id || `line-${index + 1}`,
+          text: choice.text || choice.label || "",
+          delta: choice.delta ?? 0,
+          once: choice.once,
+          response: choice.response,
+        })),
+      };
+
+    case "choiceWeighting": {
+      const weightedOptions: WeightedOption[] = options
+        .filter(isRecord)
+        .map((option, index) => ({
+          id:
+            typeof option.id === "string" && option.id
+              ? option.id
+              : `option-${index + 1}`,
+          label: typeof option.label === "string" ? option.label : "",
+          ...(typeof option.min === "number" ? { min: option.min } : {}),
+          ...(typeof option.max === "number" ? { max: option.max } : {}),
+        }));
+
+      return {
+        id: nodeId,
+        type: "choiceWeighting",
+        title,
+        prompt,
+        submitLabel,
+        totalPoints: data.totalPoints ?? 10,
+        variablePrefix: data.variablePrefix,
+        resultVariable: data.resultVariable,
+        lockExactTotal: data.lockExactTotal ?? true,
+        continueNodeId: data.continueNodeId,
+        options: weightedOptions,
+      };
+    }
+
+    default:
+      return null;
+  }
 }
 
 /**

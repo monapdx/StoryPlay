@@ -27,7 +27,7 @@ export default function TraitPickerBlockView({
   }, [previewSessionNonce]);
 
   const minSelections = block.minSelections ?? 0;
-  const maxSelections = block.maxSelections ?? 1;
+  const maxSelections = block.maxSelections ?? 2;
   const options: TraitOption[] = Array.isArray(block.options) ? block.options : [];
 
   const prompt = block.prompt ?? block.content ?? "";

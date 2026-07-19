@@ -400,6 +400,13 @@ Guard: She's in the square.`}</DocPre>
         Every node should include <DocCode>type: "storyNode"</DocCode>. Positions are editor layout
         hints; play logic uses ids and choice targets.
       </DocP>
+      <DocP>
+        Variable values may be JSON primitives, arrays, or objects. Trait pickers use arrays for
+        selected trait ids, while choice-weighting blocks may write allocation objects. The schema
+        validates each known <DocCode>blockType</DocCode> with its matching branching choice, chat
+        reply, persuasion line, trait option, or weighting option shape; unknown node payload fields
+        remain allowed for forward compatibility.
+      </DocP>
     </>
   ),
 

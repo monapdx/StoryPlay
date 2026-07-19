@@ -15,6 +15,7 @@ import TraitPickerBlockView from "../blocks/TraitPickerBlockView";
 import PersuasionBlockView from "../blocks/PersuasionBlockView";
 import ChoiceWeightingBlockView from "../blocks/ChoiceWeightingBlockView";
 import PlayerStatsPanel from "./PlayerStatsPanel";
+import { buildRuntimeMiniGameBlock } from "../../utils/miniGameFromNode";
 import type {
   PlayHistoryEntry,
   UsePlayStateResult,
@@ -32,10 +33,7 @@ import type {
 } from "../../types/storyCore";
 import type { VariablePatch } from "../../types/storyBlocks";
 import type {
-  ChoiceWeightingBlock,
-  PersuasionBlock,
   StoryPlayMiniGameResult,
-  TraitPickerBlock,
 } from "../../types/minigames";
 
 export type StoryPreviewVariant = "default" | "dock" | "player";
@@ -81,7 +79,7 @@ type ResolvedPlayNodeData = StoryNodeData & {
 };
 
 function variablePatchToEffects(
-  variablePatch: VariablePatch | Record<string, unknown> = {}
+  variablePatch: VariablePatch = {}
 ): Effect[] {
   return Object.entries(variablePatch || {}).map(([variable, value]) => ({
     variable,
@@ -381,12 +379,17 @@ export default function StoryPreview({
 
   function renderMiniGameBlock() {
     if (!resolvedPlayNodeData) return null;
+    const runtimeBlock = buildRuntimeMiniGameBlock(
+      currentPlayNode?.id || "preview",
+      resolvedPlayNodeData
+    );
+    if (!runtimeBlock) return null;
 
-    switch (blockType) {
+    switch (runtimeBlock.type) {
       case "traitPicker":
         return (
           <TraitPickerBlockView
-            block={resolvedPlayNodeData as unknown as TraitPickerBlock}
+            block={runtimeBlock}
             previewSessionNonce={previewSessionNonce}
             onComplete={handleMiniGameComplete}
           />
@@ -395,7 +398,7 @@ export default function StoryPreview({
       case "persuasion":
         return (
           <PersuasionBlockView
-            block={resolvedPlayNodeData as unknown as PersuasionBlock}
+            block={runtimeBlock}
             onComplete={handleMiniGameComplete}
           />
         );
@@ -403,7 +406,7 @@ export default function StoryPreview({
       case "choiceWeighting":
         return (
           <ChoiceWeightingBlockView
-            block={resolvedPlayNodeData as unknown as ChoiceWeightingBlock}
+            block={runtimeBlock}
             previewSessionNonce={previewSessionNonce}
             onComplete={handleMiniGameComplete}
           />

@@ -26,13 +26,24 @@ export interface ChoiceConditionsEditorProps {
   onUpdate: (field: "conditions" | string, value: Condition[]) => void;
 }
 
+function toConditionValue(
+  value: unknown
+): string | number | boolean | null {
+  return value == null ||
+    typeof value === "string" ||
+    typeof value === "number" ||
+    typeof value === "boolean"
+    ? value ?? null
+    : "";
+}
+
 function getDefaultCondition(variables: StoryVariables): Condition {
   const firstVariable = Object.keys(variables || {})[0] || "";
 
   return {
     variable: firstVariable,
     operator: "equals",
-    value: firstVariable ? variables[firstVariable] : "",
+    value: firstVariable ? toConditionValue(variables[firstVariable]) : "",
   };
 }
 
@@ -84,7 +95,7 @@ export default function ChoiceConditionsEditor({
     if (field === "variable") {
       const nextVariableValue = variables[value as string];
       if (nextVariableValue !== undefined) {
-        next[index].value = nextVariableValue;
+        next[index].value = toConditionValue(nextVariableValue);
       }
     }
 

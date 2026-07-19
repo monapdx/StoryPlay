@@ -11,6 +11,7 @@
 
 import type { ChoiceKind } from "./choiceKinds";
 import type { MiniGameBlockType } from "./minigames";
+import type { StoryPlayGameExportV1 } from "./generated/storyplayExportV1";
 import type {
   Condition,
   Effect,
@@ -19,6 +20,15 @@ import type {
   VariableMetaMap,
 } from "./storyCore";
 
+export type {
+  BranchingChoice,
+  ChatReply,
+  JsonPrimitive,
+  JsonValue,
+  PersuasionLine,
+  TraitOption as StoryWireTraitOption,
+  WeightedOption as StoryWireWeightedOption,
+} from "./generated/storyplayExportV1";
 export type {
   ChoiceKind,
   Condition,
@@ -181,12 +191,13 @@ export interface StoryPlayExportMeta {
  * StoryPlay v1 export / import document envelope.
  * @see schemas/storyplay-export.v1.schema.json
  */
-export interface StoryPlayExportDocument {
-  formatVersion: number;
-  exportedAt?: string;
+export type StoryPlayExportDocument = Omit<
+  StoryPlayGameExportV1,
+  "meta" | "story"
+> & {
   meta?: StoryPlayExportMeta;
   story: Story;
-}
+};
 
 export interface StoryPlayImportSummary {
   formatVersion: number;

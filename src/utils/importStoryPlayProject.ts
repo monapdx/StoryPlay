@@ -4,9 +4,10 @@ import { normalizeStoryNode } from "./nodeHelpers";
 import {
   buildStoryPlayImportSummary,
   canonicalizeStoryPlayProject,
-  validateStoryGraphReferences,
   validateStoryPlayProjectShape,
 } from "./projectSchema";
+import { validateStoryPlayExportV1Schema } from "./storyPlaySchemaValidation";
+import { validateStoryPlaySemantics } from "./storySemanticValidation";
 import {
   migrateStoryPlayProject,
   UnsupportedFormatVersionError,
@@ -158,12 +159,27 @@ export function prepareStoryPlayImport(
     };
   }
 
+  const schemaResult = validateStoryPlayExportV1Schema(project);
+  errors.push(...schemaResult.errors);
+
+  if (errors.length > 0) {
+    return {
+      ok: false,
+      errors,
+      warnings,
+      summary: null,
+      story: null,
+      project: null,
+    };
+  }
+
   const story = normalizeImportedStory(project.story);
+  const normalizedProject = { ...project, story };
+  const semanticResult = validateStoryPlaySemantics(normalizedProject);
+  errors.push(...semanticResult.errors);
+  warnings.push(...semanticResult.warnings);
 
-  const referenceErrors = validateStoryGraphReferences(story.nodes);
-  errors.push(...referenceErrors);
-
-  const summary = buildStoryPlayImportSummary(project, story);
+  const summary = buildStoryPlayImportSummary(normalizedProject, story);
 
   return {
     ok: errors.length === 0,
@@ -171,7 +187,7 @@ export function prepareStoryPlayImport(
     warnings,
     summary,
     story: errors.length === 0 ? story : null,
-    project: errors.length === 0 ? project : null,
+    project: errors.length === 0 ? normalizedProject : null,
   };
 }
 
