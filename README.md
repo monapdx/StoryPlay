@@ -22,10 +22,6 @@ Design visually, preview instantly, organize characters and variables, validate 
 
 [![Trait Picker](https://img.shields.io/badge/%F0%9F%91%89Trait%20Picker-111111?style=for-the-badge)](#block-types) [![Persuasion](https://img.shields.io/badge/%E2%9C%A8Persuasion-111111?style=for-the-badge)](#block-types) [![Choice Weighting](https://img.shields.io/badge/%E2%9A%96%EF%B8%8FChoice%20Weighting-111111?style=for-the-badge)](#block-types)
 
-## Planned mini-games
-
-[![Word Jumbles](https://img.shields.io/badge/%F0%9F%94%A4%20Word%20Jumbles-111111?style=for-the-badge)](#) [![Riddles](https://img.shields.io/badge/%E2%9D%93Riddles-111111?style=for-the-badge)](#) [![Alchemy](https://img.shields.io/badge/%F0%9F%94%A5%20Alchemy-111111?style=for-the-badge)](#) [![City Builder](https://img.shields.io/badge/%F0%9F%8F%A1%20City%20Builder-111111?style=for-the-badge)](#) [![Cards](https://img.shields.io/badge/%E2%9F%A3%EF%B8%8F%20Cards-111111?style=for-the-badge)](#)
-
 ## Contents
 
 - [StoryPlay](#storyplay)
