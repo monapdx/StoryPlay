@@ -23,12 +23,19 @@ export type StoryEdgeProps = EdgeProps<StoryCanvasEdgeData>;
 
 function getEdgeVisuals(
   playState: string,
-  selected: boolean | undefined
+  selected: boolean | undefined,
+  linkKind: string
 ) {
+  // Non-choice links (continue/success/failure/timeout) are direct graph
+  // transitions, not player choices — render them dashed so authors can tell
+  // continuation edges apart from choice edges at a glance.
+  const isDirectLink = linkKind !== "choice";
+
   if (playState === "reachable") {
     return {
       stroke: "#22c55e",
       strokeWidth: selected ? 4 : 3,
+      dash: isDirectLink ? "7 5" : "0",
       labelBg: "rgba(20, 83, 45, 0.95)",
       labelBorder: "rgba(74, 222, 128, 0.45)",
       labelColor: "#dcfce7",
@@ -39,6 +46,7 @@ function getEdgeVisuals(
     return {
       stroke: "#f59e0b",
       strokeWidth: selected ? 4 : 3,
+      dash: "6 6",
       labelBg: "rgba(120, 53, 15, 0.95)",
       labelBorder: "rgba(251, 191, 36, 0.4)",
       labelColor: "#fef3c7",
@@ -46,8 +54,9 @@ function getEdgeVisuals(
   }
 
   return {
-    stroke: selected ? "#a78bfa" : "#94a3b8",
+    stroke: selected ? "#a78bfa" : isDirectLink ? "#7dd3fc" : "#94a3b8",
     strokeWidth: selected ? 3 : 2,
+    dash: isDirectLink ? "7 5" : "0",
     labelBg: "rgba(15, 23, 42, 0.9)",
     labelBorder: "rgba(255,255,255,0.08)",
     labelColor: "#e5e7eb",
@@ -76,7 +85,8 @@ export default function StoryEdge({
 
   const label = data?.label || "";
   const playState = data?.playState || "idle";
-  const visuals = getEdgeVisuals(playState, selected);
+  const linkKind = data?.linkKind || "choice";
+  const visuals = getEdgeVisuals(playState, selected, linkKind);
 
   return (
     <>
@@ -86,7 +96,7 @@ export default function StoryEdge({
         style={{
           stroke: visuals.stroke,
           strokeWidth: visuals.strokeWidth,
-          strokeDasharray: playState === "blocked" ? "6 6" : "0",
+          strokeDasharray: visuals.dash,
         }}
       />
 

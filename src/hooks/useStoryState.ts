@@ -42,7 +42,7 @@ import {
 } from "../utils/nodeGraphLinks";
 import {
   addChoiceToNodeInList,
-  connectNodesInList,
+  applyConnectionInList,
   removeChoiceFromNodeInList,
   removeEdgeFromList,
   updateChoiceOnNodeInList,
@@ -910,9 +910,10 @@ export default function useStoryState(): UseStoryStateResult {
     if (!sourceId || !targetId || sourceId === targetId) return;
 
     recordHistory({ immediate: true });
-    setNodesState((prevNodes) =>
-      connectNodesInList(prevNodes, sourceId, targetId)
-    );
+    // Route by source handle: generic drag → default transition (continueNodeId),
+    // a choice handle → that choice's target, success/failure/timeout → their
+    // link field. A generic connector never appends a new player choice.
+    setNodesState((prevNodes) => applyConnectionInList(prevNodes, connection));
 
     setSelectedNodeId(sourceId);
   }

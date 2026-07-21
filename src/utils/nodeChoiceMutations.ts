@@ -9,14 +9,29 @@
 
 import type { StoryChoice, StoryNode } from "../types/story";
 import { createChoiceId } from "./nodeHelpers";
-import { resolveEdgeRef } from "./nodeGraphLinks";
+import { CHOICE_HANDLE_PREFIX, resolveEdgeRef } from "./nodeGraphLinks";
 
-const LINK_FIELD_BY_KIND: Record<string, keyof StoryNode["data"]> = {
+/** Direct/graph transition fields set by non-choice connectors. */
+export type NodeLinkField =
+  | "continueNodeId"
+  | "successNodeId"
+  | "failureNodeId"
+  | "timeoutTargetNodeId";
+
+const LINK_FIELD_BY_KIND: Record<string, NodeLinkField> = {
   continue: "continueNodeId",
   success: "successNodeId",
   failure: "failureNodeId",
   timeout: "timeoutTargetNodeId",
 };
+
+/** Minimal React Flow connection shape (kept dependency-light for pure utils). */
+export interface GraphConnectionInput {
+  source?: string | null;
+  target?: string | null;
+  sourceHandle?: string | null;
+  targetHandle?: string | null;
+}
 
 /** Build a fresh blank choice for a node, matching its block type. */
 export function makeAddedChoice(blockType: string = "narrative"): StoryChoice {
@@ -114,52 +129,143 @@ export function removeChoiceFromNodeInList(
 }
 
 /**
- * Add a go-to choice on `sourceId` pointing at `targetId`. Skips creation if a
- * choice on the source already targets that node. Only the source node is
- * mutated — connecting A→B never adds a choice to B.
+ * Generic node connector: set the source node's direct/default transition
+ * (`continueNodeId`). This does NOT create a player-visible choice — an edge and
+ * a choice are different entities. Nothing on the source's `choices` is touched,
+ * and neither node's title/content changes.
  */
-export function connectNodesInList(
+export function connectDefaultTransitionInList(
   nodes: StoryNode[],
   sourceId: string,
   targetId: string
 ): StoryNode[] {
   if (!sourceId || !targetId || sourceId === targetId) return nodes;
 
-  const targetNode = nodes.find((node) => node.id === targetId);
-  const targetTitle = targetNode?.data?.title || "Next Block";
-
   return nodes.map((node) => {
     if (node.id !== sourceId) return node;
-
-    const existingChoices = node.data?.choices || [];
-    const alreadyExists = existingChoices.some(
-      (choice) => choice.targetNodeId === targetId
-    );
-    if (alreadyExists) return node;
-
-    const nextChoice: StoryChoice = {
-      id: createChoiceId(),
-      label: `Go to ${targetTitle}`,
-      targetNodeId: targetId,
-      conditions: [],
-      effects: [],
-    };
+    if (node.data?.continueNodeId === targetId) return node;
 
     return {
       ...node,
       data: {
         ...node.data,
-        choices: [...existingChoices, nextChoice],
+        continueNodeId: targetId,
       },
     };
   });
 }
 
 /**
- * Remove the exact link identified by `edgeId`. For choice edges this removes
- * only the owning choice (matched by its stable id), so deleting one of several
- * edges that share a source/target pair leaves the other choices intact. For
- * mini-game/timed links it clears the specific link field on the source node.
+ * Choice-specific connector: point an already-existing choice at a destination.
+ * Only that one choice's `targetNodeId` changes — no new choice is created and
+ * sibling choices are left untouched.
+ */
+export function connectExistingChoiceInList(
+  nodes: StoryNode[],
+  sourceId: string,
+  choiceId: string,
+  targetId: string
+): StoryNode[] {
+  if (!sourceId || !choiceId || !targetId) return nodes;
+
+  return nodes.map((node) => {
+    if (node.id !== sourceId) return node;
+
+    const existingChoices = node.data?.choices || [];
+    let changed = false;
+    const nextChoices = existingChoices.map((choice) => {
+      if (choice.id !== choiceId) return choice;
+      changed = true;
+      return { ...choice, targetNodeId: targetId };
+    });
+
+    if (!changed) return node;
+
+    return {
+      ...node,
+      data: {
+        ...node.data,
+        choices: nextChoices,
+      },
+    };
+  });
+}
+
+/**
+ * Specialized connector: set a single graph-link field
+ * (success / failure / timeout / continue) on the source node. Never touches
+ * `choices`.
+ */
+export function setSpecialNodeLinkInList(
+  nodes: StoryNode[],
+  sourceId: string,
+  field: NodeLinkField,
+  targetId: string
+): StoryNode[] {
+  if (!sourceId || !field || !targetId) return nodes;
+
+  return nodes.map((node) => {
+    if (node.id !== sourceId) return node;
+    if (node.data?.[field] === targetId) return node;
+
+    return {
+      ...node,
+      data: {
+        ...node.data,
+        [field]: targetId,
+      },
+    };
+  });
+}
+
+/**
+ * Route a React Flow connection to the correct mutation based on which source
+ * handle it was dragged from. This is the single place that decides whether a
+ * connector becomes a default transition, an existing-choice link, or a
+ * specialized link — a generic drag never becomes a new choice.
+ */
+export function applyConnectionInList(
+  nodes: StoryNode[],
+  connection: GraphConnectionInput | null | undefined
+): StoryNode[] {
+  const sourceId = connection?.source || "";
+  const targetId = connection?.target || "";
+  const sourceHandle = connection?.sourceHandle || "";
+
+  if (!sourceId || !targetId || sourceId === targetId) return nodes;
+
+  if (sourceHandle.startsWith(CHOICE_HANDLE_PREFIX)) {
+    const choiceId = sourceHandle.slice(CHOICE_HANDLE_PREFIX.length);
+    return connectExistingChoiceInList(nodes, sourceId, choiceId, targetId);
+  }
+
+  if (sourceHandle === "success") {
+    return setSpecialNodeLinkInList(nodes, sourceId, "successNodeId", targetId);
+  }
+
+  if (sourceHandle === "failure") {
+    return setSpecialNodeLinkInList(nodes, sourceId, "failureNodeId", targetId);
+  }
+
+  if (sourceHandle === "timeout") {
+    return setSpecialNodeLinkInList(
+      nodes,
+      sourceId,
+      "timeoutTargetNodeId",
+      targetId
+    );
+  }
+
+  // Generic node handle (id "continue" or unspecified) → default transition.
+  return connectDefaultTransitionInList(nodes, sourceId, targetId);
+}
+
+/**
+ * Remove the exact link identified by `edgeId`. An edge and a choice are not the
+ * same entity: deleting a choice edge clears only that choice's `targetNodeId`
+ * (the choice stays as an unconnected player option), matched by its stable id.
+ * Deleting a continuation / success / failure / timeout edge clears only that
+ * single link field on the source node.
  */
 export function removeEdgeFromList(
   nodes: StoryNode[],
@@ -173,11 +279,13 @@ export function removeEdgeFromList(
 
     if (ref.kind === "choice") {
       const existingChoices = node.data?.choices || [];
-      const nextChoices = ref.choiceId
-        ? existingChoices.filter((choice) => choice.id !== ref.choiceId)
-        : existingChoices.filter(
-            (choice) => choice.targetNodeId !== ref.targetNodeId
-          );
+      const nextChoices = existingChoices.map((choice) => {
+        const matches = ref.choiceId
+          ? choice.id === ref.choiceId
+          : choice.targetNodeId === ref.targetNodeId;
+        if (!matches) return choice;
+        return { ...choice, targetNodeId: "" };
+      });
 
       return {
         ...node,

@@ -184,6 +184,16 @@ export default function StoryPreview({
       (setterGateOpen &&
         (blockType === "traitPicker" || blockType === "choiceWeighting")));
 
+  // Direct/default transition for a narrative block. Rendered as a distinct
+  // "Continue" control — never synthesized into a player choice chip.
+  const narrativeContinueNodeId = String(
+    playNodeData?.continueNodeId || ""
+  ).trim();
+  const canNarrativeContinue =
+    blockType === "narrative" &&
+    !!narrativeContinueNodeId &&
+    !!nodesById[narrativeContinueNodeId];
+
   useEffect(() => {
     setSetterGateOpen(false);
   }, [currentPlayNode?.id]);
@@ -642,7 +652,17 @@ export default function StoryPreview({
           {showNarrativeChoiceList && (
             <div className="preview-choice-list">
               {visibleChoices.length === 0 ? (
-                <div className="muted">No available choices.</div>
+                canNarrativeContinue ? (
+                  <button
+                    type="button"
+                    className="toolbar-button preview-continue-button"
+                    onClick={() => goToNode(narrativeContinueNodeId, [])}
+                  >
+                    Continue →
+                  </button>
+                ) : (
+                  <div className="muted">No available choices.</div>
+                )
               ) : (
                 visibleChoices.map((choice, index) => (
                   <PlayChoiceButton

@@ -1,8 +1,13 @@
 import { Handle, Position, type NodeProps } from "reactflow";
-import type { MouseEvent } from "react";
+import type { CSSProperties, MouseEvent } from "react";
 import type { StoryChoice, StoryNodeData } from "../../types/story";
 import type { StoryCharacter } from "../../types/storyCore";
 import { renderStoryText } from "../../utils/storyReferences";
+import {
+  CONTINUE_HANDLE_ID,
+  INPUT_HANDLE_ID,
+  makeChoiceHandleId,
+} from "../../utils/nodeGraphLinks";
 
 /** Play highlight on canvas nodes (from StoryCanvas playStateMap). */
 export type StoryCanvasNodePlayState =
@@ -137,6 +142,51 @@ export default function StoryNode({ id, data, selected }: StoryNodeProps) {
   );
   const playState = data?.playState || "idle";
 
+  const isMiniGameBlock =
+    blockType === "traitPicker" ||
+    blockType === "persuasion" ||
+    blockType === "choiceWeighting";
+  const showChoiceHandles = blockType !== "persuasion";
+  const showSuccessHandle =
+    isMiniGameBlock || !!String(data?.successNodeId || "").trim();
+  const showFailureHandle =
+    isMiniGameBlock || !!String(data?.failureNodeId || "").trim();
+  const showTimeoutHandle =
+    blockType === "timed" || !!String(data?.timeoutTargetNodeId || "").trim();
+
+  // Every source handle has an explicit, stable id so connection routing can
+  // tell a generic transition drag apart from a specific choice/link drag.
+  const sourceHandles: Array<{ id: string; className: string }> = [
+    { id: CONTINUE_HANDLE_ID, className: "story-handle story-handle--continue" },
+  ];
+  if (showChoiceHandles) {
+    choices.forEach((choice) => {
+      if (!choice?.id) return;
+      sourceHandles.push({
+        id: makeChoiceHandleId(choice.id),
+        className: "story-handle story-handle--choice",
+      });
+    });
+  }
+  if (showSuccessHandle) {
+    sourceHandles.push({
+      id: "success",
+      className: "story-handle story-handle--success",
+    });
+  }
+  if (showFailureHandle) {
+    sourceHandles.push({
+      id: "failure",
+      className: "story-handle story-handle--failure",
+    });
+  }
+  if (showTimeoutHandle) {
+    sourceHandles.push({
+      id: "timeout",
+      className: "story-handle story-handle--timeout",
+    });
+  }
+
   const headerClass = `node-card-header ${
     blockType === "chat"
       ? "chat"
@@ -182,6 +232,7 @@ export default function StoryNode({ id, data, selected }: StoryNodeProps) {
         .join(" ")}
     >
       <Handle
+        id={INPUT_HANDLE_ID}
         type="target"
         position={Position.Left}
         className="story-handle"
@@ -266,12 +317,22 @@ export default function StoryNode({ id, data, selected }: StoryNodeProps) {
         </button>
       </div>
 
-      <Handle
-        type="source"
-        position={Position.Right}
-        className="story-handle"
-        isConnectable={true}
-      />
+      {sourceHandles.map((handle, index) => {
+        const style: CSSProperties = {
+          top: `${((index + 1) / (sourceHandles.length + 1)) * 100}%`,
+        };
+        return (
+          <Handle
+            key={handle.id}
+            id={handle.id}
+            type="source"
+            position={Position.Right}
+            className={handle.className}
+            style={style}
+            isConnectable={true}
+          />
+        );
+      })}
     </div>
   );
 }

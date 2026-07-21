@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 import type { StoryNode } from "../src/types/story";
 import {
   addChoiceToNodeInList,
-  connectNodesInList,
   removeChoiceFromNodeInList,
   removeEdgeFromList,
   updateChoiceOnNodeInList,
@@ -80,16 +79,6 @@ describe("node-id-based choice ownership", () => {
     expect(choicesOf(next, "A")).toHaveLength(1);
   });
 
-  it("connecting A to B creates a choice only on A", () => {
-    const nodes = baseNodes();
-    const next = connectNodesInList(nodes, "A", "B");
-
-    expect(choicesOf(next, "A")).toHaveLength(2);
-    expect(choicesOf(next, "A")[1].targetNodeId).toBe("B");
-    expect(choicesOf(next, "B")).toHaveLength(1);
-    expect(choicesOf(next, "B")[0].targetNodeId).toBe("");
-  });
-
   it("keeps existing connections stable when a choice is added elsewhere", () => {
     let nodes = normalizeStoryNodes([
       narrativeNode("A", [{ label: "to B", targetNodeId: "B" }]),
@@ -131,7 +120,7 @@ describe("edge identity and deletion", () => {
     expect(new Set(edges.map((edge) => edge.id)).size).toBe(2);
   });
 
-  it("deletes only the choice tied to a specific edge", () => {
+  it("clears only the targeted choice's destination and preserves the choice", () => {
     const nodes = normalizeStoryNodes([
       narrativeNode("A", [
         { label: "first", targetNodeId: "B" },
@@ -145,10 +134,13 @@ describe("edge identity and deletion", () => {
     );
     const next = removeEdgeFromList(nodes, edges[0].id);
 
+    // Both choices remain — an edge and a choice are not the same entity.
     const remaining = choicesOf(next, "A");
-    expect(remaining).toHaveLength(1);
-    expect(remaining[0].label).toBe("second");
-    expect(remaining[0].targetNodeId).toBe("B");
+    expect(remaining).toHaveLength(2);
+    expect(remaining[0].label).toBe("first");
+    expect(remaining[0].targetNodeId).toBe("");
+    expect(remaining[1].label).toBe("second");
+    expect(remaining[1].targetNodeId).toBe("B");
   });
 });
 

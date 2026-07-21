@@ -14,6 +14,8 @@ export interface NodeGraphLink {
   kind: NodeGraphLinkKind;
   /** Stable, unique React Flow edge id for this outgoing link. */
   edgeId: string;
+  /** React Flow source-handle id the edge should attach to / was dragged from. */
+  sourceHandle: string;
   /** Present for `choice` links: the source choice's stable id. */
   choiceId?: string;
 }
@@ -26,7 +28,15 @@ interface NodeGraphChoiceSource {
   text?: unknown;
 }
 
-const EDGE_ID_PREFIX = "edge";
+/** React Flow handle ids. Node connectors rely on these for routing. */
+export const INPUT_HANDLE_ID = "input";
+export const CONTINUE_HANDLE_ID = "continue";
+export const CHOICE_HANDLE_PREFIX = "choice:";
+
+/** Source-handle id for a specific choice (drag from this = edit that choice). */
+export function makeChoiceHandleId(choiceId: string): string {
+  return `${CHOICE_HANDLE_PREFIX}${choiceId}`;
+}
 
 /**
  * Stable edge id for a choice link, tied to the specific choice (not its array
@@ -36,15 +46,20 @@ export function makeChoiceEdgeId(
   sourceNodeId: string,
   choiceId: string
 ): string {
-  return `${EDGE_ID_PREFIX}__${sourceNodeId}__choice__${choiceId}`;
+  return `choice_${sourceNodeId}_${choiceId}`;
 }
 
-/** Stable edge id for a non-choice node link (continue/success/failure/timeout). */
+/**
+ * Stable edge id for a non-choice node link. Includes the link kind so
+ * continuation edges stay distinguishable from choice edges (and from each
+ * other) even when several point at the same target.
+ */
 export function makeLinkEdgeId(
+  kind: Exclude<NodeGraphLinkKind, "choice">,
   sourceNodeId: string,
-  kind: Exclude<NodeGraphLinkKind, "choice">
+  targetNodeId: string
 ): string {
-  return `${EDGE_ID_PREFIX}__${sourceNodeId}__${kind}`;
+  return `${kind}_${sourceNodeId}_${targetNodeId}`;
 }
 
 /** Minimal node shape read for outgoing graph links / edge building. */
@@ -64,6 +79,8 @@ export interface StoryGraphEdge {
   id: string;
   source: string;
   target: string;
+  sourceHandle: string;
+  targetHandle: string;
   type: "storyEdge";
   data: {
     label: string;
@@ -105,6 +122,7 @@ export function getNodeOutgoingLinks(
       kind: "choice",
       choiceId,
       edgeId: makeChoiceEdgeId(sourceNodeId, choiceId),
+      sourceHandle: makeChoiceHandleId(choiceId),
     });
   });
 
@@ -114,7 +132,8 @@ export function getNodeOutgoingLinks(
       targetNodeId: continueNodeId,
       label: "Continue",
       kind: "continue",
-      edgeId: makeLinkEdgeId(sourceNodeId, "continue"),
+      edgeId: makeLinkEdgeId("continue", sourceNodeId, continueNodeId),
+      sourceHandle: CONTINUE_HANDLE_ID,
     });
   }
 
@@ -124,7 +143,8 @@ export function getNodeOutgoingLinks(
       targetNodeId: successNodeId,
       label: "Success",
       kind: "success",
-      edgeId: makeLinkEdgeId(sourceNodeId, "success"),
+      edgeId: makeLinkEdgeId("success", sourceNodeId, successNodeId),
+      sourceHandle: "success",
     });
   }
 
@@ -134,7 +154,8 @@ export function getNodeOutgoingLinks(
       targetNodeId: failureNodeId,
       label: "Failure",
       kind: "failure",
-      edgeId: makeLinkEdgeId(sourceNodeId, "failure"),
+      edgeId: makeLinkEdgeId("failure", sourceNodeId, failureNodeId),
+      sourceHandle: "failure",
     });
   }
 
@@ -144,7 +165,8 @@ export function getNodeOutgoingLinks(
       targetNodeId: timeoutTargetNodeId,
       label: "Timeout",
       kind: "timeout",
-      edgeId: makeLinkEdgeId(sourceNodeId, "timeout"),
+      edgeId: makeLinkEdgeId("timeout", sourceNodeId, timeoutTargetNodeId),
+      sourceHandle: "timeout",
     });
   }
 
@@ -238,6 +260,10 @@ export function buildStoryEdgesFromNodes(
         // Missing ids stay undefined at runtime (same as the JS implementation).
         source: node.id as string,
         target: link.targetNodeId,
+        // Attach to the specific source handle so choice edges and the generic
+        // continuation edge stay visually and structurally distinct.
+        sourceHandle: link.sourceHandle,
+        targetHandle: INPUT_HANDLE_ID,
         type: "storyEdge",
         data: {
           label: renderLabel(link.label, renderContext),
