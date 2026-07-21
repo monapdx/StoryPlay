@@ -658,6 +658,28 @@ body {
   background: #f59e0b;
 }
 
+/* Conflict fallback: node has choices AND a default continuation. */
+.node-link-item--default .node-link-label {
+  color: #fde68a;
+  border-color: rgba(251, 191, 36, 0.5);
+  border-style: dashed;
+}
+
+.node-link-item--default .story-handle {
+  background: #a78bfa;
+}
+
+/* Hover affordance: highlight the choice row whose connector you are aiming at. */
+.node-choice-item:hover .node-choice-chip {
+  background: rgba(79, 70, 229, 0.35);
+  border-color: rgba(129, 140, 248, 0.7);
+}
+
+.node-choice-item:hover .story-handle--choice {
+  transform: scale(1.15);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.35);
+}
+
 .node-add-choice-button {
   margin-top: 10px;
   width: 100%;

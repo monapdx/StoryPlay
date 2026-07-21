@@ -6,12 +6,14 @@ import {
   removeChoiceFromNodeInList,
 } from "../src/utils/nodeChoiceMutations";
 import {
+  buildStoryEdgesFromNodes,
   CONTINUE_HANDLE_ID,
   INPUT_HANDLE_ID,
   makeChoiceHandleId,
 } from "../src/utils/nodeGraphLinks";
 import { getNodeHandleModel } from "../src/utils/nodeHandleModel";
 import { normalizeStoryNodes } from "../src/utils/nodeHelpers";
+import { analyzeStoryGraph } from "../src/utils/graphHealth";
 
 function node(
   id: string,
@@ -41,37 +43,36 @@ function choicesOf(nodes: StoryNode[], id: string) {
   return byId(nodes, id)?.data?.choices || [];
 }
 
-/**
- * The node's two outer connector dots are exactly the target (input) and the
- * generic continuation source. Choice and specialized handles are inline and
- * never counted here.
- */
-function outerHandleIds(data: StoryNode["data"]): string[] {
-  const model = getNodeHandleModel(data);
-  return [model.inputHandleId, model.continueHandleId];
+function modelFor(node: StoryNode) {
+  return getNodeHandleModel(node.data);
 }
 
-describe("outer node handles are constant", () => {
-  it("a node with zero choices has one input and one generic source", () => {
+describe("narrative continuation vs branching", () => {
+  it("a node with zero choices shows one input and one generic output", () => {
     const [a] = normalizeStoryNodes([node("A")]);
-    const model = getNodeHandleModel(a.data);
+    const model = modelFor(a);
 
     expect(model.inputHandleId).toBe(INPUT_HANDLE_ID);
-    expect(model.continueHandleId).toBe(CONTINUE_HANDLE_ID);
+    expect(model.continueHandle).not.toBeNull();
+    expect(model.continueHandle?.id).toBe(CONTINUE_HANDLE_ID);
+    expect(model.continueHandle?.isConflict).toBe(false);
     expect(model.choiceHandles).toHaveLength(0);
-    expect(outerHandleIds(a.data)).toEqual([INPUT_HANDLE_ID, CONTINUE_HANDLE_ID]);
+    expect(model.specialHandles).toHaveLength(0);
   });
 
-  it("a node with one choice still has only two outer handles", () => {
+  it("a node with one choice shows one choice handle and no generic output", () => {
     const [a] = normalizeStoryNodes([
       node("A", {}, [{ id: "c1", label: "one", targetNodeId: "" }]),
     ]);
+    const model = modelFor(a);
 
-    expect(outerHandleIds(a.data)).toEqual([INPUT_HANDLE_ID, CONTINUE_HANDLE_ID]);
-    expect(getNodeHandleModel(a.data).choiceHandles).toHaveLength(1);
+    expect(model.inputHandleId).toBe(INPUT_HANDLE_ID);
+    expect(model.choiceHandles).toHaveLength(1);
+    expect(model.choiceHandles[0].id).toBe(makeChoiceHandleId("c1"));
+    expect(model.continueHandle).toBeNull();
   });
 
-  it("a node with multiple choices still has only two outer handles", () => {
+  it("a node with multiple choices shows one handle per choice, no generic output", () => {
     const [a] = normalizeStoryNodes([
       node("A", {}, [
         { id: "c1", label: "one", targetNodeId: "" },
@@ -79,72 +80,64 @@ describe("outer node handles are constant", () => {
         { id: "c3", label: "three", targetNodeId: "" },
       ]),
     ]);
+    const model = modelFor(a);
 
-    expect(outerHandleIds(a.data)).toEqual([INPUT_HANDLE_ID, CONTINUE_HANDLE_ID]);
-    expect(getNodeHandleModel(a.data).choiceHandles).toHaveLength(3);
+    expect(model.choiceHandles.map((h) => h.choiceId)).toEqual([
+      "c1",
+      "c2",
+      "c3",
+    ]);
+    expect(model.continueHandle).toBeNull();
   });
 });
 
-describe("choice handles are associated with their choice", () => {
-  it("each choice handle id maps to the correct choice id", () => {
+describe("ending nodes", () => {
+  it("expose no source handles at all", () => {
+    const [a] = normalizeStoryNodes([node("A", { blockType: "ending" })]);
+    const model = modelFor(a);
+
+    expect(model.continueHandle).toBeNull();
+    expect(model.choiceHandles).toHaveLength(0);
+    expect(model.specialHandles).toHaveLength(0);
+  });
+
+  it("still expose no output even if legacy data left a continueNodeId", () => {
     const [a] = normalizeStoryNodes([
-      node("A", {}, [
-        { id: "c1", label: "one", targetNodeId: "" },
-        { id: "c2", label: "two", targetNodeId: "" },
-      ]),
+      node("A", { blockType: "ending", continueNodeId: "B" }),
     ]);
-
-    const model = getNodeHandleModel(a.data);
-    expect(model.choiceHandles).toEqual([
-      { id: makeChoiceHandleId("c1"), choiceId: "c1" },
-      { id: makeChoiceHandleId("c2"), choiceId: "c2" },
-    ]);
+    expect(modelFor(a).continueHandle).toBeNull();
   });
 });
 
-describe("adding / removing a choice does not change outer handles", () => {
-  it("adding a choice adds a choice handle but no outer dot", () => {
+describe("adding / removing choices toggles the generic continuation", () => {
+  it("adding the first choice hides the generic continuation handle", () => {
+    const nodes = normalizeStoryNodes([node("A")]);
+    expect(modelFor(byId(nodes, "A")!).continueHandle).not.toBeNull();
+
+    const after = addChoiceToNodeInList(nodes, "A");
+    const model = modelFor(byId(after, "A")!);
+
+    expect(model.continueHandle).toBeNull();
+    expect(model.choiceHandles).toHaveLength(1);
+  });
+
+  it("removing the final choice restores the generic continuation handle", () => {
     const nodes = normalizeStoryNodes([
       node("A", {}, [{ id: "c1", label: "one", targetNodeId: "" }]),
     ]);
+    expect(modelFor(byId(nodes, "A")!).continueHandle).toBeNull();
 
-    const before = getNodeHandleModel(byId(nodes, "A")!.data);
-    const after = getNodeHandleModel(
-      byId(addChoiceToNodeInList(nodes, "A"), "A")!.data
-    );
+    const after = removeChoiceFromNodeInList(nodes, "A", 0);
+    const model = modelFor(byId(after, "A")!);
 
-    // Outer handles are byte-for-byte identical.
-    expect([after.inputHandleId, after.continueHandleId]).toEqual([
-      before.inputHandleId,
-      before.continueHandleId,
-    ]);
-    // One extra choice handle appeared inline.
-    expect(after.choiceHandles).toHaveLength(before.choiceHandles.length + 1);
-  });
-
-  it("removing a choice removes its inline handle but keeps outer handles", () => {
-    const nodes = normalizeStoryNodes([
-      node("A", {}, [
-        { id: "c1", label: "one", targetNodeId: "" },
-        { id: "c2", label: "two", targetNodeId: "" },
-      ]),
-    ]);
-
-    const after = getNodeHandleModel(
-      byId(removeChoiceFromNodeInList(nodes, "A", 0), "A")!.data
-    );
-
-    expect([after.inputHandleId, after.continueHandleId]).toEqual([
-      INPUT_HANDLE_ID,
-      CONTINUE_HANDLE_ID,
-    ]);
-    expect(after.choiceHandles).toHaveLength(1);
-    expect(after.choiceHandles[0].choiceId).toBe("c2");
+    expect(model.choiceHandles).toHaveLength(0);
+    expect(model.continueHandle).not.toBeNull();
+    expect(model.continueHandle?.isConflict).toBe(false);
   });
 });
 
 describe("generic and choice connections stay separate", () => {
-  it("connecting a choice handle updates only that choice's targetNodeId", () => {
+  it("connecting a choice handle updates only the matching choice", () => {
     const nodes = normalizeStoryNodes([
       node("A", {}, [
         { id: "c1", label: "one", targetNodeId: "" },
@@ -161,15 +154,11 @@ describe("generic and choice connections stay separate", () => {
 
     expect(choicesOf(next, "A")[0].targetNodeId).toBe("B");
     expect(choicesOf(next, "A")[1].targetNodeId).toBe("");
-    // The direct-continuation field is untouched.
     expect(byId(next, "A")?.data?.continueNodeId ?? "").toBe("");
   });
 
-  it("connecting the generic right-side handle updates only continueNodeId", () => {
-    const nodes = normalizeStoryNodes([
-      node("A", {}, [{ id: "c1", label: "one", targetNodeId: "" }]),
-      node("B"),
-    ]);
+  it("connecting the generic handle works on a node without choices", () => {
+    const nodes = normalizeStoryNodes([node("A"), node("B")]);
 
     const next = applyConnectionInList(nodes, {
       source: "A",
@@ -178,55 +167,159 @@ describe("generic and choice connections stay separate", () => {
     });
 
     expect(byId(next, "A")?.data?.continueNodeId).toBe("B");
-    // No choice was mutated or created.
-    expect(choicesOf(next, "A")).toHaveLength(1);
-    expect(choicesOf(next, "A")[0].targetNodeId).toBe("");
+    expect(choicesOf(next, "A")).toHaveLength(0);
   });
 });
 
-describe("specialized (mini-game / timed) handles", () => {
-  it("a timed block exposes a labeled timeout handle", () => {
-    const [a] = normalizeStoryNodes([node("A", { blockType: "timed" })]);
-    const model = getNodeHandleModel(a.data);
+describe("choices + default continuation conflict", () => {
+  it("surfaces a labeled fallback handle without destroying data", () => {
+    const [a] = normalizeStoryNodes([
+      node("A", { continueNodeId: "B" }, [
+        { id: "c1", label: "branch", targetNodeId: "C" },
+      ]),
+    ]);
+    const model = modelFor(a);
 
-    const timeout = model.specialHandles.find((h) => h.id === "timeout");
-    expect(timeout).toBeDefined();
-    expect(timeout!.label).toBe("Timeout");
+    // Both surfaces exist; nothing was deleted from the data.
+    expect(a.data?.continueNodeId).toBe("B");
+    expect(a.data?.choices).toHaveLength(1);
+
+    expect(model.choiceHandles).toHaveLength(1);
+    expect(model.continueHandle).not.toBeNull();
+    expect(model.continueHandle?.isConflict).toBe(true);
+    expect(model.continueHandle?.label).toBe("Default");
+    expect(model.hasContinuationConflict).toBe(true);
   });
 
-  it("a persuasion block exposes labeled success and failure handles", () => {
-    const [a] = normalizeStoryNodes([node("A", { blockType: "persuasion" })]);
-    const model = getNodeHandleModel(a.data);
+  it("emits a graph diagnostic when both exist", () => {
+    const nodes = normalizeStoryNodes([
+      node("A", { isStart: true, continueNodeId: "B" }, [
+        { id: "c1", label: "branch", targetNodeId: "C" },
+      ]),
+      node("B"),
+      node("C"),
+    ]);
 
-    const ids = model.specialHandles.map((h) => h.id);
-    expect(ids).toContain("success");
-    expect(ids).toContain("failure");
-    // Persuasion "choices" never become graph connection handles.
+    const codes = analyzeStoryGraph(nodes, {}).map((issue) => issue.code);
+    expect(codes).toContain("choices-and-default-continuation");
+  });
+
+  it("does not flag a plain linear node", () => {
+    const nodes = normalizeStoryNodes([
+      node("A", { isStart: true, continueNodeId: "B" }),
+      node("B"),
+    ]);
+
+    const codes = analyzeStoryGraph(nodes, {}).map((issue) => issue.code);
+    expect(codes).not.toContain("choices-and-default-continuation");
+  });
+});
+
+describe("specialized block handles", () => {
+  it("a persuasion block exposes labeled success and failure, no choices", () => {
+    const [a] = normalizeStoryNodes([
+      node("A", { blockType: "persuasion" }, [
+        { id: "line1", text: "flatter", delta: 10 },
+      ]),
+    ]);
+    const model = modelFor(a);
+
+    expect(model.specialHandles.map((h) => h.id)).toEqual([
+      "success",
+      "failure",
+    ]);
     expect(model.choiceHandles).toHaveLength(0);
+    expect(model.continueHandle).toBeNull();
+  });
+
+  it("a timed block exposes a labeled timeout plus its choice handles", () => {
+    const [a] = normalizeStoryNodes([
+      node("A", { blockType: "timed", timeoutTargetNodeId: "Z" }, [
+        { id: "c1", label: "run", targetNodeId: "" },
+      ]),
+    ]);
+    const model = modelFor(a);
+
+    expect(model.specialHandles.map((h) => h.id)).toContain("timeout");
+    expect(model.choiceHandles).toHaveLength(1);
+    // Branches through choices, so no generic continuation.
+    expect(model.continueHandle).toBeNull();
+  });
+
+  it("trait/weighting mini-games advance via a single continuation output", () => {
+    const [trait] = normalizeStoryNodes([node("A", { blockType: "traitPicker" })]);
+    const [weight] = normalizeStoryNodes([
+      node("B", { blockType: "choiceWeighting" }),
+    ]);
+
+    expect(modelFor(trait).continueHandle?.label).toBe("Continue");
+    expect(modelFor(trait).specialHandles).toHaveLength(0);
+    expect(modelFor(weight).continueHandle?.label).toBe("Continue");
+    expect(modelFor(weight).specialHandles).toHaveLength(0);
+  });
+
+  it("specialized connectors remain functional and isolated", () => {
+    const nodes = normalizeStoryNodes([
+      node("A", { blockType: "persuasion" }),
+      node("B"),
+      node("C"),
+    ]);
+
+    const withSuccess = applyConnectionInList(nodes, {
+      source: "A",
+      target: "B",
+      sourceHandle: "success",
+    });
+    const withBoth = applyConnectionInList(withSuccess, {
+      source: "A",
+      target: "C",
+      sourceHandle: "failure",
+    });
+
+    expect(byId(withBoth, "A")?.data?.successNodeId).toBe("B");
+    expect(byId(withBoth, "A")?.data?.failureNodeId).toBe("C");
   });
 
   it("multiple specialized handles are visually distinguishable", () => {
     const [a] = normalizeStoryNodes([
       node("A", {
-        blockType: "narrative",
         successNodeId: "B",
         failureNodeId: "C",
         timeoutTargetNodeId: "D",
       }),
     ]);
-
-    const model = getNodeHandleModel(a.data);
-    const labels = model.specialHandles.map((h) => h.label);
+    const model = modelFor(a);
     const ids = model.specialHandles.map((h) => h.id);
+    const labels = model.specialHandles.map((h) => h.label);
 
-    // Distinct ids and distinct human labels — no repeated anonymous dots.
     expect(new Set(ids).size).toBe(ids.length);
-    expect(new Set(labels).size).toBe(labels.length);
     expect(labels).toEqual(["Success", "Failure", "Timeout"]);
   });
+});
 
-  it("specialized handles appear only when a link exists or the block needs them", () => {
-    const [plain] = normalizeStoryNodes([node("A")]);
-    expect(getNodeHandleModel(plain.data).specialHandles).toHaveLength(0);
+describe("edge labels stay attached to their choices", () => {
+  it("each choice edge carries that choice's label", () => {
+    const nodes = normalizeStoryNodes([
+      node("A", {}, [
+        { id: "c1", label: "Pick left", targetNodeId: "B" },
+        { id: "c2", label: "Pick right", targetNodeId: "C" },
+      ]),
+      node("B"),
+      node("C"),
+    ]);
+
+    const edges = buildStoryEdgesFromNodes(nodes).filter(
+      (edge) => edge.source === "A" && edge.data.linkKind === "choice"
+    );
+
+    const left = edges.find(
+      (edge) => edge.sourceHandle === makeChoiceHandleId("c1")
+    );
+    const right = edges.find(
+      (edge) => edge.sourceHandle === makeChoiceHandleId("c2")
+    );
+
+    expect(left?.data.label).toBe("Pick left");
+    expect(right?.data.label).toBe("Pick right");
   });
 });

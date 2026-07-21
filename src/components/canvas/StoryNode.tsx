@@ -3,7 +3,7 @@ import type { MouseEvent } from "react";
 import type { StoryChoice, StoryNodeData } from "../../types/story";
 import type { StoryCharacter } from "../../types/storyCore";
 import { renderStoryText } from "../../utils/storyReferences";
-import { CONTINUE_HANDLE_ID, INPUT_HANDLE_ID } from "../../utils/nodeGraphLinks";
+import { INPUT_HANDLE_ID } from "../../utils/nodeGraphLinks";
 import { getNodeHandleModel } from "../../utils/nodeHandleModel";
 
 /** Play highlight on canvas nodes (from StoryCanvas playStateMap). */
@@ -139,13 +139,24 @@ export default function StoryNode({ id, data, selected }: StoryNodeProps) {
   );
   const playState = data?.playState || "idle";
 
-  // Outer handles are always just input (left) + continue (right). Choice and
-  // specialized handles are rendered inline next to what they control, so the
-  // node border never sprouts a variable number of anonymous dots.
+  // Connector visibility is derived, not fixed: a branching node shows one
+  // handle per choice and no generic output; a linear node shows a single
+  // continuation output; specialized links are labeled rows. See
+  // getNodeHandleModel for the full rules.
   const handleModel = getNodeHandleModel(data);
   const choiceHandleById = new Map(
-    handleModel.choiceHandles.map((handle) => [handle.choiceId, handle.id])
+    handleModel.choiceHandles.map((handle) => [handle.choiceId, handle])
   );
+
+  const continueHandle = handleModel.continueHandle;
+  // A linear continuation renders as the single outer right dot; a conflicting
+  // one (choices + default) renders as a clearly labeled "Default" row instead.
+  const linearContinueHandle =
+    continueHandle && !continueHandle.isConflict ? continueHandle : null;
+  const conflictContinueHandle =
+    continueHandle && continueHandle.isConflict ? continueHandle : null;
+  const showLinkRows =
+    handleModel.specialHandles.length > 0 || !!conflictContinueHandle;
 
   const headerClass = `node-card-header ${
     blockType === "chat"
@@ -246,9 +257,10 @@ export default function StoryNode({ id, data, selected }: StoryNodeProps) {
         {choices.length > 0 && (
           <div className="node-choice-strip">
             {choices.map((choice, index) => {
-              const choiceHandleId = choice.id
+              const choiceHandle = choice.id
                 ? choiceHandleById.get(choice.id)
                 : undefined;
+              const choiceLabel = choice.label || "Untitled choice";
 
               return (
                 <div
@@ -261,18 +273,16 @@ export default function StoryNode({ id, data, selected }: StoryNodeProps) {
                     title={buildChoiceTitle(choice)}
                     type="button"
                   >
-                    {renderStoryText(
-                      choice.label || "Untitled choice",
-                      renderContext
-                    )}
+                    {renderStoryText(choiceLabel, renderContext)}
                   </button>
 
-                  {choiceHandleId && (
+                  {choiceHandle && (
                     <Handle
-                      id={choiceHandleId}
+                      id={choiceHandle.id}
                       type="source"
                       position={Position.Right}
                       className="story-handle story-handle--choice"
+                      title={`Connect “${choiceHandle.label || choiceLabel}”`}
                       isConnectable={true}
                     />
                   )}
@@ -282,8 +292,26 @@ export default function StoryNode({ id, data, selected }: StoryNodeProps) {
           </div>
         )}
 
-        {handleModel.specialHandles.length > 0 && (
+        {showLinkRows && (
           <div className="node-link-rows">
+            {conflictContinueHandle && (
+              <div
+                className="node-link-item node-link-item--default"
+                title="Connect default continuation. This block also has choices — the default is a fallback path."
+              >
+                <span className="node-link-label">
+                  {conflictContinueHandle.label}
+                </span>
+                <Handle
+                  id={conflictContinueHandle.id}
+                  type="source"
+                  position={Position.Right}
+                  className="story-handle story-handle--continue"
+                  isConnectable={true}
+                />
+              </div>
+            )}
+
             {handleModel.specialHandles.map((handle) => (
               <div
                 className={`node-link-item node-link-item--${handle.id}`}
@@ -311,14 +339,21 @@ export default function StoryNode({ id, data, selected }: StoryNodeProps) {
         </button>
       </div>
 
-      {/* The single generic continuation output — one of the two outer dots. */}
-      <Handle
-        id={CONTINUE_HANDLE_ID}
-        type="source"
-        position={Position.Right}
-        className="story-handle story-handle--continue"
-        isConnectable={true}
-      />
+      {/*
+        The generic continuation output appears as the single outer right dot
+        only for linear blocks (no choices). Branching nodes intentionally omit
+        it so choices are the only visible outgoing paths.
+      */}
+      {linearContinueHandle && (
+        <Handle
+          id={linearContinueHandle.id}
+          type="source"
+          position={Position.Right}
+          className="story-handle story-handle--continue"
+          title="Connect default continuation"
+          isConnectable={true}
+        />
+      )}
     </div>
   );
 }

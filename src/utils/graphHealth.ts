@@ -197,6 +197,19 @@ export function analyzeStoryGraph(
       }
     }
 
+    const continueTarget = String(node.data?.continueNodeId || "").trim();
+    const branchingChoiceCount = choices.filter((choice) =>
+      isBranchingGoToChoice(choice, blockType)
+    ).length;
+    if (continueTarget && branchingChoiceCount > 0) {
+      issues.push({
+        severity: "warning",
+        nodeId: node.id,
+        code: "choices-and-default-continuation",
+        message: `Node "${node.data?.title || node.id}" has both choices and a default continuation.`,
+      });
+    }
+
     for (const choice of choices) {
       const choiceKind = getChoiceKind(choice, blockType);
       const choiceLabel = (choice.label ||
