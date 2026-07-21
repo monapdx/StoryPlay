@@ -1,13 +1,10 @@
 import { Handle, Position, type NodeProps } from "reactflow";
-import type { CSSProperties, MouseEvent } from "react";
+import type { MouseEvent } from "react";
 import type { StoryChoice, StoryNodeData } from "../../types/story";
 import type { StoryCharacter } from "../../types/storyCore";
 import { renderStoryText } from "../../utils/storyReferences";
-import {
-  CONTINUE_HANDLE_ID,
-  INPUT_HANDLE_ID,
-  makeChoiceHandleId,
-} from "../../utils/nodeGraphLinks";
+import { CONTINUE_HANDLE_ID, INPUT_HANDLE_ID } from "../../utils/nodeGraphLinks";
+import { getNodeHandleModel } from "../../utils/nodeHandleModel";
 
 /** Play highlight on canvas nodes (from StoryCanvas playStateMap). */
 export type StoryCanvasNodePlayState =
@@ -142,50 +139,13 @@ export default function StoryNode({ id, data, selected }: StoryNodeProps) {
   );
   const playState = data?.playState || "idle";
 
-  const isMiniGameBlock =
-    blockType === "traitPicker" ||
-    blockType === "persuasion" ||
-    blockType === "choiceWeighting";
-  const showChoiceHandles = blockType !== "persuasion";
-  const showSuccessHandle =
-    isMiniGameBlock || !!String(data?.successNodeId || "").trim();
-  const showFailureHandle =
-    isMiniGameBlock || !!String(data?.failureNodeId || "").trim();
-  const showTimeoutHandle =
-    blockType === "timed" || !!String(data?.timeoutTargetNodeId || "").trim();
-
-  // Every source handle has an explicit, stable id so connection routing can
-  // tell a generic transition drag apart from a specific choice/link drag.
-  const sourceHandles: Array<{ id: string; className: string }> = [
-    { id: CONTINUE_HANDLE_ID, className: "story-handle story-handle--continue" },
-  ];
-  if (showChoiceHandles) {
-    choices.forEach((choice) => {
-      if (!choice?.id) return;
-      sourceHandles.push({
-        id: makeChoiceHandleId(choice.id),
-        className: "story-handle story-handle--choice",
-      });
-    });
-  }
-  if (showSuccessHandle) {
-    sourceHandles.push({
-      id: "success",
-      className: "story-handle story-handle--success",
-    });
-  }
-  if (showFailureHandle) {
-    sourceHandles.push({
-      id: "failure",
-      className: "story-handle story-handle--failure",
-    });
-  }
-  if (showTimeoutHandle) {
-    sourceHandles.push({
-      id: "timeout",
-      className: "story-handle story-handle--timeout",
-    });
-  }
+  // Outer handles are always just input (left) + continue (right). Choice and
+  // specialized handles are rendered inline next to what they control, so the
+  // node border never sprouts a variable number of anonymous dots.
+  const handleModel = getNodeHandleModel(data);
+  const choiceHandleById = new Map(
+    handleModel.choiceHandles.map((handle) => [handle.choiceId, handle.id])
+  );
 
   const headerClass = `node-card-header ${
     blockType === "chat"
@@ -285,26 +245,60 @@ export default function StoryNode({ id, data, selected }: StoryNodeProps) {
 
         {choices.length > 0 && (
           <div className="node-choice-strip">
-            {choices.slice(0, 3).map((choice, index) => (
-              <button
-                key={`${choice.label || "choice"}-${choice.targetNodeId || "none"}-${index}`}
-                className="node-choice-chip"
-                onClick={(event) => handleChoiceClick(event, choice)}
-                title={buildChoiceTitle(choice)}
-                type="button"
-              >
-                {renderStoryText(
-                  choice.label || "Untitled choice",
-                  renderContext
-                )}
-              </button>
-            ))}
+            {choices.map((choice, index) => {
+              const choiceHandleId = choice.id
+                ? choiceHandleById.get(choice.id)
+                : undefined;
 
-            {choices.length > 3 && (
-              <span className="node-choice-more">
-                +{choices.length - 3} more
-              </span>
-            )}
+              return (
+                <div
+                  className="node-choice-item"
+                  key={choice.id || `${choice.label || "choice"}-${index}`}
+                >
+                  <button
+                    className="node-choice-chip"
+                    onClick={(event) => handleChoiceClick(event, choice)}
+                    title={buildChoiceTitle(choice)}
+                    type="button"
+                  >
+                    {renderStoryText(
+                      choice.label || "Untitled choice",
+                      renderContext
+                    )}
+                  </button>
+
+                  {choiceHandleId && (
+                    <Handle
+                      id={choiceHandleId}
+                      type="source"
+                      position={Position.Right}
+                      className="story-handle story-handle--choice"
+                      isConnectable={true}
+                    />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {handleModel.specialHandles.length > 0 && (
+          <div className="node-link-rows">
+            {handleModel.specialHandles.map((handle) => (
+              <div
+                className={`node-link-item node-link-item--${handle.id}`}
+                key={handle.id}
+              >
+                <span className="node-link-label">{handle.label}</span>
+                <Handle
+                  id={handle.id}
+                  type="source"
+                  position={Position.Right}
+                  className={`story-handle story-handle--${handle.id}`}
+                  isConnectable={true}
+                />
+              </div>
+            ))}
           </div>
         )}
 
@@ -317,22 +311,14 @@ export default function StoryNode({ id, data, selected }: StoryNodeProps) {
         </button>
       </div>
 
-      {sourceHandles.map((handle, index) => {
-        const style: CSSProperties = {
-          top: `${((index + 1) / (sourceHandles.length + 1)) * 100}%`,
-        };
-        return (
-          <Handle
-            key={handle.id}
-            id={handle.id}
-            type="source"
-            position={Position.Right}
-            className={handle.className}
-            style={style}
-            isConnectable={true}
-          />
-        );
-      })}
+      {/* The single generic continuation output — one of the two outer dots. */}
+      <Handle
+        id={CONTINUE_HANDLE_ID}
+        type="source"
+        position={Position.Right}
+        className="story-handle story-handle--continue"
+        isConnectable={true}
+      />
     </div>
   );
 }

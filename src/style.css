@@ -548,13 +548,22 @@ body {
 
 .node-choice-strip {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 6px;
   margin-top: 10px;
 }
 
+.node-choice-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .node-choice-chip {
-  max-width: 140px;
+  flex: 1 1 auto;
+  min-width: 0;
+  text-align: left;
   border: 1px solid rgba(255, 255, 255, 0.1);
   background: rgba(55, 65, 81, 0.75);
   color: #e5e7eb;
@@ -572,10 +581,81 @@ body {
   border-color: rgba(129, 140, 248, 0.7);
 }
 
-.node-choice-more {
-  font-size: 0.72rem;
-  color: #9ca3af;
-  padding: 4px 2px;
+/*
+ * Choice / specialized handles live beside the row they control — never on the
+ * outer node border. The compound selectors outrank react-flow's
+ * .react-flow__handle(-right) offsets so the dots stay inline.
+ */
+.node-choice-item .story-handle--choice {
+  position: relative;
+  right: auto;
+  left: auto;
+  top: auto;
+  transform: none;
+  flex: 0 0 auto;
+  background: #38bdf8;
+}
+
+.node-link-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.node-link-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.node-link-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #cbd5e1;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  padding: 2px 8px;
+  background: rgba(15, 23, 42, 0.6);
+}
+
+.node-link-item .story-handle {
+  position: relative;
+  right: auto;
+  left: auto;
+  top: auto;
+  transform: none;
+  flex: 0 0 auto;
+}
+
+.node-link-item--success .node-link-label {
+  color: #bbf7d0;
+  border-color: rgba(74, 222, 128, 0.4);
+}
+
+.node-link-item--failure .node-link-label {
+  color: #fecaca;
+  border-color: rgba(248, 113, 113, 0.4);
+}
+
+.node-link-item--timeout .node-link-label {
+  color: #fde68a;
+  border-color: rgba(251, 191, 36, 0.4);
+}
+
+.node-link-item--success .story-handle {
+  background: #22c55e;
+}
+
+.node-link-item--failure .story-handle {
+  background: #ef4444;
+}
+
+.node-link-item--timeout .story-handle {
+  background: #f59e0b;
 }
 
 .node-add-choice-button {
