@@ -40,7 +40,14 @@ import {
   buildStoryEdgesFromNodes,
   type StoryGraphEdge,
 } from "../utils/nodeGraphLinks";
-import { normalizeStoryNodes } from "../utils/nodeHelpers";
+import {
+  addChoiceToNodeInList,
+  connectNodesInList,
+  removeChoiceFromNodeInList,
+  removeEdgeFromList,
+  updateChoiceOnNodeInList,
+} from "../utils/nodeChoiceMutations";
+import { ensureChoiceIds, normalizeStoryNodes } from "../utils/nodeHelpers";
 import { createCharacter, normalizeCharacters } from "../utils/storyEntities";
 import { saveEditorProject, loadEditorProject } from "../utils/storyProjectStorage";
 import { renderStoryText } from "../utils/storyReferences";
@@ -137,6 +144,16 @@ export interface UseStoryStateResult {
   updateSelectedNodeField: (field: string, value: unknown) => void;
   applyMiniGameToSelectedNode: (updatedMiniGame: unknown) => void;
   deleteSelectedNode: () => void;
+  /** Node-id-based choice mutations — apply to the given node, not the selection. */
+  addChoiceToNode: (nodeId: string) => void;
+  updateChoiceOnNode: (
+    nodeId: string,
+    index: number,
+    field: string,
+    value: unknown
+  ) => void;
+  removeChoiceFromNode: (nodeId: string, index: number) => void;
+  /** Convenience wrappers for the sidebar/inspector, which edits the selection. */
   addChoiceToSelectedNode: () => void;
   addMultipleChoicesToSelectedNode: (
     rawCount: unknown
@@ -166,10 +183,6 @@ export interface UseStoryStateResult {
 
 function makeNodeId(): string {
   return `node_${Math.random().toString(36).slice(2, 10)}`;
-}
-
-function makeChoiceLabel(targetTitle = "Next Block"): string {
-  return `Go to ${targetTitle}`;
 }
 
 function buildEdgesFromNodes(
@@ -584,38 +597,42 @@ export default function useStoryState(): UseStoryStateResult {
     });
   }
 
-  function addChoiceToSelectedNode() {
-    if (!selectedNodeId) return;
+  /**
+   * Append a blank choice to a specific node. The node id is supplied by the
+   * caller (e.g. a node's own "+ Choice" button), so the mutation never depends
+   * on the asynchronously-updated selected node.
+   */
+  function addChoiceToNode(nodeId: string) {
+    if (!nodeId) return;
 
     recordHistory({ immediate: true });
+    setNodesState((prev) => addChoiceToNodeInList(prev, nodeId));
+  }
+
+  function updateChoiceOnNode(
+    nodeId: string,
+    index: number,
+    field: string,
+    value: unknown
+  ) {
+    if (!nodeId) return;
+
+    recordHistory();
     setNodesState((prev) =>
-      prev.map((node) => {
-        if (node.id !== selectedNodeId) return node;
-
-        const existingChoices = node.data?.choices || [];
-        const blockType = node.data?.blockType || "narrative";
-        const isChatBlock = blockType === "chat";
-
-        return {
-          ...node,
-          data: {
-            ...node.data,
-            choices: [
-              ...existingChoices,
-              {
-                label: isChatBlock ? "New reply" : "New Choice",
-                choiceKind: isChatBlock ? "chatReply" : "goTo",
-                playerMessage: "",
-                npcResponse: "",
-                targetNodeId: "",
-                conditions: [],
-                effects: [],
-              },
-            ],
-          },
-        };
-      })
+      updateChoiceOnNodeInList(prev, nodeId, index, field, value)
     );
+  }
+
+  function removeChoiceFromNode(nodeId: string, index: number) {
+    if (!nodeId) return;
+
+    recordHistory({ immediate: true });
+    setNodesState((prev) => removeChoiceFromNodeInList(prev, nodeId, index));
+  }
+
+  function addChoiceToSelectedNode() {
+    if (!selectedNodeId) return;
+    addChoiceToNode(selectedNodeId);
   }
 
   /**
@@ -876,53 +893,12 @@ export default function useStoryState(): UseStoryStateResult {
     value: unknown
   ) {
     if (!selectedNodeId) return;
-
-    recordHistory();
-    setNodesState((prev) =>
-      prev.map((node) => {
-        if (node.id !== selectedNodeId) return node;
-
-        const nextChoices = [...(node.data?.choices || [])];
-        const currentChoice = nextChoices[index];
-
-        if (!currentChoice) return node;
-
-        nextChoices[index] = {
-          ...currentChoice,
-          [field]: value,
-        };
-
-        return {
-          ...node,
-          data: {
-            ...node.data,
-            choices: nextChoices,
-          },
-        };
-      })
-    );
+    updateChoiceOnNode(selectedNodeId, index, field, value);
   }
 
   function removeChoiceFromSelectedNode(index: number) {
     if (!selectedNodeId) return;
-
-    recordHistory({ immediate: true });
-    setNodesState((prev) =>
-      prev.map((node) => {
-        if (node.id !== selectedNodeId) return node;
-
-        const nextChoices = [...(node.data?.choices || [])];
-        nextChoices.splice(index, 1);
-
-        return {
-          ...node,
-          data: {
-            ...node.data,
-            choices: nextChoices,
-          },
-        };
-      })
-    );
+    removeChoiceFromNode(selectedNodeId, index);
   }
 
   function connectNodesFromHandle(
@@ -934,38 +910,9 @@ export default function useStoryState(): UseStoryStateResult {
     if (!sourceId || !targetId || sourceId === targetId) return;
 
     recordHistory({ immediate: true });
-    setNodesState((prevNodes) => {
-      const targetNode = prevNodes.find((node) => node.id === targetId);
-      const targetTitle = targetNode?.data?.title || "Next Block";
-
-      return prevNodes.map((node) => {
-        if (node.id !== sourceId) return node;
-
-        const existingChoices = node.data?.choices || [];
-        const alreadyExists = existingChoices.some(
-          (choice) => choice.targetNodeId === targetId
-        );
-
-        if (alreadyExists) {
-          return node;
-        }
-
-        const nextChoice: StoryChoice = {
-          label: makeChoiceLabel(targetTitle),
-          targetNodeId: targetId,
-          conditions: [],
-          effects: [],
-        };
-
-        return {
-          ...node,
-          data: {
-            ...node.data,
-            choices: [...existingChoices, nextChoice],
-          },
-        };
-      });
-    });
+    setNodesState((prevNodes) =>
+      connectNodesInList(prevNodes, sourceId, targetId)
+    );
 
     setSelectedNodeId(sourceId);
   }
@@ -973,26 +920,8 @@ export default function useStoryState(): UseStoryStateResult {
   function deleteEdge(edgeId: string | null | undefined) {
     if (!edgeId) return;
 
-    const [sourceId, targetId] = edgeId.split("__");
-
-    if (!sourceId || !targetId) return;
-
     recordHistory({ immediate: true });
-    setNodesState((prev) =>
-      prev.map((node) => {
-        if (node.id !== sourceId) return node;
-
-        return {
-          ...node,
-          data: {
-            ...node.data,
-            choices: (node.data?.choices || []).filter(
-              (choice) => choice.targetNodeId !== targetId
-            ),
-          },
-        };
-      })
-    );
+    setNodesState((prev) => removeEdgeFromList(prev, edgeId));
   }
 
   const ensureOnboardingScaffold = useCallback(
@@ -1041,9 +970,9 @@ export default function useStoryState(): UseStoryStateResult {
         }
 
         if (seedChoices && targetId) {
-          const demoChoices = ONBOARDING_DEMO_CHOICES.map((choice) => ({
-            ...choice,
-          }));
+          const demoChoices = ensureChoiceIds(
+            ONBOARDING_DEMO_CHOICES.map((choice) => ({ ...choice }))
+          );
           next = next.map((node) =>
             node.id === targetId
               ? {
@@ -1096,6 +1025,9 @@ export default function useStoryState(): UseStoryStateResult {
     updateSelectedNodeField,
     applyMiniGameToSelectedNode,
     deleteSelectedNode,
+    addChoiceToNode,
+    updateChoiceOnNode,
+    removeChoiceFromNode,
     addChoiceToSelectedNode,
     addMultipleChoicesToSelectedNode,
     generateDestinationNodesForSelectedNode,

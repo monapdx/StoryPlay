@@ -41,7 +41,7 @@ export type StoryCanvasProps = Pick<
   | "setSelectedNodeId"
   | "addNode"
   | "deleteSelectedNode"
-  | "addChoiceToSelectedNode"
+  | "addChoiceToNode"
   | "updateNodePosition"
   | "connectNodesFromHandle"
   | "deleteEdge"
@@ -80,7 +80,7 @@ export default function StoryCanvas({
   setSelectedNodeId,
   addNode,
   deleteSelectedNode,
-  addChoiceToSelectedNode,
+  addChoiceToNode,
   updateNodePosition,
   connectNodesFromHandle,
   deleteEdge,
@@ -146,10 +146,10 @@ export default function StoryCanvas({
         onSelectNode: (nodeId: string) => setSelectedNodeId?.(nodeId),
         onAddChoice: (nodeId: string) => {
           if (!nodeId) return;
+          // Mutate the exact node whose button was clicked. Selection is a
+          // convenience update and must not be relied on for the mutation.
           setSelectedNodeId?.(nodeId);
-          setTimeout(() => {
-            addChoiceToSelectedNode?.();
-          }, 0);
+          addChoiceToNode?.(nodeId);
         },
       },
     })) as HydratedStoryFlowNode[];
@@ -159,7 +159,7 @@ export default function StoryCanvas({
     selectedNodeId,
     playStateMap,
     setSelectedNodeId,
-    addChoiceToSelectedNode,
+    addChoiceToNode,
   ]);
 
   const hydratedEdges = useMemo(() => {

@@ -4,6 +4,7 @@
  */
 
 import type { StoryChoice, StoryNode, StoryNodePosition } from "../types/story";
+import { createChoiceId } from "./nodeHelpers";
 
 export const CHOICE_PATH_MIN = 1;
 export const CHOICE_PATH_MAX = 20;
@@ -87,6 +88,7 @@ export function getNextChoiceLabelStart(
 
 export function createBlankGoToChoice(label: string): StoryChoice {
   return {
+    id: createChoiceId(),
     label,
     choiceKind: "goTo",
     playerMessage: "",

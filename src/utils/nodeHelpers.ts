@@ -1,6 +1,43 @@
 import type { StoryChoice, StoryNode } from "../types/story";
 import { STORY_NODE_TYPE } from "../types/story";
 
+/**
+ * Generate a stable, unique id for a choice. Uses crypto.randomUUID when
+ * available and falls back to a random string for older runtimes.
+ */
+export function createChoiceId(): string {
+  try {
+    if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+      return crypto.randomUUID();
+    }
+  } catch {
+    /* fall through to non-crypto id */
+  }
+  return `choice_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
+}
+
+/**
+ * Ensure every choice has a stable `id` without touching its other data
+ * (label, conditions, effects, targetNodeId, chat/persuasion fields, etc.).
+ * Existing ids are preserved; only missing/blank ids are filled in.
+ */
+export function ensureChoiceIds(choices: unknown): StoryChoice[] {
+  if (!Array.isArray(choices)) return [];
+
+  return choices.map((choice) => {
+    if (!choice || typeof choice !== "object" || Array.isArray(choice)) {
+      return { id: createChoiceId() } as StoryChoice;
+    }
+
+    const existing = choice as Record<string, unknown>;
+    if (typeof existing.id === "string" && existing.id.trim()) {
+      return existing as unknown as StoryChoice;
+    }
+
+    return { ...existing, id: createChoiceId() } as unknown as StoryChoice;
+  });
+}
+
 export function createNewNode(index = 0): StoryNode {
   const id = crypto.randomUUID();
 
@@ -72,6 +109,10 @@ export function normalizeStoryNode(node: unknown): StoryNode {
     const data = { ...(next.data as Record<string, unknown>) };
     if (!Array.isArray(data.choices)) {
       data.choices = [];
+    } else {
+      // Assign stable ids to any legacy choices missing one, leaving all
+      // other choice data (label, conditions, effects, targets) untouched.
+      data.choices = ensureChoiceIds(data.choices);
     }
     if (!Array.isArray(data.enterEffects)) {
       data.enterEffects = [];
@@ -89,7 +130,7 @@ export function normalizeStoryNodes(nodes: unknown): StoryNode[] {
 
 export function createNewChoice(): StoryChoice {
   return {
-    id: crypto.randomUUID(),
+    id: createChoiceId(),
     label: "New choice",
     targetNodeId: "",
   };

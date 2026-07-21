@@ -12,13 +12,39 @@ export interface NodeGraphLink {
   targetNodeId: string;
   label: string;
   kind: NodeGraphLinkKind;
+  /** Stable, unique React Flow edge id for this outgoing link. */
+  edgeId: string;
+  /** Present for `choice` links: the source choice's stable id. */
+  choiceId?: string;
 }
 
 /** Minimal choice fields read when collecting outgoing links. */
 interface NodeGraphChoiceSource {
+  id?: unknown;
   targetNodeId?: unknown;
   label?: unknown;
   text?: unknown;
+}
+
+const EDGE_ID_PREFIX = "edge";
+
+/**
+ * Stable edge id for a choice link, tied to the specific choice (not its array
+ * index) so reordering/removing other choices never reassigns this edge.
+ */
+export function makeChoiceEdgeId(
+  sourceNodeId: string,
+  choiceId: string
+): string {
+  return `${EDGE_ID_PREFIX}__${sourceNodeId}__choice__${choiceId}`;
+}
+
+/** Stable edge id for a non-choice node link (continue/success/failure/timeout). */
+export function makeLinkEdgeId(
+  sourceNodeId: string,
+  kind: Exclude<NodeGraphLinkKind, "choice">
+): string {
+  return `${EDGE_ID_PREFIX}__${sourceNodeId}__${kind}`;
 }
 
 /** Minimal node shape read for outgoing graph links / edge building. */
@@ -57,6 +83,7 @@ export function getNodeOutgoingLinks(
   const links: NodeGraphLink[] = [];
   const data = node?.data || {};
   const blockType = data.blockType || "narrative";
+  const sourceNodeId = (node?.id as string) ?? "";
 
   (data.choices || []).forEach((choice, index) => {
     if (blockType === "persuasion") return;
@@ -64,11 +91,20 @@ export function getNodeOutgoingLinks(
     const targetNodeId = choice?.targetNodeId;
     if (!targetNodeId) return;
 
+    // Prefer the choice's stable id; fall back to a deterministic id for
+    // un-normalized inputs so edges stay unique even without persisted ids.
+    const choiceId =
+      typeof choice?.id === "string" && choice.id.trim()
+        ? choice.id
+        : `${sourceNodeId}#c${index}`;
+
     links.push({
       // Truthy legacy ids / labels are kept as-is (historically not always strings).
       targetNodeId: targetNodeId as string,
       label: (choice.label || choice.text || `Choice ${index + 1}`) as string,
       kind: "choice",
+      choiceId,
+      edgeId: makeChoiceEdgeId(sourceNodeId, choiceId),
     });
   });
 
@@ -78,6 +114,7 @@ export function getNodeOutgoingLinks(
       targetNodeId: continueNodeId,
       label: "Continue",
       kind: "continue",
+      edgeId: makeLinkEdgeId(sourceNodeId, "continue"),
     });
   }
 
@@ -87,6 +124,7 @@ export function getNodeOutgoingLinks(
       targetNodeId: successNodeId,
       label: "Success",
       kind: "success",
+      edgeId: makeLinkEdgeId(sourceNodeId, "success"),
     });
   }
 
@@ -96,6 +134,7 @@ export function getNodeOutgoingLinks(
       targetNodeId: failureNodeId,
       label: "Failure",
       kind: "failure",
+      edgeId: makeLinkEdgeId(sourceNodeId, "failure"),
     });
   }
 
@@ -105,10 +144,45 @@ export function getNodeOutgoingLinks(
       targetNodeId: timeoutTargetNodeId,
       label: "Timeout",
       kind: "timeout",
+      edgeId: makeLinkEdgeId(sourceNodeId, "timeout"),
     });
   }
 
   return links;
+}
+
+/**
+ * Resolve an edge id back to its owning node + link so deletion targets the
+ * exact source choice/link, rather than every choice sharing a targetNodeId.
+ */
+export interface ResolvedEdgeRef {
+  sourceNodeId: string;
+  kind: NodeGraphLinkKind;
+  targetNodeId: string;
+  choiceId?: string;
+}
+
+export function resolveEdgeRef(
+  nodes: ReadonlyArray<NodeGraphLinkSource> | null | undefined,
+  edgeId: string | null | undefined
+): ResolvedEdgeRef | null {
+  if (!edgeId) return null;
+
+  for (const node of nodes || []) {
+    const links = getNodeOutgoingLinks(node);
+    for (const link of links) {
+      if (link.edgeId === edgeId) {
+        return {
+          sourceNodeId: (node?.id as string) ?? "",
+          kind: link.kind,
+          targetNodeId: link.targetNodeId,
+          choiceId: link.choiceId,
+        };
+      }
+    }
+  }
+
+  return null;
 }
 
 export function nodeHasOutgoingLinks(
@@ -156,9 +230,11 @@ export function buildStoryEdgesFromNodes(
   for (const node of nodes || []) {
     const links = getNodeOutgoingLinks(node);
 
-    links.forEach((link, index) => {
+    links.forEach((link) => {
       edges.push({
-        id: `${node.id}__${link.targetNodeId}__${link.kind}__${index}`,
+        // Stable id tied to the specific choice/link, unique even when
+        // multiple choices from one source point at the same target.
+        id: link.edgeId,
         // Missing ids stay undefined at runtime (same as the JS implementation).
         source: node.id as string,
         target: link.targetNodeId,
