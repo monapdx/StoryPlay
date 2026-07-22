@@ -170,9 +170,9 @@ const SECTION_RENDERERS = {
       </DocP>
       <DocH3>Chat</DocH3>
       <DocP>
-        Line-based script shown as chat bubbles. Use <DocCode>Name: message</DocCode> per line;
-        <DocCode>You:</DocCode> lines are outgoing. See <DocCode>Chat Conversations</DocCode> for
-        reply vs go-to choices.
+        Opening message shown as a chat bubble (<DocCode>Name: message</DocCode>). Choices on this
+        block are chat replies with unique NPC responses—see{" "}
+        <DocCode>Chat Conversations</DocCode>.
       </DocP>
       <DocH3>Timed</DocH3>
       <DocP>
@@ -246,25 +246,24 @@ const SECTION_RENDERERS = {
   "chat-conversations": () => (
     <>
       <DocP>
-        Chat blocks play out as a threaded conversation. Opening lines use{" "}
-        <DocCode>Speaker: text</DocCode> format—one line per bubble.
+        Chat blocks play a threaded conversation. The block content is the{" "}
+        <strong>opening message</strong> the player receives (
+        <DocCode>Speaker: text</DocCode>).
       </DocP>
-      <DocH3>Chat reply choices</DocH3>
+      <DocH3>Chat replies</DocH3>
       <DocP>
-        Keep the player in the same block. Set a <strong>reply button</strong> label, optional{" "}
-        <strong>player message</strong> (what appears in the player bubble), and{" "}
-        <strong>NPC response</strong> lines after the pick. Leave <DocCode>After Reply, Go To</DocCode>{" "}
-        empty to continue talking in-thread.
+        On a chat block, every choice is a reply — not a normal go-to choice. Set a{" "}
+        <strong>reply button</strong>, optional <strong>player message</strong>, and a unique{" "}
+        <strong>character response</strong>. The NPC speaker is taken from the opening message when
+        you omit a <DocCode>Name:</DocCode> prefix.
       </DocP>
-      <DocH3>Go-to-block choices</DocH3>
+      <DocH3>Leaving the chat</DocH3>
       <DocP>
-        Leave the chat UI and jump to another block—useful when the conversation ends or the scene
-        changes location.
+        Stay in the thread until you set <strong>Exit to block after this reply</strong> on a reply.
+        After that NPC response plays, the story continues at the chosen block.
       </DocP>
-      <DocCallout title="Example opening script">
-        <DocPre>{`Guard: Halt! State your business.
-You: I'm looking for the merchant.
-Guard: She's in the square.`}</DocPre>
+      <DocCallout title="Example opening message">
+        <DocPre>{`Guard: Halt! State your business.`}</DocPre>
       </DocCallout>
     </>
   ),

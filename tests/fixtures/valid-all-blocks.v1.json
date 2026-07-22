@@ -41,13 +41,15 @@
           "choices": [
             {
               "id": "reply",
+              "choiceKind": "chatReply",
               "label": "Hello",
-              "npcResponse": "Guide: Welcome."
+              "npcResponse": "Welcome."
             },
             {
               "id": "leave-chat",
-              "choiceKind": "goTo",
+              "choiceKind": "chatReply",
               "label": "Continue",
+              "npcResponse": "Onward, then.",
               "targetNodeId": "timed"
             }
           ]

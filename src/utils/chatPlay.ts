@@ -118,12 +118,55 @@ export function parseChatLines(content = ""): ChatLine[] {
 }
 
 /**
- * Incoming lines to auto-play before showing reply choices.
+ * Speaker of the first incoming message in chat block content.
+ * Used so reply NPC responses inherit who texted the player.
+ */
+export function getChatOpeningSpeaker(content = ""): string | null {
+  for (const line of parseChatLines(content)) {
+    if (line.side !== "incoming") continue;
+    const speaker = String(line.speaker || "").trim();
+    if (speaker) return speaker;
+  }
+  return null;
+}
+
+/**
+ * Ensure an authored NPC reply is attributed to the opening chat speaker when
+ * the author only wrote the message body (no "Name: …" prefix).
+ */
+export function withChatNpcSpeaker(
+  npcResponse = "",
+  openingSpeaker: string | null = null
+): string {
+  const trimmed = String(npcResponse || "").trim();
+  if (!trimmed) return "";
+
+  const speaker = String(openingSpeaker || "").trim();
+  if (!speaker) return trimmed;
+
+  return trimmed
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      if (line.startsWith("You:")) return line;
+      const colonIndex = findSpeakerMessageColonIndex(line);
+      if (colonIndex > 0) {
+        const existingSpeaker = line.slice(0, colonIndex).trim();
+        if (existingSpeaker) return line;
+      }
+      return `${speaker}: ${line}`;
+    })
+    .join("\n");
+}
+
+/**
+ * Opening messages to auto-play before showing reply choices.
  *
- * When the block has player choices, we stop the scripted animation before
- * the first "You:" line so the player picks their response from Choices.
- * If there is no "You:" line, only the first incoming line plays so the
- * player is not stuck watching a long passive script.
+ * Chat content is the first message(s) the player receives. When the block has
+ * reply choices, only incoming preface lines play (stop before any scripted
+ * "You:" line). If there is no "You:" line, only the first incoming line plays
+ * so a multi-line script does not run as a passive monologue.
  */
 export function getChatPrefaceLines<T extends { side: string }>(
   chatLines: T[] = [] as T[],

@@ -32,9 +32,7 @@ Design visually, preview instantly, organize characters and variables, validate 
 ### Story blocks
 
 - **Narrative** — Body text plus branching **choices** (label, target node, optional **conditions** and **effects** on variables).
-- **Chat** — Line-based script rendered as chat bubbles in preview. Opening lines use **`Name: message`** (or character tokens as the speaker). Lines starting with `You:` are outgoing. After the opening script, the player picks **chat reply** choices to continue the conversation in-thread, or **go to block** choices to leave for another scene.
-  - **Chat reply** choices support a **reply button** label, optional **player message** (what appears in the player’s bubble), and **NPC response** lines (`Name: message` per line).
-  - Leave **After Reply, Go To** empty to keep talking in the same block.
+- **Chat** — The block content is the **opening message** the player receives (`Name: message`). Choices on a chat block are **chat replies** (not normal go-to choices): each has a reply button, optional player bubble text, and a unique **NPC response**. The NPC speaker is taken from the opening message when you omit a `Name:` prefix. Set **Exit to block after this reply** when that turn should leave the chat and continue the story.
 - **Timed** — **Countdown**; at zero the preview can jump to a **timeout target** node and apply **timeout effects** (same effect model as choices).
 - **Ending** — Typically has no choices; used as a terminal beat.
 

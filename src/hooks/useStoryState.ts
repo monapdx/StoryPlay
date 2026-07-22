@@ -42,6 +42,7 @@ import {
 } from "../utils/nodeGraphLinks";
 import {
   addChoiceToNodeInList,
+  applyBlockTypeToNodeChoices,
   applyConnectionInList,
   removeChoiceFromNodeInList,
   removeEdgeFromList,
@@ -535,6 +536,14 @@ export default function useStoryState(): UseStoryStateResult {
     if (!selectedNodeId) return;
 
     recordHistory();
+
+    if (field === "blockType" && typeof value === "string") {
+      setNodesState((prev) =>
+        applyBlockTypeToNodeChoices(prev, selectedNodeId, value)
+      );
+      return;
+    }
+
     setNodesState((prev) =>
       prev.map((node) =>
         node.id === selectedNodeId

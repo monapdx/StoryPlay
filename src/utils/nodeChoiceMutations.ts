@@ -33,6 +33,19 @@ export interface GraphConnectionInput {
   targetHandle?: string | null;
 }
 
+/**
+ * Align choiceKind with the node's block type.
+ * Chat blocks always use chat replies; other blocks always use go-to.
+ */
+export function normalizeChoiceKindForBlockType(
+  choice: StoryChoice,
+  blockType: string = "narrative"
+): StoryChoice {
+  const nextKind = blockType === "chat" ? "chatReply" : "goTo";
+  if (choice.choiceKind === nextKind) return choice;
+  return { ...choice, choiceKind: nextKind };
+}
+
 /** Build a fresh blank choice for a node, matching its block type. */
 export function makeAddedChoice(blockType: string = "narrative"): StoryChoice {
   const isChatBlock = blockType === "chat";
@@ -88,16 +101,54 @@ export function updateChoiceOnNodeInList(
     const currentChoice = nextChoices[index];
     if (!currentChoice) return node;
 
-    nextChoices[index] = {
-      ...currentChoice,
-      [field]: value,
-    };
+    const blockType = node.data?.blockType || "narrative";
+    nextChoices[index] = normalizeChoiceKindForBlockType(
+      {
+        ...currentChoice,
+        [field]: value,
+      },
+      blockType
+    );
 
     return {
       ...node,
       data: {
         ...node.data,
         choices: nextChoices,
+      },
+    };
+  });
+}
+
+/**
+ * When a node becomes a chat (or leaves chat), rewrite every choice's kind so
+ * the editor and preview stay aligned without a Choice Type selector.
+ */
+export function applyBlockTypeToNodeChoices(
+  nodes: StoryNode[],
+  nodeId: string,
+  blockType: string
+): StoryNode[] {
+  if (!nodeId) return nodes;
+
+  return nodes.map((node) => {
+    if (node.id !== nodeId) return node;
+
+    const existingChoices = node.data?.choices || [];
+    const nextChoices = existingChoices.map((choice) =>
+      normalizeChoiceKindForBlockType(choice, blockType)
+    );
+
+    const choicesChanged = nextChoices.some(
+      (choice, index) => choice !== existingChoices[index]
+    );
+
+    return {
+      ...node,
+      data: {
+        ...node.data,
+        blockType,
+        choices: choicesChanged ? nextChoices : existingChoices,
       },
     };
   });

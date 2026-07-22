@@ -268,7 +268,7 @@ export default function SidebarEditor({
           >
             <span>
               <span className="collapsible-row-title">
-                {blockType === "chat" ? "Chat Content" : "Content"}
+                {blockType === "chat" ? "Opening Message" : "Content"}
               </span>
               <span className="collapsible-row-meta">
                 {content?.trim()
@@ -290,7 +290,7 @@ export default function SidebarEditor({
               onChange={(nextValue) => updateSelectedNodeField("content", nextValue)}
               placeholder={
                 blockType === "chat"
-                  ? "Name: Opening line\nYou: Player line (optional script)"
+                  ? "Name: First message the player receives"
                   : "Write the story text for this block..."
               }
             />

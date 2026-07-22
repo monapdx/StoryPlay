@@ -3,9 +3,11 @@ import PlayChoiceButton from "./PlayChoiceButton";
 import { evaluateConditions } from "../../utils/storyLogic";
 import { renderStoryText } from "../../utils/storyReferences";
 import {
+  getChatOpeningSpeaker,
   getChatPrefaceLines,
   parseChatLines,
   runChatLineRevealSequence,
+  withChatNpcSpeaker,
   type ChatLine,
 } from "../../utils/chatPlay";
 import { isChatReplyChoice, isGoToChoice } from "../../utils/choiceKinds";
@@ -342,7 +344,12 @@ export default function StoryPreview({
     setChatTurnReady(false);
     setChatBusy(true);
 
-    const responseLines = parseChatLines(choice.npcResponse || "");
+    const responseLines = parseChatLines(
+      withChatNpcSpeaker(
+        choice.npcResponse || "",
+        getChatOpeningSpeaker(playNodeData?.content || "")
+      )
+    );
 
     const completeChatReplyTurn = () => {
       applyChatChoiceEffects(choice);
@@ -626,7 +633,7 @@ export default function StoryPreview({
             goToChoices.length === 0 && (
             <div className="helper-box" style={{ marginTop: 12 }}>
               {playChoices.length === 0
-                ? "Add chat replies or go-to choices for this block."
+                ? "Add chat replies for this block. Set an exit on a reply when the conversation should continue elsewhere."
                 : "No choices available right now (conditions not met)."}
             </div>
           )}

@@ -3,12 +3,6 @@ import ChoiceConditionsEditor from "./ChoiceConditionsEditor";
 import ChoiceEffectsEditor from "./ChoiceEffectsEditor";
 import ReferenceTextarea from "./ReferenceTextarea";
 import { renderStoryText } from "../../utils/storyReferences";
-import {
-  CHOICE_KIND,
-  getChoiceKind,
-  isChatReplyChoice,
-  type ChoiceKindSource,
-} from "../../utils/choiceKinds";
 import type { StoryBlockType, StoryNode } from "../../types/story";
 import type {
   Condition,
@@ -22,10 +16,11 @@ import type {
  * incomplete legacy/demo choices remain usable; do not weaken StoryChoice.
  * Canonical StoryChoice values are assignable to this type.
  */
-export type ChoiceRowSource = ChoiceKindSource & {
+export type ChoiceRowSource = {
+  choiceKind?: string | null;
+  npcResponse?: string | null;
   label?: string;
   playerMessage?: string;
-  npcResponse?: string;
   targetNodeId?: string;
   conditions?: Condition[] | null;
   effects?: Effect[] | null;
@@ -89,8 +84,8 @@ export default function ChoiceRow(props: ChoiceRowProps) {
 
   const storyState = { characters };
   const isChatBlock = blockType === "chat";
-  const choiceKind = getChoiceKind(choice, blockType);
-  const isReply = isChatReplyChoice(choice, blockType);
+  // Chat blocks always author replies — no Choice Type toggle.
+  const showAsChatReply = isChatBlock;
   const displayLabel =
     renderStoryText(choice.label, storyState)?.trim() || "Untitled choice";
   const playerPreview = renderStoryText(
@@ -110,17 +105,15 @@ export default function ChoiceRow(props: ChoiceRowProps) {
   )?.data?.title;
 
   const metaLabel = isChatBlock
-    ? isReply
-      ? [
-          playerPreview ? `You: ${playerPreview}` : null,
-          npcPreview ? `NPC: ${npcPreview}` : "NPC: (no response yet)",
-          choice.targetNodeId
-            ? `→ ${targetLabel || choice.targetNodeId}`
-            : null,
-        ]
-          .filter(Boolean)
-          .join(" · ")
-      : targetLabel || choice.targetNodeId || "Go to block (no target)"
+    ? [
+        playerPreview ? `You: ${playerPreview}` : null,
+        npcPreview ? `NPC: ${npcPreview}` : "NPC: (no response yet)",
+        choice.targetNodeId
+          ? `Exit → ${targetLabel || choice.targetNodeId}`
+          : "Stay in chat",
+      ]
+        .filter(Boolean)
+        .join(" · ")
     : targetLabel || choice.targetNodeId || "No target selected";
 
   return (
@@ -171,23 +164,7 @@ export default function ChoiceRow(props: ChoiceRowProps) {
             <p className="sidebar-hint">Example choice.</p>
           ) : (
             <>
-              {isChatBlock && (
-                <div className="form-group">
-                  <label className="form-label">Choice Type</label>
-                  <select
-                    className="form-select"
-                    value={choiceKind}
-                    onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-                      props.onUpdate(choiceIndex, "choiceKind", e.target.value)
-                    }
-                  >
-                    <option value={CHOICE_KIND.CHAT_REPLY}>Chat reply</option>
-                    <option value={CHOICE_KIND.GO_TO}>Go to block</option>
-                  </select>
-                </div>
-              )}
-
-              {isReply ? (
+              {showAsChatReply ? (
                 <div className="chat-turn-fields">
                   <div className="chat-turn-fields__side chat-turn-fields__side--player">
                     <span className="chat-turn-fields__badge">Player</span>
@@ -234,9 +211,13 @@ export default function ChoiceRow(props: ChoiceRowProps) {
                         onChange={(nextValue) =>
                           props.onUpdate(choiceIndex, "npcResponse", nextValue)
                         }
-                        placeholder={"{{character:id.name}}: Response line"}
+                        placeholder="Unique reply from the character who texted first"
                         insertLabel="Insert character"
                       />
+                      <p className="sidebar-hint">
+                        Speaker is taken from the opening message when you omit
+                        a Name: prefix.
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -258,7 +239,7 @@ export default function ChoiceRow(props: ChoiceRowProps) {
 
               <div className="form-group">
                 <label className="form-label">
-                  {isReply ? "After reply" : "Target"}
+                  {showAsChatReply ? "Exit to block after this reply" : "Target"}
                 </label>
                 <select
                   className="form-select"
@@ -272,8 +253,8 @@ export default function ChoiceRow(props: ChoiceRowProps) {
                   }
                 >
                   <option value="">
-                    {isReply
-                      ? "Stay in this chat block"
+                    {showAsChatReply
+                      ? "Stay in this chat (no exit yet)"
                       : "Select target block"}
                   </option>
                   {availableTargets.map((node) => (
@@ -282,6 +263,12 @@ export default function ChoiceRow(props: ChoiceRowProps) {
                     </option>
                   ))}
                 </select>
+                {showAsChatReply && (
+                  <p className="sidebar-hint">
+                    Pick an exit when this reply should leave the chat and
+                    continue the story.
+                  </p>
+                )}
               </div>
 
               <ChoiceConditionsEditor
@@ -306,7 +293,7 @@ export default function ChoiceRow(props: ChoiceRowProps) {
                   className="danger-button"
                   onClick={() => props.onRemove(choiceIndex)}
                 >
-                  Remove Choice
+                  {showAsChatReply ? "Remove Reply" : "Remove Choice"}
                 </button>
               )}
             </>

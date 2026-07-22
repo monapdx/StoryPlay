@@ -80,6 +80,7 @@ export default function ChoicesEditor(props: ChoicesEditorProps) {
   } = props;
 
   const blockType = selectedNode?.data?.blockType || "narrative";
+  const isChatBlock = blockType === "chat";
   const selectedNodeId = selectedNode?.id;
   const storyChoices = selectedNode?.data?.choices || [];
   const showOnboardingChoiceDemo = isOnboardingChoiceStep(onboardingStepId);
@@ -155,14 +156,14 @@ export default function ChoicesEditor(props: ChoicesEditorProps) {
   return (
     <div className="editor-section">
       <div className="editor-section-header">
-        <h3 className="section-title">Choices</h3>
+        <h3 className="section-title">{isChatBlock ? "Chat Replies" : "Choices"}</h3>
         {!readOnly && (
           <button
             type="button"
             className="toolbar-button"
             onClick={addChoiceToSelectedNode}
           >
-            + Add Choice
+            {isChatBlock ? "+ Add Reply" : "+ Add Choice"}
           </button>
         )}
       </div>
@@ -236,7 +237,9 @@ export default function ChoicesEditor(props: ChoicesEditorProps) {
       )}
 
       {visibleChoices.length === 0 ? (
-        <p className="sidebar-hint">No choices yet.</p>
+        <p className="sidebar-hint">
+          {isChatBlock ? "No replies yet." : "No choices yet."}
+        </p>
       ) : (
         <div className="choice-list">
           {visibleChoices.map((choice, index) =>
