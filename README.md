@@ -1,8 +1,8 @@
 # StoryPlay
 
-| Logo | Tagline |
-|---|---|
-| <img src="https://raw.githubusercontent.com/monapdx/StoryPlay/refs/heads/main/screenshots/product.png" width="402"> | **Build interactive experiences visually.** |
+<img src="https://raw.githubusercontent.com/monapdx/StoryPlay/refs/heads/main/screenshots/storyplay-banner.png"> 
+
+**Build interactive experiences visually.**
 
 **[StoryPlay](https://monapdx.github.io/StoryPlay/)** is a visual editor for building interactive experiences.
 
