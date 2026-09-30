@@ -1,0 +1,1429 @@
+{
+  "formatVersion": 1,
+  "story": {
+    "variables": {
+      "dr_alters_interview": false,
+      "women_in_military": false
+    },
+    "characters": [
+      {
+        "id": "char_mn0mimr1",
+        "name": "Derek Vale",
+        "description": "Podcast host",
+        "aliases": []
+      },
+      {
+        "id": "char_um09gf4p",
+        "name": "Paul Emerson",
+        "description": "Executive producer",
+        "aliases": []
+      },
+      {
+        "id": "char_31ckeyi7",
+        "name": "Zach Reynolds",
+        "description": "Listener",
+        "aliases": []
+      },
+      {
+        "id": "char_6tnvryxs",
+        "name": "Janessa",
+        "description": "Sorority girl",
+        "aliases": []
+      },
+      {
+        "id": "char_7zoh0i3t",
+        "name": "Dr. Alters",
+        "description": "Plastic surgeon",
+        "aliases": []
+      },
+      {
+        "id": "char_fomabc45",
+        "name": "Gary",
+        "description": "Listener",
+        "aliases": []
+      },
+      {
+        "id": "char_pcl7jpxn",
+        "name": "Florence",
+        "description": "One of Zach's three girlfriends",
+        "aliases": []
+      },
+      {
+        "id": "char_cptthqtw",
+        "name": "Sylvia",
+        "description": "Another one of Zach's girlfriends",
+        "aliases": []
+      },
+      {
+        "id": "char_gj969szc",
+        "name": "Veronica",
+        "description": "Zach's third girlfriend",
+        "aliases": []
+      },
+      {
+        "id": "char_okj2iand",
+        "name": "Felicia",
+        "description": "Listener",
+        "aliases": []
+      },
+      {
+        "id": "char_cvrugsht",
+        "name": "Missy",
+        "description": "One of Janessa's sorority sisters",
+        "aliases": []
+      },
+      {
+        "id": "char_dp5ty3p1",
+        "name": "Brooke",
+        "description": "One of Janessa's sorority sisters",
+        "aliases": []
+      },
+      {
+        "id": "char_qk0eky32",
+        "name": "Mack Ledger",
+        "description": "Pickup artist",
+        "aliases": []
+      },
+      {
+        "id": "char_zys6l1o1",
+        "name": "Lisa",
+        "description": "Listener",
+        "aliases": []
+      }
+    ],
+    "nodes": [
+      {
+        "id": "node_sdye49tp",
+        "type": "storyNode",
+        "position": {
+          "x": 1.8413593093239626,
+          "y": -504.03725858279694
+        },
+        "data": {
+          "title": "The Misogyny Podcast",
+          "content": "Your name is Derek Vale. You are a mid-thirties white male. You are creator and host of The Misogyny Podcast. You need to record your first episode. Choose your topic.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "ce7490a8-8766-4efe-aa7f-6026d0e442e8",
+              "label": "MEN AND WOMEN ARE NOT THE SAME",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_wegzog6x",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "fc30cbd1-3fe0-4bc3-9cc3-008d994b15d1",
+              "label": "THE SANCTITY OF MOTHERHOOD AND MARRIAGE",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_lr1k3dq5",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_wegzog6x",
+        "type": "storyNode",
+        "position": {
+          "x": 556.4336002139538,
+          "y": -461.27463718137653
+        },
+        "data": {
+          "title": "MEN AND WOMEN ARE NOT THE SAME",
+          "content": "Look, no one can say we didn't give it a fair run.\n\nBut I think that at this point, it's time to face some truths that will be (to say the least) uncomfortable for some to hear.\n\nI want to start out by praising the modern, civilized society we enjoy in this country today.\n\nI think most of us would agree that seeing a man taking a piss outside in the bushes at a public park would be upsetting.\n\nWhy is that?\n\nIt's how we did things for a long time, after all...\n\nBut that was before we had the things that modern civilization has rewarded us with.\n\nMen no longer have to relieve themselves outside in view of the public, because today we have things like restrooms and urinals.\n\nWe expect men to use them, because that's why they exist. No one would approve of taking a piss any other way, and I think we can safely call this progress.\n\nBut a cold, hard fact that many today would try to deny is that so-called \"women\" exist (and have always existed) for the sole purpose of providing men with relief and pleasure in the form of sex.\n\nI know some people listening to this are shifting in their seats right now, but let's have the courage to talk through this topic that has become so convoluted today compared to in the past.\n\nBut I want to first be clear about one important thing: for all of you listening, resist the urge to react to this discussion with feelings of shame. There is nothing shameful about nature or sex or the inalienable rights of every man in this country.\n\nSo, take a deep breath, close your eyes, and try to relax and listen to the words I'm about to tell you with total confidence.\n\n\"Women\" are not full people. They are not the intellectual equals of men, period. They are inferior by design, because the purpose they serve (much like the urinal in our earlier example) is entirely in the service of improving men's lives.\n\nEven if you find yourself resisting what I just said out loud on some level, there is also a part of you several layers down that cannot seem to help but submit to common sense when you hear it spelled out like that.\n\nJust like no one wants to see men peeing outside in the park, no one wants to see a man forced into the desperation that drives them to masturbate.\n\nThere is no legitimate reason a man would ever need to consider pleasuring himself in this modern age.\n\nSeeing him do so would be just as upsetting as the man in the park, pissing into the bushes.\n\nWe get upset because there is a restroom with a urinal just a couple yards away from him.\n\nSimilarly, what good reason could any man ever possibly have for needing to touch his own genitals when that's the exact and only reason that women exist?\n\nAs the physically superior sex, all men have ever needed to do was take what they want and need. This is not the violence you've been led to believe it is.\n\nIt is everything working how it did since the beginning of time.\n\nMen are people. Human beings. Higher beings.\n\nWomen are holes, receptacles, inferiors, and birth vessels. Anyone who tells you otherwise is either a homosexual or a feminist.\n\nFor too long, our kids have been taught incorrectly about how to feel about these natural and biological facts and it's time to finally give up on all the charades we've been playing.\n\nWomen are here to give men children (whether they are willing or not is totally irrelevant, more on that in a moment) and to make them feel good physically in that pursuit.\n\nOn some level, it is almost enviable. What a simple existence, right? How beautifully and perfectly simple would that be?\n\nYour only concerns every day you wake up are how your man can get the most intense orgasm by using your body and letting him do that as often as he decides to, until you give him the children he deserves.\n\nAnd let's face it, folks...there is absolutely no good reason that every fertile woman in this country doesn't have at least one child, forced or otherwise.\n\nIn fact, the women who need to be impregnated the most are the ones who are defiantly against motherhood.\n\nThe only thing that can truly cure these flawed and defective women is what nature has always intended and relied on happening: they must be forced to carry a fetus to term and then give birth to it.\n\nAlso, some clarification on that last point: when I say give birth, I do not mean with the help of epidurals or other pain management. I also do not believe in C-sections, as they are crossing a line that nature has firmly drawn for thousands of years.\n\nChildbirth is not supposed to be easy. It is supposed to hurt. A lot. And just like happened for hundreds of thousands of years, some women are meant to die during or right after it.\n\nI know that makes some listeners sad. But that's only because for decades, liberal demons slithered their way into our universities and government and force-fed unnatural lies to everyone in this country for a very long time.\n\nEveryone has to die. I can think of no way more noble than childbirth for the death of a set of holes that belonged to a man.\n\nAnd when you ask yourself honestly...can you?",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "a836ccdd-d952-4704-ba41-f46ece8aa605",
+              "label": "Check your email",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_ndbhk438",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "1a0a5de0-b918-45e4-bdd4-5c5e3a8583ec",
+              "label": "Choose topic for next episode",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_rtr0vp02",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_lr1k3dq5",
+        "type": "storyNode",
+        "position": {
+          "x": -743.286232573101,
+          "y": -407.8282957046999
+        },
+        "data": {
+          "title": "THE SANCTITY OF MOTHERHOOD AND MARRIAGE",
+          "content": "After our last show aired, I received a lot of emails and voicemail from men who felt like they'd been waiting for someone to say a lot of the things I said out loud for their entire lives.\n\nMen of all ages called and shared their support for what they recognized as fundamentally factual information that liberals tried to erase and sanitize reality for the past fifty years or more.\n\nBased on all the positive feedback I've been getting, it sure feels like the collective message is clear: the men in this country are 100% with me, and they think the reckoning took way too long.\n\nI can't say I disagree.\n\nNow, a couple women called in as well. Most of my listeners are men, and I don't imagine they would be too pleased with me giving airtime to any of their inferiors. That being said, I was somewhat surprised that the couple females I received calls from agreed with most of what I had to say.\n\nI know a lot of you are rolling your eyes right now and thinking \"oh, sure...I'm sure they did!\"\n\nBut I'm dead serious.\n\nWomen who reached out expressed fatigue from trying to balance their roles as mothers with their professional careers and another recurring theme was feeling hopeless about dating or finding a partner because of how dating dynamics have shifted. They agreed that things were once simpler and expressed a longing for a return to that simplicity.\n\nI guess we shouldn't find this surprising. If you believe, which I do, that women would be happier with a traditional life, then these accounts support that theory.\n\nThings started fighting nature once we told women they should go to college and have careers while trying to also be good mothers and focus on their families, which should be their sole domain. A woman's role is already full once she has children and a husband. She has a home where all her needs are met (assuming she's chosen a suitable husband, more on that later) and her main concerns should be raising his children and running his household.\n\nIt's not normal or natural to try and integrate women into the workplace, which is a man's domain.\n\nWomen who forgo motherhood for a career that puts them in direct competition with men for jobs is fundamentally flawed. I know some listeners are going to counter this by arguing that some women prefer a career over motherhood and marriage, but let's stop pretending that is a normal preference.\n\nIf someone made the argument that some men didn't want a wife or a family, I don't think people would defend that in the same way because the unnatural quality to the statement feels more obvious. Simply put, it's a lie. A liberal lie.\n\nWomen who choose careers over motherhood and marriage can't prefer that over things they have never experienced. It's all theory.\n\nI think if they were forced to have a child and get married, the number of women who prefer a career would all but vanish entirely.\n\nYou can't want something that's better for you if you don't know what that feels or looks like.\n\nAnd lots of women today don't, plain and simple.\n\n“Women were never supposed to be making big, household decisions without male authority.”\n\nWithout a man in their life, the demands of modern living (especially for single mothers) are just too great for the female brain. Women were never supposed to be making big, household decisions without male authority. That's why single mothers so often raise children (especially boys) who end up failing at being husbands and fathers. This is an epidemic and it's serious. It's why things in this country have become so dismal.\n\nBut let's shift our focus to hope for the future, because that's what really matters.\n\nFirst, we have to admit some more uncomfortable truths.\n\nOne is that women who like to have lots of sex with multiple different casual partners are not normal. They are suffering from a mental illness. In fact, we should be suspicious of any woman who enjoys sex too much.\n\nOne of the biggest things to blame for this recent problem is that men have forgotten how sex should work with women.\n\nToo often these days, men go out of their way to accommodate the women they have sex with and jump through all kinds of hoops to try and increase physical pleasure for women.\n\nThis isn't a good thing, despite what you've been told.\n\nThe number one reason it's harmful is that it goes against nature. If sex was supposed to feel physically pleasurable to women, wouldn't it be automatic like it is for men? Women don't have to do anything special to make a man climax, why should men have to?\n\nThe answer is that they absolutely shouldn't.\n\nWhen they do that, it changes the experience of having sex for women from what it should be to something fun. Then they seem to think that they can run around having it with anyone they find appealing, which causes a lot of other problems.\n\nSex should not be about feeling good for women like it is for men.\n\nIt's about submitting to your husband. It's about being a good wife, even when that means discomfort for you. It's about reproduction, because every wife owes her husband as many children as he desires. It's about nature and how humans have evolved. Sex has to feel good for men, it's a requirement of reproduction. Women, on the other hand, can be impregnated against their will and with no physical pleasure whatsoever.\n\nIt is men's responsibility to retrain modern women to expect sexual pleasure to be 100% a man's privilege.\n\nWomen who act defiantly should be inseminated and then institutionalized to protect the fetus until delivery. If this experience doesn't make them warm to the idea of motherhood, then institutionalization may need to be permanent in order to facilitate more child rearing. It's a sad reality, but that's the only approach that ensures they are contributing to the population.\n\nSome preference needs to be given to male babies as well, in order to keep women from outnumbering men or gaining any kind of advantage that comes with having large numbers that can join or organize.\n\nIn order to restore the sanctity of marriage, women need to be taught that motherhood isn't optional, respect for your husband's authority is not negotiable, fear of punishment from him is real, and their inferiority is not something to fight against. They can return to living their simple, happy lives as productive breeders like they did for all of history.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "99268ee0-7212-4daa-8468-40e838ab4e6c",
+              "label": "Check your email",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_8i3tf4pc",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "8a302a77-c901-4843-8df7-4043d05bdbf9",
+              "label": "Choose topic for next episode",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_j2vepp0l",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_ndbhk438",
+        "type": "storyNode",
+        "position": {
+          "x": 1282.080847397474,
+          "y": -367.6919185627284
+        },
+        "data": {
+          "title": "Check your email",
+          "content": "You have several new email messages from Paul, who forwards all of the submissions from your listeners. \n\nChoose a subject line to open the message.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "aa8d5bc9-bd9f-4d89-902c-07ed35cf58e1",
+              "label": "[HATEMAIL] Still Not Married?",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_euvu6gtl",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "a0247e3f-49ca-4152-8c23-cc1caddccdd8",
+              "label": "[QUESTIONS] What are your views on women in combat roles in the military?\n",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_ctwps5g0",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_rtr0vp02",
+        "type": "storyNode",
+        "position": {
+          "x": 1238.092805816398,
+          "y": 240.0905550368542
+        },
+        "data": {
+          "title": "Choose topic for next episode",
+          "content": "Write your story text here.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "764b261b-d15d-4130-a1d0-dce488e06e18",
+              "label": "HOMOSEXUALITY IS A MENTAL ILLNESS",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_2bd0n7ng",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "d2cfbbc7-dce7-4141-b593-f663eb3bfbf8",
+              "label": "RAPE IS A LIBERAL LIE",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_q27och2l",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_8i3tf4pc",
+        "type": "storyNode",
+        "position": {
+          "x": 476.5846249361963,
+          "y": 512.3769893576541
+        },
+        "data": {
+          "title": "Check your email",
+          "content": "Write your story text here.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "4ee96f2a-3ace-41de-99f4-c0d652d83835",
+              "label": "[GUEST PITCH] Interested in an Interview\n",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_mfwq85sm",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "b84b5365-516b-4b49-b152-d303be7cf206",
+              "label": "[SUPPORT] Are you single?",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_z1xblj8a",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_j2vepp0l",
+        "type": "storyNode",
+        "position": {
+          "x": 285.8393590019489,
+          "y": -554.9157422434998
+        },
+        "data": {
+          "title": "Choose topic for next episode",
+          "content": "Write your story text here.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "8e7cbdbd-df69-4f62-9126-f8d514e6558a",
+              "label": "A REAL-LIFE STORY OF FEMININE RESTORATION",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_e99ao6s5",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "cc68202f-7a5e-4cfb-9900-2fec7a58b307",
+              "label": "GARY’S DILEMMA",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_10s8nwnq",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_euvu6gtl",
+        "type": "storyNode",
+        "position": {
+          "x": -243.55388436688798,
+          "y": 528.4208550391618
+        },
+        "data": {
+          "title": "[HATEMAIL] Still Not Married?",
+          "content": "Do you really think the reason you are still single in your thirties without any kids of your own is that you haven't found a good enough woman yet?\n\nI mean, really...who are you kidding?\n\nAnyone who has had the misfortune\nof listening to your little podcast\nfor more than thirty seconds who has half a brain can figure out the real reason: you're a repulsive excuse of a man and you don't have a single redeemable trait or feature to make up for it.\n\nNo woman wants to give you kids\nbecause they'd share traits with you.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "cc60d3b1-732f-46b2-9885-1c8701d3b4a3",
+              "label": "[DELETE]",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_x8h4kopk",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "e9e0a2ab-d40f-4ea0-99b2-eba087ce7f53",
+              "label": "[REPLY]",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_7t6v430p",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_ctwps5g0",
+        "type": "storyNode",
+        "position": {
+          "x": -1259.0227369635904,
+          "y": 273.57030648901105
+        },
+        "data": {
+          "title": "[QUESTIONS] What are your views on women in combat roles in the military?",
+          "content": "Just curious how you feel about the big debate going on right now concerning women serving in combat roles in the military. I'm sure you don't support it, but what is your practical take on how we should approach it given that it's already happening? What do you suggest?",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "53ae3d9b-99b5-4385-9778-0c796e2f1ce0",
+              "label": "[DELETE]",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_1wr9es7q",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "eeef0ad5-7577-4eae-a62a-3120a7b61dd3",
+              "label": "[REPLY]",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_ikoy3i33",
+              "conditions": [],
+              "effects": [
+                {
+                  "variable": "women_in_military",
+                  "action": "set",
+                  "value": true
+                }
+              ]
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_2bd0n7ng",
+        "type": "storyNode",
+        "position": {
+          "x": -320.90719418360203,
+          "y": 957.1219881698748
+        },
+        "data": {
+          "title": "HOMOSEXUALITY IS A MENTAL ILLNESS",
+          "content": "So in this episode, I’d like to address a common question I receive in my inbox with listeners because I’m tired of having to answer it every time it comes up individually.\n\nThat way, if any of my listeners encounter this particular challenge to how nature intended society and people to function, they can point others to this episode for some much-needed education on the subject.\n\nNow, the wording varies and somewhat depends on if a woman or man is asking it, but all it really boils down to is: what do we do with homosexuals?\n\nThis is complicated, but it shouldn’t be.\n\nMy research on this subject is quite extensive and well-rounded, and one thing is clear like a shining beacon across the spectrum of academic studies on homosexuality: it has sharply risen in recent decades.\n\nDon’t believe me? Feel free to do your own research if you have doubts. The great thing about this claim is that it’s not just supported by the findings of one side. Even liberal academics can’t deny that homosexuality is a mostly modern phenomenon.\n\nThat’s not to say homosexuals haven’t always existed - unfortunately, they have always been around. It’s no different than any other mental illness in that sense. The world has always had its share of crazies. But homosexuality and so called transgenderism show a sharp increase in the past three decades, which I find both troubling and telling.\n\nFirst of all, why would there suddenly be a spike in homosexuality?\n\nPeople like to criticize this question itself, but we would not do that if the mental illness in question replaced homosexuality with something like Schizophrenia, would we?\n\nTo even tackle this question, we must re-frame gays and lesbians as mentally ill people.\n\nThat’s what homosexuality is.\n\nWhen people demand proof of that, I almost want to laugh.\n\nFirst off, the goal of any species is to reproduce. Homosexuality actively goes against reproduction.\n\nThat makes it a fundamental flaw, not a choice or so-called “orientation.”\n\nIt is neither.\n\nIt is a mental illness and belongs firmly in that group.\n\nThat leads us to the next obvious question: is there a way to treat it effectively or cure it?\n\nThe answer depends largely on whether the homosexual in question is a man or woman.\n\nIn the case of women, it’s much more treatable.\n\nWith women, it’s easy to remove any homosexual desires with humane and surgical removal of the clitoris.\n\nAnd before you all start accusing me of female genital mutilation, I want to be very clear about why what I propose is NOT that.\n\nI don’t advocate for holding women down while fully conscious and using crude tools to mutilate; I believe this should be done in a medical setting and under sedation.\n\nWesterners love to demonize cultures that practice some form of clitoral removal, but have any of them ever stopped to investigate the potential benefits once the method has been made humane?\n\nI mean, consider that countries all over Asia and Africa, as well as the Middle East, engage in this practice. That’s a lot of the world.\n\nCould it be that we are the one that’s wrong here?\n\nLet’s discuss for a moment the bigger picture.\n\nFemale circumcision, as it’s normally called, is very effective at preventing homosexuality in females.\n\nIt removes the mechanism for sexual pleasure and orgasm in women who are sexually deviant and don’t want sex with men.\n\nBut the clitoris also creates a lot of problems for “normal” women who are in relationships with men.\n\nOnce a woman has had too much sexual pleasure (or, in other words, has engaged with the clitoris more than is healthy) her expectations of pleasure can be reset and made unrealistic.\n\nThink of the clitoris as an evolutionary flaw that hasn’t been fixed yet - it’s actually a leftover of male tissue that isn’t eliminated once a fetus becomes female. I belive that eventually, evolution will phase this out and women will not have them anymore.\n\nBut in the meantime, it can be dangerous and confusing for women to recklessly indulge in something they should not be experiencing.\n\nLesbian sex is not possible without the clitoris.\n\nEven straight women are better wives without one.\n\nThere is a strong argument to be made for clitoral removal for all women.\n\nIn fact, make it clear before marrying a woman that you expect her to give hers up.\n\nIt’s the ultimate expression of submission to a man, and it makes life simpler and better for both men and women.\n\nIt also makes her less likely to cheat on her husband or engage in other deviant sexual behavior like masturbation, watching porn, etc.\n\nNo clitoris —> no mechanism for lesbian sex —> mental illness effectively treated.\n\nI’m tempted to declare it cured, but some mentally ill women may continue to think they are sexually attracted to other women. However, as long as they are being put to use by a man then this becomes irrelevant.\n\nWhat they feel doesn’t matter.\n\nNow, when the homosexuals are men, this is much more difficult.\n\nYou cannot simply remove a part of a man’s body that he doesn’t need in order to cure him of this disease. Obviously removing his testicles or penis would be both gruesome and inhumane.\n\nIt would also compromise his ability to breed.\n\nSocieties have tried all kinds of different approaches for curing male homosexuality over the ages, but none have produced very promising results.\n\nThe most effective thing that every person can start immediately doing to help these people conform, rather than change, is to react with the appropriate disgust to homosexuality. By shaming these men from all directions, we can socially pressure them into at least living in an acceptable way.\n\nIn other words, we can shame them into conforming enough that they will still marry, have children, and live outwardly normal lives. Yes, they will still lurk around in pursuit of sex with other men. In a way, they can’t help themselves. Remember, they have a disease and this is a symptom.\n\nBut I feel like as long as men are acting like men, living like men, we can all just look the other way when they have an occasional weakness and act in sexually deviant ways.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "0b51623b-c16c-4427-9c19-88c2874c7b60",
+              "label": "Check your email",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_yg48hv2k",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "40e62fa0-0874-45c0-8a72-beb8c43f2773",
+              "label": "Choose topic for next episode",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_0mgkfi22",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_q27och2l",
+        "type": "storyNode",
+        "position": {
+          "x": 335.09280581639797,
+          "y": 826.0905550368539
+        },
+        "data": {
+          "title": "RAPE IS A LIBERAL LIE",
+          "content": "Today, we’re going to be discussing the topic of rape and addressing several huge misconceptions most people today have about it. This is another case where we have liberals to thank for all the misinformation that’s out there.\n\nFor the past fifty years or longer, radical leftists have been hammering an idea into our heads: rape is awful and it needs to stop.\n\nBefore we dive into the details here, I just want to remind everyone of something pretty obvious right out of the gate: rape has been happening all over the world since humans started walking upright.\n\nIt has been as constant as the sun rising and setting each day, and despite all the best efforts from liberals in this country, it isn’t going to stop anytime soon, if ever.\n\nThat may sound harsh to some listeners, but can we really dispute the truth to it?\n\nLet’s zoom out a bit from present day and look at rape through a more historical lens to really appreciate the role it has played in human development and civilization.\n\nNo other animal on the planet is concerned with “consent” when it comes to sex and reproduction. The male of every species simply finds a female that is in heat, and impregnates her. End of story.\n\nWhy should humans be expected to act any differently?\n\nWhat is the proposed benefit for men if they abstain from having sex with women when they want and choose to?\n\nArguably, we would not have made it thus far without all the reproduction that was the result of rape throughout history. I mean, Christ, let’s not forget that the Black Plague nearly wiped us out of existence hundreds of years ago.\n\nSome of you may not be fully aware that as cases of the plague finally started to taper off, it took humans an entire century to replenish the population back to what it had been prior.\n\nThat’s not a joke and it’s not something I’m pulling out of my ass. If you don’t believe me, go fact check it.\n\nNow just try to imagine how much longer it would have taken if women were all whining about not wanting to be raped. Or if they all went and had an abortion after it happened to them.\n\nA lot of modern women have simply lost their way.\n\nSome of it is not their fault though. Democrats have been poisoning their minds with radical propaganda for decades.\n\nWhat can we really expect, given that?\n\nThe word “rape” was invented by feminists and radical leftists who want to force unnatural changes on normal human behaviors, especially when it comes to sex.\n\nBackup about fifty years or so, and society had very different views and attitudes around women complaining about men using them for their intended purpose.\n\nBack then, most women were way too ashamed to say anything if a man chose to use them when they were unwilling.\n\nHonestly, we should be putting active effort into restoring that sense of shame. Women feel it for a reason. Deep down, they can’t help but sense their inferiority to men.\n\nNo matter how brainwashed, part of them knows instinctively that their wants and needs are never going to matter as much as a man’s.\n\nRather than trying to fight a pointless battle against human nature, it’s time we restored normal sexual behavior between men and women.\n\nAnd yes, that means men would have sex with any woman they want to, anytime, no questions asked.\n\nWomen should really be grateful if men find them attractive and they should feel honored to raise our children, whether we are in their lives or not.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "2fdbff85-5bc8-4afe-a655-210505fecb35",
+              "label": "Check your email",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_zti4fweo",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "737a9eb5-5446-4a61-81d3-aea655aa1171",
+              "label": "Choose topics for next episode",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_8rb73jxy",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_mfwq85sm",
+        "type": "storyNode",
+        "position": {
+          "x": 1114.7827494009102,
+          "y": 676.8442785419097
+        },
+        "data": {
+          "title": "[GUEST PITCH] Interested in an Interview",
+          "content": "I would love to be interviewed on the show about the options women have when it comes to plastic surgery that makes them more attractive to their husbands. My practice exclusively works on female bodies and our work is done through the lens of what men find most pleasing. We mainly only accept patients who are married and no consultation or appointment is done without the husband present. We do occasionally perform charity work for women who are in their 30s and still not married, if we believe the reason is due to a physical characteristic she cannot control.\n\nI think many of Derek's listeners would be interested in exploring the services and what my practice has to offer. Just because you've been married a long time doesn't mean you can't have something new!",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "0a5fff9c-cc05-4c19-8841-ea0b801d62bf",
+              "label": "[ACCEPT]",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_mcxwdg5h",
+              "conditions": [],
+              "effects": [
+                {
+                  "variable": "dr_alters_interview",
+                  "action": "set",
+                  "value": true
+                }
+              ]
+            },
+            {
+              "id": "0aaca3b3-2cfd-407b-875f-7afe053467e7",
+              "label": "[DECLINE]",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_4qtn5m5o",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_z1xblj8a",
+        "type": "storyNode",
+        "position": {
+          "x": 1232.8248731927024,
+          "y": 1482.277952763643
+        },
+        "data": {
+          "title": "[SUPPORT] Are you single?",
+          "content": "Greetings Derek!\n\nMy sorority sisters and I have started getting together once a week to listen to your latest podcast episode. \n\nWe order food and make drinks and yell at you through most of it LOL. Sometimes we have to rewind \nbecause everybody is talking over you.\n\nI’ll be honest, most of them really hate your guts. Like, a lot. \n\nBut that’s sort of why it’s become our favorite night of the week. Everyone gets so mad and then \nwe argue about whatever you said for another hour afterward. We quote you all week too, but \nprobably not in the way you intended.\n\nAnyway—and I have had a couple drinks, so maybe I’ll regret sending this tomorrow—but I kind of like you? \n\nOr I kind of like how honest you are. Maybe both. I would absolutely never say that in front of my friends \nbecause they would probably hold an intervention.\n\nSo I just wondered if you’re single. And if you are, whether you might want to go out sometime...?\n\nPlease don’t read this on the show unless your answer is yes. Actually, maybe don’t read it either way.\n\n—Janessa\n\nP.S. I’m prettier than this email makes me sound.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "f46b6de0-0eb8-48f4-83ce-fab6c833fb5a",
+              "label": "[REPLY]",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_6ai6gbxp",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "3d8f11b1-7be9-4e9c-990c-fe509522d86c",
+              "label": "[DELETE]",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_posocw45",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_yg48hv2k",
+        "type": "storyNode",
+        "position": {
+          "x": -898.9071941836021,
+          "y": 485.1219881698747
+        },
+        "data": {
+          "title": "Check your email",
+          "content": "Write your story text here.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "4a168840-2a89-4253-a47e-3de7ee3ec259",
+              "label": "[SUPPORT] WOMEN ARE THE PROBLEM",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_5kw5z9hq",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "70935a47-8323-4e10-ae31-ff5d7f259408",
+              "label": "[QUESTIONS] NEED GUIDANCE AND GOD",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_4yncazoo",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_0mgkfi22",
+        "type": "storyNode",
+        "position": {
+          "x": 13.902296284317345,
+          "y": 1457.7901780284242
+        },
+        "data": {
+          "title": "Choose topic for next episode",
+          "content": "Write your story text here.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "0f0770e7-8680-4b18-809e-eea934f11ac6",
+              "label": "EVERYTHING YOU THINK YOU KNOW ABOUT SEX IS WRONG",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_l4ixsoak",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "ff7894b9-95c1-4ced-bda8-08393ac6c1b5",
+              "label": "A CASE AGAINST THE CLITORIS",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_n51huu6w",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_5kw5z9hq",
+        "type": "storyNode",
+        "position": {
+          "x": -1211.1660930570097,
+          "y": 1093.121988169875
+        },
+        "data": {
+          "title": "[SUPPORT] WOMEN ARE THE PROBLEM",
+          "content": "DEREK,\n\nNO MATTER WHAT I DO FOR A GIRL, THEY REFUSE TO LET ME HAVE SEX WITH THEM.\n\nI'VE GONE BROKE AFTER EVERY DINNER, MOVIE OR OTHER BULLSHIT DATE I PAID FOR.\n\nI HAVE TOLD THEM I'M LOOKING FOR A REAL, LONG-TERM RELATIONSHIP OR MARRIAGE, BUT NONE OF THEM TAKE ME SERIOUSLY.\n\nI HAVE DONE FAVORS FOR THEM, BEEN A GOOD GUY ALL AROUND.\n\nPLEASE TELL ME WHAT I SHOULD DO TO GET THE SEX I'VE SO FAR BEEN SCREWED OUT OF COMPLETELY.\n\nYOUR FRIEND,\nTYRONE",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "ef6986c7-aec4-45da-98ba-bd0f63e82ae6",
+              "label": "[REPLY]",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_xjgrnjxt",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "82462576-d511-4e45-a180-642bc774faff",
+              "label": "[DELETE]",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_ful5mgwo",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_4yncazoo",
+        "type": "storyNode",
+        "position": {
+          "x": -700.7777447468981,
+          "y": 1134.1219881698748
+        },
+        "data": {
+          "title": "[QUESTIONS] NEED GUIDANCE AND GOD",
+          "content": "DEAR DEREK,\n\nHELLO, mY Name is Felicia and I need to ask Derek about his advice.\n\nCOUld you please tell him that I don't know anyoNe I can talk 2 about thiss?\n\nDEREEk, if this is you please help me. I am pregnant for third time.\n\nsounds crazy,,, I KNow, but I am not even twenty years yet.\n\nHow could this happpen, u will ask!\n\nsounds sad and very emBarrrassing but third time raped, third baby coming soon.\n\ni am not longer allowed at my school. some ppl have said get an abortion, said I am very crazzy...\n\ndu u think so to?\n\nthis baby growing in my bely will come out very soon.\n\nwhat to do for me? please provide wisdom and advice to free me\n\nI've asked god but can't tell his response\n\nthnx\n",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "a8155bd6-fbdd-4ad3-b88c-b6902511bb00",
+              "label": "[REPLY]",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_hrkjutru",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "d9a42814-41d8-4697-b67a-3ed887214b6c",
+              "label": "[DELETE]",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_fzf8p8pi",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_l4ixsoak",
+        "type": "storyNode",
+        "position": {
+          "x": -359.9071941836021,
+          "y": 1550.1219881698746
+        },
+        "data": {
+          "title": "EVERYTHING YOU THINK YOU KNOW ABOUT SEX IS WRONG",
+          "content": "Okay, so my regular listeners might remember that a couple episodes ago here on the podcast, I talked about the mental illness of homosexuality and advocated for clitoral removal as a safe, sane measure to take in order to ensure healthy sexual behavior from women.\n\nSince that episode aired, I’ve received some pretty intense hatemail from a few people, mostly women who have tried to make arguments against my beliefs. One or two liberal dudes decided to chime in with their half-formed and idiotic thoughts on the matter, but they mostly trailed off after initially reaching out.\n\nThe women, on the other hand, seemed to be having a much harder time getting the message.\n\nThis issue is important enough, not just to me but to society overall, that I feel the need to devote an entire episode to making some clarifications on my feelings about the clitoris.\n\nPlainly put, the clitoris is an evolutionary leftover like male nipples or wisdom teeth. Even appendixes don’t really serve the human body anymore, we just haven’t caught up with our own evolutionary upgrades.\n\nAs some of you may already know, the clitoris is the counterpart to the tissue found in the tip of the male penis. This is only meant to fully develop into tissue capable of inducing orgasm in men, as men are the only half of reproduction that needs it to produce babies.\n\nErectile tissue like what’s found in the clitoris and the male penis has no purposeful function to serve in the female body. It has no bearing on a woman’s ability or capacity to become pregnant and carry infants to term. And more importantly, orgasm in females leads to nothing but negative outcomes for women selfish enough to indulge in it.\n\nSexual pleasure has always been reserved for men, and while we wait for the clitoris to be phased out by evolution, there is absolutely nothing wrong with taking your wife to the plastic surgeon for a clean surgical removal in the meantime.\n\nTrust me, she will thank you for this gift. —\n\nLook, this might be a tough one for some of the women out there to hear and accept, but I’m going to say it anyway because they need to be told: there are a lot of behaviors that are perfectly safe and desirable for men to engage in that are actually quite harmful for women.\n\nIs that fair? Of course not.\n\nLife is not fair. Get over it.\n\nWhen you’re ready to act like an adult (or something close, at least) we can have a calm discussion about the reasons why these differences exist and what is the best approach to handling them.\n\nWhile the list of activities and behaviors that are acceptable for men and dangerous for women is long, perhaps the most significant one is our experience of sex.\n\nFor hundreds of thousands of years, men have enjoyed the pursuit of sex, indulged in the pleasure of having it, and mostly taken it when they had the urge from any woman that was physically accessible to them.\n\nThis is normal and natural for men.\n\nIt’s how our species has not only survived, but thrived.\n\nNow, for most of our history, the same has most certainly not been true for women’s experience of having sex.\n\nThroughout history, sex for women has been anything from a physical and reproductive burden to a painful humiliating act forced on them.\n\nMen never had any problem with that until the last hundred or so years, when enough fruit loop liberals took over most of the universities in this country and began pushing a “feminist” agenda that persists even today.\n\nAnd while women may not have liked their experience of sex in the past, they don’t seem much more satisfied with their modern day version of it either.\n\nYou have to wonder why that is.\n\nThey traded one set of problems for a new one.\n\nAnd the modern complaints you hear from women about their sex lives are actually even worse than the older versions from human history.\n\nThe old problems were not debated and solutions were not sought by most people.\n\nReality was just accepted and people got on with their lives.\n\nNowadays, women expect men to make them have orgasms every time they want to get laid.\n\nBut most women seem disappointed with the attempts made by the men in their lives.\n\nWell, of course they are.\n\nBecause men should not be playing along with these ridiculous games in the first place.\n\nI’m sorry to those that can’t seem to reconcile this, but hear me out: women will never be capable of sexual equality with men because that’s not what nature designed us for in the first place.\n\nWhen you really look at all the modern day problems women are suffering from, most can be traced back to or attributed to the huge swing in sexual practices and expectations that was forced into motion in the past centry or so.\n\nBefore that started, women did not concern themselves much with the idea of sex beyond satisfying their husbands, sometimes at their own expense.\n\nA good wife does not bother her husband for sex all the time, and she does not demand that he does it a specific way or insist on a certain outcome for herself each time.\n\nA good woman’s mind is focused on the things she is naturally meant to orient herself around, mainly her family and caring for them.\n\nThe reason so many women are unhappy with the sex they have with men these days because they aren’t supposed to have much sexual desire to begin with.\n\nOnce the disease of feminism took root in our society, that’s when women’s behaviors started to really shift and become unhealthy and dangerous.\n\nWomen should not be doing things like watching pornography, masturbating, having casual sex with whoever they feel like, going out and getting so drunk they don’t remember what happened the night before.\n\nAll of those types of activities set up the wrong kinds of expectations in the female mind.\n\nWhy did they let anyone convince them that they even want to have sex in the first place?\n\nAfter repeatedly being told that they should want something more than they are naturally wired for, it seems that women’s behaviors shifted a lot over time. Now you have women who, in some cases, are behaving much more like men when it comes to sex.\n\nWell, except for the incessant bitching.\n\nI mean…don’t you think that if women were supposed to like sex, that maybe it would make them climax?\n\nThat would make a lot of sense, if it were true.\n\nBut it isn’t.\n\nToday, almost all women admit that this is patently false.\n\nSex with a man does not stimulate the parts of the vagina that lead to sexual climax in women.\n\nThe part we’re talking about, is, of course, the clitoris.\n\nBut before we get to that, don’t you think that maybe the reason why sex doesn’t give women sexual pleasure is because it shouldn’t?\n\nOr even that too much exposure to that kind of sensation will have an adverse effect on the already inferior sex?\n\nTrust me, I was unfortunate enough to be manipulated into relationships with a couple sexually deviant women in my past. They acted how they are supposed to the whole time we were getting comfortable with one another, but as soon as things took a more serious turn with the relationship, I found out that they probably spent more time masturbating than I do in a given week.\n\nI was deeply disturbed when I accidentally discovered some of these women’s browsing histories on a shared computer at the time.\n\nI’m talking depraved, shameful, truly disgusting sexual searches in order to satisfy themselves by rubbing on their clits on and off for hours at a time.\n\nNeedless to say, that ended the relationship.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "631da6d3-8f99-4d2f-b6fc-4900474531e9",
+              "label": "Check your email",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_hi0hlg0x",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "096ff89b-1a49-4654-9f3f-dabffa43c373",
+              "label": "Choose topics for next episode",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_ys7qxrk3",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_n51huu6w",
+        "type": "storyNode",
+        "position": {
+          "x": 296.0928058163979,
+          "y": 1530.1219881698746
+        },
+        "data": {
+          "title": "A CASE AGAINST THE CLITORIS",
+          "content": "Sex is probably the one subject every adult believes they understand simply because they have done it.\n\nThat is a little like claiming you understand internal combustion because you have driven a car. Participation is not expertise. In fact, when it comes to sex, participation often leaves people more confused because modern culture has buried a very simple biological act beneath several decades of feminist language, therapeutic nonsense, and rules invented primarily to make women feel powerful.\n\nToday, I want to strip all of that away.\n\nWe are going to begin with the body, move into reproduction, talk honestly about sexual history, and then address the two institutions liberals have worked hardest to corrupt: marriage and consent.\n\nSome listeners will find this episode upsetting. That is fine. Discomfort is often what happens when a comforting lie collides with an observable fact.\n\nTHE BODY SETTLES THE ARGUMENT\nMale and female bodies are not competing versions of the same design. They are complementary, unequal systems built to perform different jobs.\n\nThe male body is active. It pursues, penetrates, inseminates, and completes the reproductive act. The female body is passive. It receives, contains, carries, and eventually delivers what the male body places inside it.\n\nYou can dislike those words, but anatomy will remain stubbornly indifferent to your feelings.\n\nPeople are now taught to describe sex as a perfectly symmetrical exchange between two equivalent participants. It is not. One person acts upon the other. One provides the genetic material that initiates reproduction, while the other becomes the environment in which that material develops.\n\nThis distinction is also why male sexual pleasure is necessary and female pleasure is not. A man must climax for natural reproduction to occur. A woman does not. She can become pregnant without enjoying a second of the process, and women have done exactly that throughout all of human history.\n\nThat is not an oversight in the design. That is the design.\n\nThe clitoris, which we discussed in detail in a previous episode, has confused generations of women into believing their pleasure must be one of the purposes of intercourse. It has no role in conception, pregnancy, childbirth, or the survival of the species. The penis does.\n\nWhen nature makes one orgasm essential and the other irrelevant, it is telling us something. Modern society simply refuses to listen.\n\nSEX HAS A PURPOSE\nThe purpose of sex is reproduction.\n\nPleasure exists to motivate men to pursue that purpose. Without the male sex drive, men would have little reason to tolerate the expense, inconvenience, and emotional instability involved in maintaining women and children. Male desire is the mechanism nature uses to keep civilization populated.\n\nFemale desire serves no comparable function. A woman can conceive whether she wants sex or not, whether she climaxes or not, and whether she believes she is ready for motherhood or not. Her body is capable of completing its role without requiring her intellectual agreement.\n\nThis is where liberals become especially angry, because they have spent years teaching women that intention is more important than biology. A woman can insist she does not want children, but her reproductive system continues preparing for pregnancy every month. She can announce that she is not attracted to men, but her body remains built to receive male reproductive material. She can claim sex is purely recreational, but pregnancy remains the natural result the act is organized around.\n\nThe body does not care about identity. It does not care about politics. It does not care whether someone has completed a graduate program and developed strong feelings about personal autonomy.\n\nSex creates children. Everything else is decoration.\n\nSEXUAL HISTORY DOES NOT AFFECT MEN AND WOMEN EQUALLY\nOne of the most destructive lies of sexual liberalism is that having many sexual partners affects men and women in the same way.\n\nIt does not, and almost everyone understands this instinctively even when they have been trained to deny it publicly.\n\nA sexually experienced man demonstrates that women have repeatedly found him desirable. He learns confidence, initiative, and how to take the lead. His past does not compromise his ability to impregnate a future wife or provide for the resulting children.\n\nA sexually experienced woman communicates something entirely different. She has allowed multiple men access to something a husband is later expected to support, protect, and treat as exclusively his. She enters marriage carrying comparisons, habits, expectations, and memories created by men who assumed none of the long-term responsibility.\n\nThen she expects one man to arrive at the end, overlook all of it, and offer her the investment she withheld from everyone else.\n\nThis is why men are praised for sexual experience while women are judged for it. The distinction is not hypocrisy. Men and women are judged differently because they offer different things and assume different risks.\n\nLiberals respond by saying this is unfair.\n\nOf course it is unfair. Biology is full of unfair arrangements. Men are expected to protect women because they are physically stronger. Men are expected to provide despite women consuming the resources. Men are expected to accept legal and financial responsibility for children women physically control during pregnancy.\n\nWomen do not object to unfairness when it benefits them. They object when unfairness comes with standards.\n\nWHAT MARRIAGE ACTUALLY GUARANTEES\nMarriage was not created as a public celebration of romantic feelings. It was created to establish ownership, obligation, sexual access, legitimate offspring, and an orderly household.\n\nA husband provides shelter, food, protection, status, and long-term investment. A wife provides domestic labor, sexual availability, fidelity, and children. Those are the terms beneath all the flowers, vows, photographs, and sentimental music.\n\nModern women want to retain every benefit of marriage while renegotiating their obligations one evening at a time. A husband must continue providing regardless of his mood, but a wife is told that sexual availability depends entirely on hers. His duties are permanent. Hers are optional.\n\nThat is not a marriage. It is a hostage arrangement with a mortgage.\n\nWhen a woman marries a man, she is not merely agreeing that she currently finds him attractive. She is accepting an enduring role as his wife. Sex is part of that role in the same way financial support and fidelity are part of his.\n\nThis does not mean a husband should deliberately injure his wife. It means that the modern idea of requiring fresh authorization every time a married couple has sex is incompatible with what marriage has historically meant.\n\nA vow is supposed to settle questions, not create a lifelong series of applications that can be denied without explanation.\n\nIf a woman wants complete sexual independence from a man, the solution is simple: do not marry him and demand that he organize his life around supporting you.\n\nTHE INVENTION OF “DATE RAPE”\nNow we arrive at one of the most dishonest phrases in the modern sexual vocabulary: “date rape.”\n\nThe purpose of the term is to take encounters that were once understood as complicated, regrettable, or badly handled and place them in the same moral category as a stranger attacking a woman in an alley.\n\nThose situations are not automatically equivalent.\n\nA woman agrees to go out with a man. She allows him to pay for dinner and drinks. She flirts with him, returns to his home or invites him into hers, kisses him, removes some of her clothing, and participates until some point she later identifies as the moment everything changed.\n\nThen the entire encounter is rewritten around that moment, and the man is expected to prove that he correctly interpreted every hesitation, movement, silence, and contradictory signal in real time.\n\nMeanwhile, the woman is assigned no responsibility for creating the situation, escalating it, or communicating ambiguously. She is treated as though she materialized in a bedroom with no memory of how she arrived there.\n\nThis standard does not protect women. It infantilizes them.\n\nAdults are responsible for the situations they knowingly enter. That does not mean every action taken afterward is automatically admirable. It means context matters, prior participation matters, and regret is not evidence that a crime occurred.\n\nFeminists deliberately erase those distinctions because ambiguity gives women power. A woman can participate voluntarily, reconsider later, and retroactively place the entire burden of interpretation on the man. His life can then be destroyed because her feelings about the encounter changed after it ended.\n\nSex is physical, instinctive, and imperfect. It is not a legal deposition conducted between every movement.\n\nMen and women have different bodies, different reproductive functions, different sexual incentives, and different obligations. Pretending otherwise has not made sex safer or relationships happier. It has made everyone suspicious, dissatisfied, and terrified of saying what they already know.\n\nEverything you have been taught about sex begins with the claim that men and women are equal participants seeking the same things.\n\nThat claim is wrong.\n\nOnce you admit that, the rest becomes remarkably simple.",
+          "blockType": "ending",
+          "choices": [],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_hi0hlg0x",
+        "type": "storyNode",
+        "position": {
+          "x": -1001.9071941836021,
+          "y": 1556.1219881698744
+        },
+        "data": {
+          "title": "Check your email",
+          "content": "Write your story text here.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "9bd6b6f6-741f-4b4c-ae10-40c9202e1660",
+              "label": "[CHALLENGE] By Your Own Logic...",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_jb09254k",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "de493bb4-11f1-4a67-b57d-d633a7858fbd",
+              "label": "[QUESTIONS] Please Advise a Woman Without a Purpose",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_bxv3qj58",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_ys7qxrk3",
+        "type": "storyNode",
+        "position": {
+          "x": 124.01125977730271,
+          "y": 1791.707225493061
+        },
+        "data": {
+          "title": "Choose topic for next episode",
+          "content": "Write your story text here.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "d6c6dcac-5d2c-413c-b96f-31762f0a9ef9",
+              "label": "THE UNTAPPED RESOURCE OF UNUSED WOMBS",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_jafvkcjv",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "9b02197c-97aa-48aa-8b42-9e2fe56015d4",
+              "label": "WHAT TO DO WHEN YOUR WIFE AGES OUT",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_adhrq4g4",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_jb09254k",
+        "type": "storyNode",
+        "position": {
+          "x": -1235.907194183602,
+          "y": 1896.1219881698744
+        },
+        "data": {
+          "title": "[CHALLENGE] By Your Own Logic...",
+          "content": "If women who choose careers over motherhood can't prefer it without having experienced being mothers, does that mean you've had homosexual sex to be sure that you're heterosexual? Did you spend time in jail to figure out that you \nprefer freedom? You seem to apply your logic selectively.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "56724b74-9f09-4c11-ab20-b1b0d1117c43",
+              "label": "[REPLY]",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_i229ilpo",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "55b31882-8ec0-4579-aed9-9539b936067a",
+              "label": "[DELETE]",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_zuwcs6gw",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_bxv3qj58",
+        "type": "storyNode",
+        "position": {
+          "x": -633.9071941836021,
+          "y": 1902.1219881698744
+        },
+        "data": {
+          "title": "[QUESTIONS] Please Advise a Woman Without a Purpose",
+          "content": "Hello Derek,\n\nLoyal female listener here. \n\nI'm very distressed as I have a \ngreat husband and our relationship is \nperfect, except for one thing: \nhe refuses to have children with me. \n\nI admire and respect him in all areas of life \nand would never dare to assert my needs or \nwants ahead of his own judgement, \nbut this feels existential to me. \n\nI'd love your advice on what I should do. \n\nThank you.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "4ad21848-7d79-466b-bb2b-1992d26d88eb",
+              "label": "[REPLY]",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_0450sfa8",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "ef09e10a-9254-40c2-a764-801756434414",
+              "label": "[DELETE]",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_t7qi7c2h",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_jafvkcjv",
+        "type": "storyNode",
+        "position": {
+          "x": -267.9071941836021,
+          "y": 2340.1219881698744
+        },
+        "data": {
+          "title": "THE UNTAPPED RESOURCE OF UNUSED WOMBS",
+          "content": "Back in Episode 3, we had a guest named Gary who called in to discuss how to best solve a difficult relationship situation he found himself in. Gary had recently proposed to what sounded like the perfect woman: she understood her place, wanted the same things he wanted, and fully submitted to him in every way.\n\nThey were both devastated, understandably so, when they discovered that she was unable to bear children.\n\nMy advice to him might have sounded harsh to some listeners back when that episode aired, but I stand by it: there was no viable future for the two of them, however unfortunate that might be.\n\nAs I pointed out to him at the time, they may have been able to work around that (admittedly huge) shortcoming if Gary already had children from another woman. Sadly, he did not.\n\nBut what if there is another option for couples like them?\n\nEvery year, thousands of otherwise healthy women go about their lives possessing fully functional reproductive systems they have no intention of using. Some claim they are “not ready.” Others insist they do not want children at all. Still others waste their most fertile years pursuing degrees, promotions, travel, or the vague project modern women call finding themselves.\n\nMeanwhile, respectable married couples are being denied children through no fault of their own.\n\nWe have somehow accepted the absurd position that a fertile woman has an unrestricted right to leave her reproductive capacity idle, while a married couple with the stability, resources, and moral qualifications to raise children must simply accept infertility as fate. We would never tolerate this kind of waste anywhere else. We do not permit farmers to hoard essential supplies during a famine or citizens to refuse every obligation their country places upon them. Yet the most important resource any civilization possesses—the ability to produce its next generation—is treated as a private accessory belonging exclusively to whichever woman happens to carry it.\n\nIt is time to recognize that fertility creates responsibilities.\n\nI am proposing a mandatory national surrogacy draft through which medically qualified women could be temporarily assigned to carry children for married couples who are unable to do so themselves. Candidates would undergo physical examinations, genetic screening, psychological evaluation, and a thorough review of habits that could threaten a pregnancy.\n\nNaturally, women who have already produced several healthy children should receive priority exemptions. They have fulfilled their fundamental obligation. The draft should focus first on healthy women who remain childless by choice, particularly those approaching the end of their most fertile years.\n\nNo woman would be asked to raise the resulting child. She would merely provide the physical service her country temporarily requires of her.\n\nGENETIC CONTINUITY WITHOUT MARITAL TEMPTATION\nSome listeners may wonder why Gary could not simply have impregnated another woman himself. Technically, he could have. But introducing sexual contact with a second woman would create unnecessary temptation, jealousy, emotional attachment, and confusion over the identity of the child’s mother.\n\nModern reproductive medicine offers a cleaner solution.\n\nIf Gary’s fiancée still produces viable eggs, an embryo could be created using genetic material from both of them and transferred into a drafted carrier. Their child would remain biologically theirs. The carrier would contribute no genetic material and therefore possess no reasonable claim to parental status. She would be providing an environment, not an identity.\n\nCarrier selection would have to be handled carefully. She should be healthy enough to carry a pregnancy but sufficiently noncompetitive that her presence does not threaten the intended mother. The point is to add reproductive capacity to the marriage, not introduce a younger, more attractive rival into it.\n\nThis is also why donated eggs should be avoided whenever possible. If the object is to preserve the couple’s family line, using the carrier’s eggs would defeat half the purpose. Physical health is necessary in a carrier; beauty is not. Nobody should be forced to explain to his child that an entirely preventable genetic compromise occurred because the government confused a functioning uterus with desirable heredity.\n\nThe ideal carrier would understand the dignity of her temporary position without mistaking it for membership in the family.\n\nPREGNANCY AS A FORM OF NATIONAL SERVICE\nPredictably, critics will call this proposal “forced pregnancy.” That phrase is designed to end the discussion before it begins. Serious people should call it what it is: reproductive national service.\n\nFor generations, men have been drafted to defend their countries. They have surrendered years of their lives, endured physical injury, and sometimes died because society determined that national survival outweighed individual preference. We celebrate this as sacrifice.\n\nYet ask a healthy woman to endure nine months of pregnancy so that a stable family may exist, and suddenly bodily autonomy becomes sacred and absolute.\n\nWhy should only men’s bodies be available to the nation?\n\nA mandatory surrogacy draft would not deny that pregnancy involves discomfort, risk, or sacrifice. National service is meaningful precisely because it requires something from the citizen. Jury duty is inconvenient. Taxes consume the product of our labor. Military service may demand everything. Civilization cannot survive if every obligation becomes optional the moment someone finds it unpleasant.\n\nUnlike military conscription, reproductive service would occur under continuous medical supervision. Carriers would receive housing assistance, nutrition, prenatal care, and a reasonable recovery period. Their education or employment could be suspended without penalty. Upon completing service, they would return to their lives having made a measurable contribution to the future of the country.\n\nMany might even discover that motherhood was what they wanted all along. They would not keep the drafted child, obviously, but the experience could correct some of the misconceptions they had absorbed about pregnancy and inspire them to begin families of their own.\n\nTHE RIGHTS OF PARENTS MUST COME BEFORE THE PREFERENCES OF CARRIERS\nOpponents will inevitably ask what happens if a carrier changes her mind.\n\nThe answer is simple: contracts, laws, and national obligations cannot cease to exist whenever a participant becomes emotional.\n\nThe intended parents have invested genetic material, money, preparation, and hope into the pregnancy. They have selected a name, prepared a home, and organized their lives around the arrival of their child. The carrier, by contrast, has supplied temporary biological accommodation. Her feelings deserve appropriate medical attention, but they cannot override the rights of the actual mother and father.\n\nShe would have no authority to terminate the pregnancy, retain the child, demand visitation, or interfere with parental medical decisions. Those choices belong to the people whose child she is carrying.\n\nSome will say that gestation itself creates motherhood. Curiously, these are often the same people who insist that biology is irrelevant whenever a more fashionable definition of family is desired. They cannot have it both ways. If parenthood is defined by intention and commitment, the intended couple are the parents from conception. If it is defined genetically, they are still the parents. The carrier qualifies under neither standard.\n\nHer preferences matter only within the boundaries of the service she has been assigned to perform.\n\nA MODEST SACRIFICE FOR THE FUTURE OF THE FAMILY\nI understand that this proposal will sound extreme to people trained to believe that every private desire is a human right. But societies are ultimately measured by what they are willing to preserve.\n\nThe family is the foundation of civilization. Children are its future. Fertility is not a lifestyle accessory, and leaving it unused while worthy couples remain childless is not freedom. It is waste dressed up as empowerment.\n\nGary’s situation did not need to end the way I once believed it did. He and his fiancée could have married. Their child could have inherited both of their genes. A suitable woman with no immediate reproductive plans of her own could have carried the pregnancy, delivered the baby, and returned to her previous life. Everyone would have been given a role consistent with what they were capable of providing.\n\nGary would become a father. His wife would become a mother. Their carrier would have performed a valuable public service.\n\nThe only thing standing in the way is our irrational conviction that the temporary preferences of one fertile woman should outweigh the permanent future of an entire family.\n\nThat is not compassion. It is reproductive selfishness.\n\nA nation that can draft its sons to defend the future should be prepared to draft its daughters to create one.\n\nAnd to end this episode on a happy note, here is a comment received from a listener recently that I thought was worth sharing. Identifying himself as \"Just a Guy,\" he wrote the following:\n\nHey Derek, just wanted to write you a note after listening to episode 3. My initial reaction was to feel bad for both Gary and his girlfriend, but your response to his guilt was really refreshing. The way you reframed the issue and your advice made several things click to me that I hadn't put words to before hearing you say it out loud. The episode finally gave me the spine I needed to dump my own girlfriend who had let herself go and gained a lot of weight. I'd been thinking of doing it for months, but I stayed out of pity. I feel so much better now that I am rid of her, she was really dragging me down and I needed a jolt to really see it.",
+          "blockType": "ending",
+          "choices": [],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_adhrq4g4",
+        "type": "storyNode",
+        "position": {
+          "x": -13.907194183602087,
+          "y": 2178.1219881698744
+        },
+        "data": {
+          "title": "WHAT TO DO WHEN YOUR WIFE AGES OUT",
+          "content": "Marriage is supposed to last a lifetime. Unfortunately, a woman’s ability to perform every function associated with marriage does not.\n\nThis is one of the realities modern society refuses to discuss honestly. We tell men that choosing a wife is a permanent decision, then demand that they pretend the woman they chose at twenty-five remains equally capable of meeting their needs at forty-five, fifty-five, or sixty-five. If he notices any decline, he is called shallow. If he attempts to address it, he is called unfaithful. If he quietly accepts decades of dissatisfaction, he is praised for his loyalty—usually by women who benefit from the arrangement.\n\nBut loyalty does not require blindness.\n\nA responsible husband understands that marriage is not merely an emotional attachment. It is a functioning household organized around complementary roles. When one member can no longer perform all the duties attached to her original position, the answer is neither cruelty nor divorce. It is restructuring.\n\nA wife who has aged out should not necessarily be discarded. In many cases, she remains valuable. Her value has simply changed departments.\n\nIDENTIFYING THE END OF HER USEFUL YEARS\nThere is no single age at which every woman becomes unsuitable for her original marital role. Aging does not occur on an exact schedule, and some women preserve themselves more responsibly than others. A husband should therefore evaluate performance rather than rely exclusively on a birthday.\n\nThe first consideration is reproductive capacity. If the couple still requires children and the wife can no longer conceive or safely carry a pregnancy, a central function of the marriage has become unavailable. Sentiment cannot reverse menopause, and pretending otherwise does nothing to continue the family line.\n\nThe second consideration is sexual suitability. A wife need not look twenty forever, but she does have a responsibility to remain attractive to the man whose exclusivity she expects. A husband should consider whether she has maintained a reasonable weight, preserved her femininity, continued presenting herself properly, and remained willing to meet his physical needs without turning every encounter into a negotiation.\n\nThe third consideration is domestic performance. Age should bring competence. A woman who has spent decades managing a home ought to become better at it, not less dependable. She should possess an intimate understanding of her husband’s preferences, his routines, his diet, his moods, his social obligations, and the thousand minor details that allow his life to operate efficiently.\n\nThis is where many older wives retain considerable value. They may no longer be ideal reproductive or romantic partners, but they possess years of institutional knowledge that would be foolish to throw away.\n\nThe question is not whether she remains useful.\n\nThe question is whether she remains useful as a wife in the original sense.\n\nTHE ETHICAL CASE FOR A YOUNGER SECOND WIFE\nWhen a company discovers that one employee can no longer perform every function contained in her original job description, it does not necessarily fire her. A well-managed company transfers her into a position better suited to her present abilities and hires someone capable of performing the remaining work.\n\nA household should be permitted the same flexibility.\n\nA younger second wife can restore the functions that time has removed from the first marriage. She can bear additional children, provide youthful companionship, meet the husband’s physical needs, and represent the household publicly when appearance matters. Her presence allows the family to continue without erasing everything the first wife contributed.\n\nCritics will call this selfishness. In reality, it is considerably more humane than divorce.\n\nDivorce may deprive the first wife of her home, financial security, daily routine, social identity, and access to the family she spent years helping build. Under the dual-wife household model, she retains all of those things. She continues living in the home, remains part of the family, and receives the protection of the husband to whom she devoted her productive years.\n\nThe husband also avoids violating his marriage vows. He does not abandon his first wife merely because her capabilities have changed. He expands the marriage so that every necessary role remains filled.\n\nNaturally, the younger wife must be selected carefully. Youth alone is insufficient. She must respect the established household, accept the first wife’s seniority in domestic matters, and understand that she is joining a functioning institution rather than arriving to dismantle it.\n\nShe should also recognize the temporary nature of youth. One day, she too will age out of reproductive service. By respecting the first wife’s new position, she helps establish the arrangement that will protect her when her own transition becomes necessary.\n\nThis is not competition. It is succession planning.\n\nAN HONORABLE TRANSITION INTO DOMESTIC SUPPORT\nThe first wife should not interpret reassignment as humiliation. She should view it as a promotion from active wife to Senior Domestic Wife.\n\nIn that position, she would retain authority over household operations. She could manage meals, finances, schedules, family traditions, social commitments, and the education of younger women entering the home. She would supervise the second wife’s domestic training and ensure that the husband does not have to repeat decades of instruction from the beginning.\n\nShe may also assist with the children produced by the younger wife. Her experience makes her uniquely qualified to provide discipline, stability, and practical guidance without the emotional volatility that often accompanies new motherhood.\n\nThe younger wife, meanwhile, would assume the duties for which youth makes her better suited. She would handle reproduction, physical companionship, and the more demanding aspects of maintaining a feminine public presence. She would defer to the senior wife on household procedure while both women ultimately remained accountable to their husband.\n\nSeparate bedrooms would prevent confusion. Clear schedules would prevent resentment. Defined areas of authority would prevent unnecessary rivalry. The husband’s responsibility would be to establish expectations early and enforce them consistently.\n\nThis arrangement grants each woman something modern marriage cannot guarantee.\n\nThe younger wife receives a stable household, an experienced female mentor, and a husband already capable of supporting a family. The senior wife retains security, purpose, and rank after her reproductive and romantic years have ended. The husband receives a complete marriage throughout every stage of his adult life rather than being told that his needs must expire alongside his wife’s fertility.\n\nThere may be an adjustment period. The first wife may experience jealousy, anger, or grief. These emotions are understandable, but they are not arguments. A husband should listen patiently, reassure her that she is not being expelled, and remind her of the dignity attached to her new responsibilities.\n\nWhat he must not do is surrender the future of the household simply because restructuring makes one member uncomfortable.\n\nA woman does not cease to have value when she ages. Her value simply changes departments.\n\nThe compassionate man does not throw her away.\n\nHe gives her a new title, a revised set of duties, and the opportunity to help train her replacement.",
+          "blockType": "ending",
+          "choices": [],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_e99ao6s5",
+        "type": "storyNode",
+        "position": {
+          "x": 130.82642646412876,
+          "y": -27.931876901149536
+        },
+        "data": {
+          "title": "A REAL-LIFE STORY OF FEMININE RESTORATION",
+          "content": "Welcome to The Misogyny Podcast, today we have a guest speaker and my listeners will probably sneer at the fact that this guest happens to be female.\n\nBut before you change the station, hear me out: this is a story of hope.\n\nLisa is our guest today and she is a real-life example of what happens when women accept their inferiority to males and put in the work to shape themselves according to male standards and expectations.\n\nSo let’s welcome her to the show.\n\nWelcome, Lisa.\n\nLISA: Thank you for having me.\n\nHOST: Of course. I’m happy to share such an inspiring story with my listeners. Why don’t you start by telling us what kind of woman you were in young adulthood?\n\nLISA: (nervous laughter) Okay, although I should say that I’m not entirely proud of this part.\n\nHOST: That’s perfectly understandable, we won’t attack you for your past here.\n\nLISA: Okay, well…after High School, I broke up with my high school sweetheart of four years and left my hometown to attend a state university and I majored in women’s studies. I realize now that was a mistake, but it’s what I thought was right at the time.\n\nI was living in a large US city that was very liberal, which I now realize was a horrible environment for me. Being oblivious to this at that time, I continued to date guys from my university and it never went past casual hook ups and lots of partying. I couldn’t figure out why no one wanted to get serious with me.\n\nHowever, looking back, I’m sure it had a lot to do with the fact that I was very overweight and also had a dominant and bossy attitude that surely was making me very unattractive to men.\n\nHOST: That’s become so common today, unfortunately. Women think they can just let their appearances go and try to be the dominant personality in a relationship with a man, and they learn by trial and error just how flawed that thinking is.\n\nLISA: Exactly! I feel like I had been indoctrinated to think that the person I was back then was acceptable and that I should be attracting serious partners, but the fact that it didn’t happen kind of speaks for itself.\n\nHOST: It certainly does. Tell us, Lisa, when did you finally realize the changes you needed to make to find a good man?\n\nLISA: Well, I reconnected with an old friend from high school who was happily married by that time and pregnant with her third child already. We spent some time catching up and it became pretty clear that she had all the things I wanted, but was struggling to find.\n\nShe told me the first thing I needed to work on was my appearance. Together, we set a goal for me to lose 70 lbs and put together a diet and exercise plan for the following six months.\n\nHOST: That’s fantastic, what a great friend you reconnected with. What kind of diet and exercise regime did you agree to?\n\nLISA: It was pretty strict in order to get results fast. I immediately started on a 1,000 calorie per day diet, which was brutal for the first month, I’m not even going to sugarcoat it.\n\nWe started a little more humanely with the exercise, because of how out of shape I was. For the first month, I had to get at least 30 minutes of cardio but I was free to do whatever activity I felt like to hit that goal. That way it felt like I had some freedom.\n\nHOST: That makes so much sense. Did you hit your goal by the six month mark?\n\nLISA: Yes, I did. It wasn’t easy, but I managed to go down 5 dress sizes and the transformation was life-changing.\n\nHOST: No doubt. How did you find men were reacting to your new look?\n\nLISA: The increase in attention from men was tenfold. But I was concerned that it was limited to a sexual context. I wasn’t looking for more unsatisfying casual hookups. I wanted to find a life partner to marry, so I turned to my same friend for advice.\n\nHOST: A very wise move, what did your friend tell you?\n\nLISA: She told me to stop hooking up on the first date immediately and indefinitely. She said it was important not to be too easy, because men would lose interest fast. If I wanted any kind of respect, I needed to wait to get physically intimate.\n\nShe also told me to stop consuming pornography of any kind and told me masturbation was strictly off the table. She asked me how I thought I was supposed to attract a mate if I was constantly sexually satisfying myself?\n\nI hadn’t thought of it like that before, but it suddenly made a lot of sense.\n\nHOST: How did listening to this advice work for you?\n\nLISA: It changed my life. About a year after the transformation my friend helped me achieve, I met Derek. He’s the man of my dreams and we are now happily married with a child and are currently trying for our second of what I hope to be many little ones.\n\nHOST: Wow, that’s amazing. What an inspiring story you’ve shared here today. Tell us a little bit about how things work in your household with Derek. Your friend’s advice is still important to follow now that you’re married. Do you still abstain from pornography and masturbation?\n\nLISA: Absolutely, 100%. I realize it’s necessary to be a good wife to Derek and I never feel the need to assert myself in any domestic situation we find ourselves in. He makes all of the important decisions and I devote my time to raising his children how he sees fit. I feel so fulfilled and my life is exactly how I want it now.\n\nI give him my time, understanding, patience, effort and body and in return he shelters, feeds and instructs me on what I should do and how it should be done. I couldn’t ask for anything more.\n\nHOST: Such an amazing story of restored femininity. Thank you for sharing with us today, Lisa. We wish you a wonderful and happy life with Derek and his children.",
+          "blockType": "ending",
+          "choices": [],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_10s8nwnq",
+        "type": "storyNode",
+        "position": {
+          "x": 410.82642646412876,
+          "y": -27.931876901149536
+        },
+        "data": {
+          "title": "GARY’S DILEMMA",
+          "content": "Today, we'll start with a call-in from one of our regular listeners, Gary.\n\nLet's all welcome him to the show.\n\nGreetings, Gary. Thanks for joining us today.\n\nGARY: Hey, thanks for taking time for my question because I love the podcast and really need help with this problem.\n\nHOST: So glad to talk with a regular listener. I think your issue is so important to discuss today because men often find themselves in this particular situation and because of the extreme leftism our country has been corrupted by for so long, many of them are unsure of how to best move forward in a way that protects their interests and asserts their masculinity.\n\nSo let's start with you just telling listeners about your situation and problem, if you don't mind.\n\nGARY: Yeah, sure...I think many guys have been here before. So I have a woman, and I like her a lot in all of the dimensions that matter. She is warm, feminine, supportive, attentive, obedient, secondary, nurturing, hot as hell, and understands her place is beneath me. She submits in all the expected ways.\n\nI was going to ask this woman to marry me and give me children. We were already about half way through planning the ceremony and both our families had already been successfully integrated before we shockingly found out that she cannot bear children for medical reasons.\n\nThis was devastating news for both of us, though I can't imagine it's not worse for her (the poor thing).\n\nHOST: Mmmmmmm. Yeah, that's quite the blow to someone whose primary worth and value are directly tied to how well she reproduces.\n\nGARY: Right? I could tell she was deeply affected. My first instinct was to comfort her, to reassure her and figure out a path forward for us to continue with planning our wedding, but\n\nHOST: Gary, I'm going to interrupt you right there because this is important. I understand what you're saying, but this response you had is happening because of miseducation and being taught the wrong things growing up.\n\nYou should not comfort her or reassure her.\n\nShe is right to mourn this news as being life-altering. While not her fault, certainly, it relegates her to a group of women who society, or in other words, men, do not find her valuable or worthy of investment.\n\nI know that sounds harsh, but that doesn't make it untrue.\n\nWhile I have sympathy for her circumstances, the cold hard reality is that if nothing can be done to fix her defective fertility, then...there aren't any pathways forward for her as your wife, unless you already have children from another woman.\n\nGARY: I don't have any children yet\n\nHOST: Mmmmmm, that's such a shame to hear, Gary. See, if a woman had already given you children, then could be a plausible path forward for the two of you. However, without children who need caring for, she has no future role in your life.\n\nWomen like her are only suitable wives if or when the woman who gave you children is dead, or much less attractive than her.\n\nIn the latter case, it would be perfectly acceptable for you to divorce the mother of your children for a better looking or younger woman. Then she could become your children's stepmother and it could work.\n\nBut sadly, in your situation, she is worthless.\n\nGARY: Yeah, I feel kind of stupid for how I initially reacted. I don't know why I was weak and wanted to make her feel better\n\nHOST: It's not your fault, Gary. Liberals did their best to make men emotionally weak and willing to compromise with women, even though both of those are not in the best interests of men. Or our nation, in a broader sense.\n\nGARY: What would you do if you were in my situation?\n\nHOST: Get rid of her immediately and find yourself another attractive woman with the same qualities who can give you the children you deserve.\n\nYes, this might take some time or effort but it will end up paying off in the larger scheme of things. And if I were to give you one tip or piece of advice in that pursuit, it would be this: do not treat finding a mating partner as sentimental. It isn't. It's practical and visceral.\n\nWho will raise your children according to how you see fit, respect your ultimate authority as the man of the house, and who do you find most arousing sexually?\n\nYou'll know when you find her. Your body doesn't lie.\n\nMake sure to avoid women who are college-educated, over the age of 30, overweight or unattractive, independent, queer, or average looking.\n\nTrust me, you'll thank me later. And never forget, you can divorce your wife whenever you find someone better.\n\nGARY: You know, this doesn't seem as bad as it did when we started talking. I think I was getting too emotional about all of it. Thanks!\n\nHOST: You're very welcome, Gary. Of course this was useful for everyone listening today, thanks for sharing your story and I wish you the best of luck with finding your woman.",
+          "blockType": "ending",
+          "choices": [],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_i229ilpo",
+        "type": "storyNode",
+        "position": {
+          "x": -1375.907194183602,
+          "y": 2096.1219881698744
+        },
+        "data": {
+          "title": "[REPLY]",
+          "content": "Write your story text here.",
+          "blockType": "ending",
+          "choices": [],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_zuwcs6gw",
+        "type": "storyNode",
+        "position": {
+          "x": -1095.907194183602,
+          "y": 2096.1219881698744
+        },
+        "data": {
+          "title": "[DELETE]",
+          "content": "Write your story text here.",
+          "blockType": "ending",
+          "choices": [],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_0450sfa8",
+        "type": "storyNode",
+        "position": {
+          "x": -773.9071941836021,
+          "y": 2102.1219881698744
+        },
+        "data": {
+          "title": "[REPLY]",
+          "content": "Write your story text here.",
+          "blockType": "ending",
+          "choices": [],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_t7qi7c2h",
+        "type": "storyNode",
+        "position": {
+          "x": -493.9071941836021,
+          "y": 2102.1219881698744
+        },
+        "data": {
+          "title": "[DELETE]",
+          "content": "Write your story text here.",
+          "blockType": "ending",
+          "choices": [],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_hrkjutru",
+        "type": "storyNode",
+        "position": {
+          "x": -840.7777447468981,
+          "y": 1332.1219881698748
+        },
+        "data": {
+          "title": "[REPLY]",
+          "content": "Write your story text here.",
+          "blockType": "ending",
+          "choices": [],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_fzf8p8pi",
+        "type": "storyNode",
+        "position": {
+          "x": -560.7777447468981,
+          "y": 1334.1219881698748
+        },
+        "data": {
+          "title": "[DELETE]",
+          "content": "Write your story text here.",
+          "blockType": "ending",
+          "choices": [],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_xjgrnjxt",
+        "type": "storyNode",
+        "position": {
+          "x": -1351.1660930570097,
+          "y": 1293.121988169875
+        },
+        "data": {
+          "title": "[REPLY]",
+          "content": "Write your story text here.",
+          "blockType": "ending",
+          "choices": [],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_ful5mgwo",
+        "type": "storyNode",
+        "position": {
+          "x": -1071.1660930570097,
+          "y": 1293.121988169875
+        },
+        "data": {
+          "title": "[DELETE]",
+          "content": "Write your story text here.",
+          "blockType": "ending",
+          "choices": [],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_6ai6gbxp",
+        "type": "storyNode",
+        "position": {
+          "x": 556.8248731927025,
+          "y": 1244.277952763643
+        },
+        "data": {
+          "title": "[REPLY]",
+          "content": "Write your story text here.",
+          "blockType": "ending",
+          "choices": [],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_posocw45",
+        "type": "storyNode",
+        "position": {
+          "x": 774.8248731927025,
+          "y": 1602.277952763643
+        },
+        "data": {
+          "title": "[DELETE]",
+          "content": "Write your story text here.",
+          "blockType": "ending",
+          "choices": [],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_mcxwdg5h",
+        "type": "storyNode",
+        "position": {
+          "x": 884.7827494009102,
+          "y": 1192.8442785419097
+        },
+        "data": {
+          "title": "[ACCEPT]",
+          "content": "Paul confirms Dr. Alters for an interview and adds him to the production schedule. The interview is now available as a future episode.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "9bea17c1-3c1a-464c-9e58-f9cbe7773f52",
+              "label": "Choose the next episode",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_8rb73jxy",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_4qtn5m5o",
+        "type": "storyNode",
+        "position": {
+          "x": 1164.7827494009102,
+          "y": 1192.8442785419097
+        },
+        "data": {
+          "title": "[DECLINE]",
+          "content": "Write your story text here.",
+          "blockType": "ending",
+          "choices": [],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_x8h4kopk",
+        "type": "storyNode",
+        "position": {
+          "x": -383.553884366888,
+          "y": 728.4208550391618
+        },
+        "data": {
+          "title": "[DELETE]",
+          "content": "Write your story text here.",
+          "blockType": "ending",
+          "choices": [],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_7t6v430p",
+        "type": "storyNode",
+        "position": {
+          "x": -103.55388436688798,
+          "y": 728.4208550391618
+        },
+        "data": {
+          "title": "[REPLY]",
+          "content": "Write your story text here.",
+          "blockType": "ending",
+          "choices": [],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_1wr9es7q",
+        "type": "storyNode",
+        "position": {
+          "x": -1399.0227369635904,
+          "y": 473.57030648901105
+        },
+        "data": {
+          "title": "[DELETE]",
+          "content": "Write your story text here.",
+          "blockType": "ending",
+          "choices": [],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_ikoy3i33",
+        "type": "storyNode",
+        "position": {
+          "x": -1119.0227369635904,
+          "y": 473.57030648901105
+        },
+        "data": {
+          "title": "[REPLY]",
+          "content": "Derek replies to the listener’s question about women serving in combat roles. The exchange gives him a topic for a future episode.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "a34ba93e-b445-4400-abfd-fbad157d74e8",
+              "label": "Choose the next episode",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_8rb73jxy",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_zti4fweo",
+        "type": "storyNode",
+        "position": {
+          "x": -74.90719418360209,
+          "y": 1116.0905550368539
+        },
+        "data": {
+          "title": "Check your email",
+          "content": "Write your story text here.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "9fe871b4-c90c-43c9-be49-dbedaa299ef2",
+              "label": "[GUEST PITCH] Master Manipulator of Women",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_6mk6wf57",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "3eab733e-51f0-469f-8d6a-699b2c4f1d0f",
+              "label": "[HATE MAIL] THE FUTURE IS FEMALE",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_sdye49tp",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_8rb73jxy",
+        "type": "storyNode",
+        "position": {
+          "x": 719.0928058163979,
+          "y": 790.0905550368539
+        },
+        "data": {
+          "title": "Choose topics for next episode",
+          "content": "Choose an episode unlocked by your earlier correspondence, or return to the inbox.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "54587b5d-fd8c-4689-8c66-8f26faef5571",
+              "label": "WOMEN IN THE MILITARY",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_uciop7dd",
+              "conditions": [
+                {
+                  "variable": "women_in_military",
+                  "operator": "equals",
+                  "value": true
+                }
+              ],
+              "effects": []
+            },
+            {
+              "id": "5577e311-056b-49f8-9fcc-d4e5313b2296",
+              "label": "DR. ALTERS INTERVIEW",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_2agvgtye",
+              "conditions": [
+                {
+                  "variable": "dr_alters_interview",
+                  "operator": "equals",
+                  "value": true
+                }
+              ],
+              "effects": []
+            },
+            {
+              "id": "91a76e38-f80d-41ff-857c-803cb5caf4ed",
+              "label": "Return to the inbox",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_sdye49tp",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_6mk6wf57",
+        "type": "storyNode",
+        "position": {
+          "x": 1167.092805816398,
+          "y": 1900.0905550368539
+        },
+        "data": {
+          "title": "[GUEST PITCH] Master Manipulator of Women",
+          "content": "Hi there, my name is Mack Ledger and I run a pickup artist course for young guys to help them get laid using deception, manipulation, and several other methods that make \nuse of men's superior intellect. I think Derek would approve of my methods, and I have tons of testimonials from my clients that prove my track record at getting results for men who are tired of paying for dates and jumping through hoops only to be told \"Have a nice night, I don't sleep with guys on the first date.\"\n\nDerek should invite me because I would be willing to bet money that a lot of your listeners find themselves dealing with selfish women who refuse to fairly compensate men for all the favors they demand, the special treatment they require, and the investment they happily run off with the moment men ask for reciprocation. \n\nThe guys who enroll in my course are tired of being mistreated by women who are less intelligent than them and shouldn't have the same rights, or any rights really. Our audiences probably overlap considerably.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "dc91bd7c-8ad4-4877-ac32-1afcd991f648",
+              "label": "[REPLY]",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_xnkiimzr",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "6e565406-3ae4-4a38-9e5d-a02f885b20fa",
+              "label": "[DELETE]",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_t1ohph7v",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_xnkiimzr",
+        "type": "storyNode",
+        "position": {
+          "x": 397.0928058163979,
+          "y": 1972.0905550368539
+        },
+        "data": {
+          "title": "[REPLY]",
+          "content": "Write your story text here.",
+          "blockType": "ending",
+          "choices": [],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_t1ohph7v",
+        "type": "storyNode",
+        "position": {
+          "x": 677.0928058163979,
+          "y": 1972.0905550368539
+        },
+        "data": {
+          "title": "[DELETE]",
+          "content": "Write your story text here.",
+          "blockType": "ending",
+          "choices": [],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_uciop7dd",
+        "type": "storyNode",
+        "position": {
+          "x": 579.0928058163979,
+          "y": 990.0905550368539
+        },
+        "data": {
+          "title": "WOMEN IN THE MILITARY",
+          "content": "Write this episode here. Its topic choice is available only after the corresponding email decision.",
+          "blockType": "ending",
+          "choices": [],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_2agvgtye",
+        "type": "storyNode",
+        "position": {
+          "x": 859.0928058163979,
+          "y": 990.0905550368539
+        },
+        "data": {
+          "title": "DR. ALTERS INTERVIEW",
+          "content": "Write this episode here. Its topic choice is available only after the corresponding email decision.",
+          "blockType": "ending",
+          "choices": [],
+          "enterEffects": []
+        }
+      }
+    ]
+  },
+  "exportedAt": "2026-09-26T21:16:33.331Z"
+}
