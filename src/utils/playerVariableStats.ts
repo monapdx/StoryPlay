@@ -296,8 +296,6 @@ export function getInitiallyRevealedVariableKeys(
 export function getVisiblePlayerStats({
   playVariables = {},
   initialVariables = {},
-  revealedKeys = [],
-  activeNodeExposure = [],
   nodes = [],
   variableMeta = {},
 }: GetVisiblePlayerStatsParams): VisiblePlayerStat[] {
