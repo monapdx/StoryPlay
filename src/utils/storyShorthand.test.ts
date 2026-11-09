@@ -49,8 +49,8 @@ describe("story choice shorthand", () => {
       id: "existing",
       label: "Agree",
       targetNodeId: "victory",
-      conditions: [{ variable: "gold", operator: "gte", value: 10 }],
-      effects: [{ variable: "gold", operation: "subtract", value: 10 }],
+      conditions: [{ variable: "gold", operator: "greaterThanOrEqual", value: 10 }],
+      effects: [{ variable: "gold", action: "subtract", value: 10 }],
     }];
     const result = applyChoiceDeclaration(
       original,
