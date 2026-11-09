@@ -42,6 +42,7 @@ export type StoryCanvasProps = Pick<
   | "addNode"
   | "deleteSelectedNode"
   | "addChoiceToNode"
+  | "renameNode"
   | "updateNodePosition"
   | "connectNodesFromHandle"
   | "deleteEdge"
@@ -50,6 +51,7 @@ export type StoryCanvasProps = Pick<
   | "canUndo"
   | "canRedo"
 > & {
+  onOpenNode?: (nodeId: string) => void;
   currentPlayNodeId?: UsePlayStateResult["currentPlayNodeId"];
   playVariables?: StoryVariables;
 };
@@ -81,6 +83,8 @@ export default function StoryCanvas({
   addNode,
   deleteSelectedNode,
   addChoiceToNode,
+  renameNode,
+  onOpenNode,
   updateNodePosition,
   connectNodesFromHandle,
   deleteEdge,
@@ -141,6 +145,7 @@ export default function StoryCanvas({
       data: {
         ...node.data,
         characters,
+        onRenameNode: renameNode,
         isSelected: node.id === selectedNodeId,
         playState: playStateMap[node.id] || "idle",
         onSelectNode: (nodeId: string) => setSelectedNodeId?.(nodeId),
@@ -160,6 +165,7 @@ export default function StoryCanvas({
     playStateMap,
     setSelectedNodeId,
     addChoiceToNode,
+    renameNode,
   ]);
 
   const hydratedEdges = useMemo(() => {
@@ -284,6 +290,9 @@ export default function StoryCanvas({
           Delete Selected Edge
         </button>
 
+        <button type="button" className="toolbar-button" disabled={!selectedNodeId}
+          onClick={() => selectedNodeId && onOpenNode?.(selectedNodeId)}>Open node editor</button>
+
         <UndoRedoButtons
           onUndo={undo}
           onRedo={redo}
@@ -307,6 +316,8 @@ export default function StoryCanvas({
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onNodeClick={onNodeClick}
+        onNodeDoubleClick={(_, node) => onOpenNode?.(node.id)}
+        zoomOnDoubleClick={false}
         onPaneClick={onPaneClick}
         onNodeDragStop={onNodeDragStop}
         onConnect={onConnect}

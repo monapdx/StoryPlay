@@ -6,7 +6,7 @@ import {
   type ChangeEvent,
 } from "react";
 import StoryCanvas from "./components/canvas/StoryCanvas";
-import StoryWritingEditor from "./components/writing/StoryWritingEditor";
+import StoryWritingEditor, { type WritingSession } from "./components/writing/StoryWritingEditor";
 import SidebarEditor from "./components/editor/SidebarEditor";
 import VariablesScreen from "./components/editor/VariablesScreen";
 import CharactersScreen from "./components/entities/CharactersScreen";
@@ -59,6 +59,7 @@ type EditorActiveScreen = "editor" | "writing" | "variables" | "characters";
 
 function EditorApp() {
   const story = useStoryState();
+  const writingSession = useRef<WritingSession>({ drafts: {}, history: [] });
   const storyRef = useRef(story);
   storyRef.current = story;
 
@@ -238,6 +239,7 @@ function EditorApp() {
     }
 
     setIsMiniGameOpen(false);
+    writingSession.current = { drafts: {}, history: [] };
     story.loadDemoStory(storyId);
     setIsTemplateModalOpen(false);
   }
@@ -277,7 +279,7 @@ function EditorApp() {
   }
 
   if (activeScreen === "writing") {
-    return <StoryWritingEditor story={story} onVisual={() => setActiveScreen("editor")} />;
+    return <StoryWritingEditor key={story.selectedNodeId || "empty"} session={writingSession.current} story={story} onOpenMiniGameEditor={handleOpenMiniGameEditor} onOpenVariables={handleOpenVariablesWorkspace} onVisual={() => setActiveScreen("editor")} />;
   }
 
   if (isMiniGameOpen && selectedMiniGame) {
@@ -341,6 +343,7 @@ function EditorApp() {
   function handleConfirmImport() {
     if (!importPreview?.ok || !importPreview.story) return;
 
+    writingSession.current = { drafts: {}, history: [] };
     story.importStory(importPreview.story);
     saveCurrentStoryForPreview({
       nodes: importPreview.story.nodes,
@@ -574,6 +577,7 @@ function EditorApp() {
             <section className="panel canvas-panel" data-onboarding="canvas">
               <StoryCanvas
                 {...story}
+                onOpenNode={nodeId => { story.setSelectedNodeId(nodeId); onboarding.skip(); setActiveScreen("writing"); }}
                 currentPlayNodeId={play.currentPlayNodeId}
                 playVariables={play.playVariables}
               />
