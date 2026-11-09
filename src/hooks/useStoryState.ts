@@ -140,6 +140,7 @@ export interface UseStoryStateResult {
   isDemoDirty: boolean;
   addNode: () => void;
   applyWritingChoice: (sourceNodeId: string, declaration: ChoiceDeclaration, choiceId?: string) => void;
+  renameNode: (nodeId: string, title: string) => void;
   updateNodePosition: (
     nodeId: string,
     position: StoryNodePosition
@@ -529,6 +530,13 @@ export default function useStoryState(): UseStoryStateResult {
         characters: storyStateRef.current.characters },
       declaration, { sourceNodeId, choiceId }
     ).nodes);
+  }
+
+  function renameNode(nodeId: string, title: string) {
+    if (!title.trim()) return;
+    recordHistory({ immediate: true });
+    setNodesState(prev => prev.map(node => node.id === nodeId
+      ? { ...node, data: { ...node.data, title: title.trim() } } : node));
   }
 
   function updateNodePosition(nodeId: string, position: StoryNodePosition) {
@@ -1045,6 +1053,7 @@ export default function useStoryState(): UseStoryStateResult {
     isDemoDirty,
     addNode,
     applyWritingChoice,
+    renameNode,
     updateNodePosition,
     updateSelectedNodeField,
     applyMiniGameToSelectedNode,

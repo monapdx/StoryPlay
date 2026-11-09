@@ -2,17 +2,17 @@
 import { normalizeVariableMeta } from "./storyVariables";
 import type { StoryVariables, VariableMetaMap } from "../types/storyCore";
 
-export const STORYPLAY_PREVIEW_STORAGE_KEY = "storyplay-current-preview";
+export const STORYPLAY_PREVIEW_STORAGE_KEY = import.meta.env.VITE_STORYPLAY_PREVIEW === "true" ? "storyplay-redesign-current-preview" : "storyplay-current-preview";
 
 /** BroadcastChannel name so play tabs can refresh when the snapshot updates. */
-export const STORYPLAY_PREVIEW_BROADCAST_CHANNEL = "storyplay-preview-sync";
+export const STORYPLAY_PREVIEW_BROADCAST_CHANNEL = import.meta.env.VITE_STORYPLAY_PREVIEW === "true" ? "storyplay-redesign-preview-sync" : "storyplay-preview-sync";
 
 /**
  * Session flag (per browser tab): after the first "Play in new tab" from this editor tab,
  * debounced pushes keep the preview snapshot aligned while you edit.
  */
 export const STORYPLAY_LIVE_PREVIEW_SESSION_KEY =
-  "storyplay-live-preview-enabled";
+  import.meta.env.VITE_STORYPLAY_PREVIEW === "true" ? "storyplay-redesign-live-preview-enabled" : "storyplay-live-preview-enabled";
 
 /**
  * Preview snapshot after loadStoryForPreview storage/JSON checks.
