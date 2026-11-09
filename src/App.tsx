@@ -7,7 +7,6 @@ import {
 } from "react";
 import StoryCanvas from "./components/canvas/StoryCanvas";
 import StoryWritingEditor, { type WritingSession } from "./components/writing/StoryWritingEditor";
-import SidebarEditor from "./components/editor/SidebarEditor";
 import VariablesScreen from "./components/editor/VariablesScreen";
 import CharactersScreen from "./components/entities/CharactersScreen";
 import StoryPreview from "./components/preview/StoryPreview";
@@ -568,7 +567,7 @@ function EditorApp() {
 
           <main
             className={[
-              "app-workspace",
+              "app-workspace app-workspace--graph-only",
               isQuickPreviewOpen ? "app-workspace--with-preview" : "",
             ]
               .filter(Boolean)
@@ -589,15 +588,6 @@ function EditorApp() {
                 />
               )}
             </section>
-
-            <aside className="panel sidebar-panel custom-scrollbar" data-onboarding="sidebar">
-              <SidebarEditor
-                {...story}
-                onboardingStepId={onboarding.isActive ? onboarding.step?.id : null}
-                onOpenMiniGameEditor={handleOpenMiniGameEditor}
-                onOpenVariables={handleOpenVariablesWorkspace}
-              />
-            </aside>
 
             <aside
               className={[

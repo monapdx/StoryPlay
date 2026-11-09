@@ -3883,3 +3883,22 @@ mark {
 .node-card--compact .node-card-header { border-radius: 15px 15px 0 0; overflow-wrap: anywhere; }
 .node-card--compact .node-card-meta { margin-top: 0; }
 .node-title-input { width: 100%; box-sizing: border-box; color: #111827; background: white; font: inherit; border: 1px solid #818cf8; }
+
+/* Graph workspace: scene editing lives in the node editor. */
+.app-workspace--graph-only { grid-template-columns: minmax(0, 1fr); }
+.app-workspace--graph-only.app-workspace--with-preview {
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+  grid-template-rows: minmax(0, 1fr);
+}
+.app-workspace--graph-only .canvas-panel { grid-column: 1; grid-row: 1; }
+.app-workspace--graph-only.app-workspace--with-preview .preview-panel--dock { grid-column: 2; grid-row: 1; }
+@media (max-width: 1000px) {
+  .app-workspace--graph-only.app-workspace--with-preview {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(320px, 1fr) minmax(200px, 34vh);
+  }
+  .app-workspace--graph-only.app-workspace--with-preview .preview-panel--dock { grid-column: 1; grid-row: 2; }
+}
+@media (max-width: 800px) {
+  .app-workspace--graph-only .canvas-panel { flex: 1; }
+}

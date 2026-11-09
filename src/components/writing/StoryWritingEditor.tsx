@@ -80,25 +80,25 @@ export default function StoryWritingEditor({ story, onVisual, session, onOpenMin
 
   return (
     <main className="writing-workspace">
-      <header className="writing-toolbar">
-        <strong>{node?.data.title || "Node editor"}</strong>
-        <button type="button" disabled={!session.history.some(id => story.nodes.some(item => item.id === id))} onClick={goBack}>Back</button>
-        <button type="button" onClick={onVisual}>Return to graph</button>
+      <header className="app-header writing-toolbar">
+        <div className="writing-heading"><span className="writing-brand">StoryPlay · Node editor</span><strong>{node?.data.title || "Select a scene"}</strong></div>
+        <button className="toolbar-button" type="button" disabled={!session.history.some(id => story.nodes.some(item => item.id === id))} onClick={goBack}>Back</button>
+        <button className="toolbar-button" type="button" onClick={onVisual}>Return to graph</button>
       </header>
       <div className="writing-layout">
-        <section className="writing-page" aria-label="Write story">
+        <section className="panel writing-page" aria-label="Write story">
           {!node ? (
             <div className="writing-empty">
               <h1>Open a node to start writing</h1>
               <p>Select a node in the graph, or create a new one.</p>
-              <button type="button" onClick={story.addNode}>Create first node</button>
+              <button className="toolbar-button" type="button" onClick={story.addNode}>Create first node</button>
             </div>
           ) : (
             <>
               <label htmlFor="writing-node-title">Node title</label>
               <input
                 id="writing-node-title"
-                className="writing-title"
+                className="form-input writing-title"
                 value={node.data.title || ""}
                 onChange={event => story.updateSelectedNodeField("title", event.target.value)}
               />
@@ -111,7 +111,7 @@ export default function StoryWritingEditor({ story, onVisual, session, onOpenMin
                   session.drafts[nodeKey].selectionEnd = event.currentTarget.selectionEnd;
                 }}
                 id="writing-prose"
-                className="writing-prose"
+                className="form-textarea writing-prose"
                 value={node.data.content || ""}
                 onChange={event => story.updateSelectedNodeField("content", event.target.value)}
                 placeholder="Write the scene here..."
@@ -127,26 +127,27 @@ export default function StoryWritingEditor({ story, onVisual, session, onOpenMin
                       {editingChoiceId === id ? (
                         <form onSubmit={saveEditedChoice}>
                           <input
+                            className="form-input"
                             aria-label="Edit choice declaration"
                             value={editingText}
                             onChange={event => setEditingText(event.target.value)}
                           />
-                          <button type="submit">Save</button>
-                          <button type="button" onClick={() => setEditingChoiceId(null)}>Cancel</button>
+                          <button className="toolbar-button" type="submit">Save</button>
+                          <button className="toolbar-button" type="button" onClick={() => setEditingChoiceId(null)}>Cancel</button>
                         </form>
                       ) : (
                         <>
                           <span className="writing-choice-label">{choice.label || "Untitled choice"}</span>
                           <span aria-hidden="true">→</span>
                           {target ? (
-                            <button className="writing-destination" type="button" onClick={() => openNode(target.id)}>
+                            <button className="toolbar-button writing-destination" type="button" onClick={() => openNode(target.id)}>
                               {target.data.title || target.id}
                             </button>
                           ) : <span className="writing-missing">Destination not assigned</span>}
                           {choice.id && target && (
                             <button
                               type="button"
-                              className="writing-edit"
+                              className="toolbar-button writing-edit"
                               onClick={() => {
                                 setEditingChoiceId(choice.id!);
                                 setEditingText(`ch: ${choice.label || ""} ---> ${target.data.title || target.id}`);
@@ -163,13 +164,14 @@ export default function StoryWritingEditor({ story, onVisual, session, onOpenMin
               <form className="writing-add-choice" onSubmit={addChoice}>
                 <label htmlFor="writing-choice-input">New choice</label>
                 <input
+                  className="form-input"
                   id="writing-choice-input"
                   value={draft}
                   onChange={event => { setDraft(event.target.value); setError(""); }}
                   placeholder="ch: Refuse ---> Failure"
                   autoComplete="off"
                 />
-                <button type="submit">Add choice</button>
+                <button className="toolbar-button" type="submit">Add choice</button>
               </form>
               {error && <p className="writing-error" role="alert">{error}</p>}
               <details className="writing-settings">

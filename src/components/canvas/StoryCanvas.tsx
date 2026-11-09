@@ -290,7 +290,7 @@ export default function StoryCanvas({
           Delete Selected Edge
         </button>
 
-        <button type="button" className="toolbar-button" disabled={!selectedNodeId}
+        <button type="button" className="toolbar-button" data-onboarding="node-editor" disabled={!selectedNodeId}
           onClick={() => selectedNodeId && onOpenNode?.(selectedNodeId)}>Open node editor</button>
 
         <UndoRedoButtons
