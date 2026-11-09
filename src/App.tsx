@@ -6,6 +6,7 @@ import {
   type ChangeEvent,
 } from "react";
 import StoryCanvas from "./components/canvas/StoryCanvas";
+import StoryWritingEditor from "./components/writing/StoryWritingEditor";
 import SidebarEditor from "./components/editor/SidebarEditor";
 import VariablesScreen from "./components/editor/VariablesScreen";
 import CharactersScreen from "./components/entities/CharactersScreen";
@@ -54,7 +55,7 @@ declare global {
   }
 }
 
-type EditorActiveScreen = "editor" | "variables" | "characters";
+type EditorActiveScreen = "editor" | "writing" | "variables" | "characters";
 
 function EditorApp() {
   const story = useStoryState();
@@ -275,6 +276,10 @@ function EditorApp() {
     setIsMiniGameOpen(false);
   }
 
+  if (activeScreen === "writing") {
+    return <StoryWritingEditor story={story} onVisual={() => setActiveScreen("editor")} />;
+  }
+
   if (isMiniGameOpen && selectedMiniGame) {
     return (
       <MiniGameEditor
@@ -444,6 +449,7 @@ function EditorApp() {
             </div>
 
             <div className="app-header__actions">
+              <button type="button" className="header-button" onClick={() => { onboarding.skip(); setActiveScreen("writing"); }} title="Open the prose-focused Story Editor"><span>Story Editor</span></button>
               <button
                 type="button"
                 className="header-help-button"
