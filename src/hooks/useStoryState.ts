@@ -26,6 +26,7 @@ import type {
   VariableMetaMap,
 } from "../types/storyCore";
 import { createBlankStory } from "../utils/blankStory";
+import { applyChoiceDeclaration, type ChoiceDeclaration } from "../utils/storyShorthand";
 import {
   createBlankGoToChoice,
   createNarrativeDestinationNode,
@@ -138,6 +139,7 @@ export interface UseStoryStateResult {
   /** @deprecated use isStoryDirty */
   isDemoDirty: boolean;
   addNode: () => void;
+  applyWritingChoice: (sourceNodeId: string, declaration: ChoiceDeclaration, choiceId?: string) => void;
   updateNodePosition: (
     nodeId: string,
     position: StoryNodePosition
@@ -516,6 +518,17 @@ export default function useStoryState(): UseStoryStateResult {
 
     setNodesState((prev) => [...prev, newNode]);
     setSelectedNodeId(nextId);
+  }
+
+  function applyWritingChoice(sourceNodeId: string, declaration: ChoiceDeclaration, choiceId?: string) {
+    if (!storyStateRef.current.nodes.some(node => node.id === sourceNodeId)) return;
+    recordHistory({ immediate: true });
+    setNodesState(prev => applyChoiceDeclaration(
+      { nodes: prev, variables: storyStateRef.current.variables,
+        variableMeta: storyStateRef.current.variableMeta,
+        characters: storyStateRef.current.characters },
+      declaration, { sourceNodeId, choiceId }
+    ).nodes);
   }
 
   function updateNodePosition(nodeId: string, position: StoryNodePosition) {
@@ -1031,6 +1044,7 @@ export default function useStoryState(): UseStoryStateResult {
     isStoryDirty,
     isDemoDirty,
     addNode,
+    applyWritingChoice,
     updateNodePosition,
     updateSelectedNodeField,
     applyMiniGameToSelectedNode,
