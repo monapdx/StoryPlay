@@ -120,8 +120,8 @@ function humanizeVariableKey(key: unknown): string {
 
 export function isEmptyPlayerStatValue(value: unknown): boolean {
   if (value === null || value === undefined) return true;
-  if (typeof value === "number") return value === 0;
-  if (typeof value === "boolean") return value === false;
+  if (typeof value === "number") return false;
+  if (typeof value === "boolean") return false;
   if (typeof value === "string") return value.trim() === "";
   if (Array.isArray(value)) return value.length === 0;
   if (typeof value === "object") return Object.keys(value).length === 0;
@@ -301,8 +301,6 @@ export function getVisiblePlayerStats({
   nodes = [],
   variableMeta = {},
 }: GetVisiblePlayerStatsParams): VisiblePlayerStat[] {
-  const revealed = new Set(revealedKeys);
-  const activeExposure = new Set(activeNodeExposure);
   const keys = new Set([
     ...Object.keys(initialVariables || {}),
     ...Object.keys(playVariables || {}),
@@ -315,11 +313,10 @@ export function getVisiblePlayerStats({
       ? playVariables[key]
       : initialVariables[key];
 
-    const revealedByStory = revealed.has(key);
-    const hasValue = !isEmptyPlayerStatValue(value);
-    const activeInScene = activeExposure.has(key);
-
-    if (!hasValue && !(revealedByStory && activeInScene)) continue;
+    // A reference to a variable in the current scene does not assign it.
+    // Only display player-facing stats when they have a meaningful value.
+    // Numeric zero and boolean false are meaningful, assigned values.
+    if (isEmptyPlayerStatValue(value)) continue;
 
     visible.push({
       key,
