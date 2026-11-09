@@ -1,8 +1,8 @@
-name: Deploy to GitHub Pages
+name: Deploy StoryPlay and redesign preview
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "redesign/dual-editor"]
   workflow_dispatch:
 
 permissions:
@@ -18,28 +18,49 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout production (main)
         uses: actions/checkout@v4
+        with:
+          ref: main
+          path: production
+
+      - name: Checkout redesign preview
+        uses: actions/checkout@v4
+        with:
+          ref: redesign/dual-editor
+          path: redesign
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: npm
+          node-version: 22
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Build existing production site
+        working-directory: production
+        run: |
+          npm ci
+          npm run build
 
-      - name: Build
-        run: npm run build
+      - name: Build isolated redesign preview
+        working-directory: redesign
+        env:
+          VITE_STORYPLAY_PREVIEW: "true"
+        run: |
+          npm ci
+          npm run build -- --base=/StoryPlay/preview/
+
+      - name: Add preview under separate URL
+        run: |
+          mkdir -p production/dist/preview
+          cp -R redesign/dist/. production/dist/preview/
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      - name: Upload artifact
+      - name: Upload both sites
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist
+          path: ./production/dist
 
   deploy:
     environment:
