@@ -3877,9 +3877,3 @@ mark {
   flex: 1;
   min-width: 0;
 }
-
-/* Compact graph cards: details live in the per-node editor. */
-.node-card--compact { position: relative; overflow: visible; }
-.node-card--compact .node-card-header { border-radius: 15px 15px 0 0; overflow-wrap: anywhere; }
-.node-card--compact .node-card-meta { margin-top: 0; }
-.node-title-input { width: 100%; box-sizing: border-box; color: #111827; background: white; font: inherit; border: 1px solid #818cf8; }
