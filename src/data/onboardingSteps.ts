@@ -20,7 +20,7 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
     id: "sidebar",
     target: '[data-onboarding="sidebar"]',
     title: "Edit a scene",
-    body: "Select a block to edit its title, story text, and block type in this panel.",
+    body: "Select a block to edit its title and story text. Open Block settings to change its type.",
     placement: "left",
   },
   {
@@ -34,7 +34,7 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
     id: "choice-expand",
     target: '[data-onboarding="choice-expand-demo"]',
     title: "Expand to edit",
-    body: "Each choice row has a blue ▾ arrow on the right. Click the row—or the arrow—to open it and edit the label, target block, conditions, and effects.",
+    body: "Open a choice to edit what the player reads and where it leads. Use Choice rules to control when it appears or what changes after it is picked.",
     placement: "left",
     scrollBlock: "center",
     spotlightPadding: 10,

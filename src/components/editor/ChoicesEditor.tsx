@@ -161,80 +161,15 @@ export default function ChoicesEditor(props: ChoicesEditorProps) {
           <button
             type="button"
             className="toolbar-button"
-            onClick={addChoiceToSelectedNode}
+            onClick={() => {
+              addChoiceToSelectedNode();
+              setExpandedChoiceIndex(storyChoices.length);
+            }}
           >
             {isChatBlock ? "+ Add Reply" : "+ Add Choice"}
           </button>
         )}
       </div>
-
-      {showPathTools && (
-        <div className="choice-path-generator" aria-label="Choice path generator">
-          <div className="choice-path-generator__row">
-            <label className="form-label" htmlFor={countInputId}>
-              Number of choices
-            </label>
-            <input
-              id={countInputId}
-              className="form-input choice-path-generator__count"
-              type="number"
-              inputMode="numeric"
-              min={CHOICE_PATH_MIN}
-              max={CHOICE_PATH_MAX}
-              step={1}
-              value={choiceCountInput}
-              onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                setChoiceCountInput(event.target.value);
-                setPathStatus(null);
-              }}
-              title={`Whole number from ${CHOICE_PATH_MIN} to ${CHOICE_PATH_MAX}`}
-            />
-            <button
-              type="button"
-              className="toolbar-button"
-              onClick={handleAddMultipleChoices}
-              title={`Add ${CHOICE_PATH_MIN}–${CHOICE_PATH_MAX} new choices without destinations`}
-            >
-              Add choices
-            </button>
-          </div>
-
-          <div className="choice-path-generator__actions">
-            <button
-              type="button"
-              className="toolbar-button"
-              onClick={handleGenerateDestinations}
-              disabled={!hasChoices}
-              title={
-                hasChoices
-                  ? "Create a destination block for each choice that has no target"
-                  : "Add at least one choice first"
-              }
-            >
-              Generate destination nodes
-            </button>
-            <button
-              type="button"
-              className="toolbar-button"
-              onClick={handleGenerateChoicePaths}
-              title="Add the requested choices and create a destination for each new choice"
-            >
-              Generate choice paths
-            </button>
-          </div>
-
-          {pathStatus ? (
-            <p className="sidebar-hint choice-path-generator__status" role="status">
-              {pathStatus}
-            </p>
-          ) : (
-            <p className="form-hint">
-              Add multiple choices, then generate destinations for unconnected ones—
-              or generate choice paths in one step.
-            </p>
-          )}
-        </div>
-      )}
 
       {visibleChoices.length === 0 ? (
         <p className="sidebar-hint">
@@ -281,6 +216,76 @@ export default function ChoicesEditor(props: ChoicesEditorProps) {
             )
           )}
         </div>
+      )}
+
+      {showPathTools && (
+        <details className="editor-disclosure">
+          <summary>Bulk choice tools</summary>
+          <div className="choice-path-generator">
+            <div className="choice-path-generator__row">
+              <label className="form-label" htmlFor={countInputId}>
+                Number of choices
+              </label>
+              <input
+                id={countInputId}
+                className="form-input choice-path-generator__count"
+                type="number"
+                inputMode="numeric"
+                min={CHOICE_PATH_MIN}
+                max={CHOICE_PATH_MAX}
+                step={1}
+                value={choiceCountInput}
+                onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                  setChoiceCountInput(event.target.value);
+                  setPathStatus(null);
+                }}
+                title={`Whole number from ${CHOICE_PATH_MIN} to ${CHOICE_PATH_MAX}`}
+              />
+              <button
+                type="button"
+                className="toolbar-button"
+                onClick={handleAddMultipleChoices}
+                title={`Add ${CHOICE_PATH_MIN}–${CHOICE_PATH_MAX} new choices without destinations`}
+              >
+                Add choices
+              </button>
+            </div>
+
+            <div className="choice-path-generator__actions">
+              <button
+                type="button"
+                className="toolbar-button"
+                onClick={handleGenerateDestinations}
+                disabled={!hasChoices}
+                title={
+                  hasChoices
+                    ? "Create a destination block for each choice that has no target"
+                    : "Add at least one choice first"
+                }
+              >
+                Create missing destination blocks
+              </button>
+              <button
+                type="button"
+                className="toolbar-button"
+                onClick={handleGenerateChoicePaths}
+                title="Add the requested choices and create a destination for each new choice"
+              >
+                Add choices with new blocks
+              </button>
+            </div>
+
+            {pathStatus ? (
+              <p className="sidebar-hint choice-path-generator__status" role="status">
+                {pathStatus}
+              </p>
+            ) : (
+              <p className="form-hint">
+                Create blocks for existing unlinked choices or add new choices and their blocks together.
+              </p>
+            )}
+          </div>
+        </details>
       )}
     </div>
   );

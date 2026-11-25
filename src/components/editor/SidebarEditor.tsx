@@ -1,7 +1,7 @@
 import {
   useEffect,
   useLayoutEffect,
-  useState,
+  useId,
   type ChangeEvent,
   type CSSProperties,
 } from "react";
@@ -85,7 +85,7 @@ export default function SidebarEditor({
   onOpenMiniGameEditor,
   onOpenVariables,
 }: SidebarEditorProps) {
-  const [isNarrativeContentOpen, setIsNarrativeContentOpen] = useState(false);
+  const fieldId = useId();
   const showOnboardingChoiceDemo = isOnboardingChoiceStep(onboardingStepId);
 
   useLayoutEffect(() => {
@@ -105,10 +105,6 @@ export default function SidebarEditor({
     if (!ensureOnboardingScaffold || !isOnboardingChoiceStep(onboardingStepId)) return;
     ensureOnboardingScaffold({ seedChoices: true });
   }, [ensureOnboardingScaffold, onboardingStepId, selectedNode?.id]);
-
-  useEffect(() => {
-    setIsNarrativeContentOpen(false);
-  }, [selectedNode?.id]);
 
   if (!selectedNode) {
     if (showOnboardingChoiceDemo) {
@@ -226,8 +222,9 @@ export default function SidebarEditor({
       <h2 className="section-title">Block Editor</h2>
 
       <div className="form-group">
-        <label className="form-label">Title</label>
+        <label className="form-label" htmlFor={`${fieldId}-title`}>Title</label>
         <input
+          id={`${fieldId}-title`}
           className="form-input"
           value={title}
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
@@ -237,64 +234,24 @@ export default function SidebarEditor({
         />
       </div>
 
-      <div className="form-group">
-        <label className="form-label">Block Type</label>
-        <select
-          className="form-select"
-          value={blockType}
-          onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-            updateSelectedNodeField("blockType", e.target.value)
-          }
-        >
-          <option value="narrative">Narrative</option>
-          <option value="chat">Chat</option>
-          <option value="timed">Timed</option>
-          <option value="traitPicker">Trait Picker</option>
-          <option value="persuasion">Persuasion</option>
-          <option value="choiceWeighting">Choice Weighting</option>
-          <option value="ending">Ending</option>
-        </select>
-      </div>
-
       {(blockType === "narrative" ||
         blockType === "chat" ||
         blockType === "ending") && (
         <div className="form-group">
-          <button
-            type="button"
-            className="collapsible-row-header"
-            onClick={() => setIsNarrativeContentOpen((value) => !value)}
-            aria-expanded={isNarrativeContentOpen}
-          >
-            <span>
-              <span className="collapsible-row-title">
-                {blockType === "chat" ? "Opening Message" : "Content"}
-              </span>
-              <span className="collapsible-row-meta">
-                {content?.trim()
-                  ? `${content.trim().slice(0, 80)}${content.trim().length > 80 ? "..." : ""}`
-                  : "No content yet"}
-              </span>
-            </span>
-            <span
-              className={`collapsible-chevron ${isNarrativeContentOpen ? "is-open" : ""}`}
-            >
-              ▾
-            </span>
-          </button>
-
-          {isNarrativeContentOpen && (
-            <ReferenceTextarea
-              value={content}
-              characters={characters}
-              onChange={(nextValue) => updateSelectedNodeField("content", nextValue)}
-              placeholder={
-                blockType === "chat"
-                  ? "Name: First message the player receives"
-                  : "Write the story text for this block..."
-              }
-            />
-          )}
+          <label className="form-label" htmlFor={`${fieldId}-text`}>
+            {blockType === "chat" ? "Opening message" : "Story text"}
+          </label>
+          <ReferenceTextarea
+            id={`${fieldId}-text`}
+            value={content}
+            characters={characters}
+            onChange={(nextValue) => updateSelectedNodeField("content", nextValue)}
+            placeholder={
+              blockType === "chat"
+                ? "Name: First message the player receives"
+                : "Write what the player will read…"
+            }
+          />
         </div>
       )}
 
@@ -416,20 +373,42 @@ export default function SidebarEditor({
         </>
       )}
 
+      <details className="editor-disclosure" key={selectedNode.id}>
+        <summary>Block settings</summary>
+        <div className="form-group">
+          <label className="form-label" htmlFor={`${fieldId}-type`}>Block type</label>
+          <select
+            id={`${fieldId}-type`}
+            className="form-select"
+            value={blockType}
+            onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+              updateSelectedNodeField("blockType", e.target.value)
+            }
+          >
+            <option value="narrative">Narrative</option>
+            <option value="chat">Chat</option>
+            <option value="timed">Timed</option>
+            <option value="traitPicker">Trait Picker</option>
+            <option value="persuasion">Persuasion</option>
+            <option value="choiceWeighting">Choice Weighting</option>
+            <option value="ending">Ending</option>
+          </select>
+        </div>
+        <button type="button" className="danger-button" onClick={deleteSelectedNode}>
+          Delete block
+        </button>
+        <p className="sidebar-meta-id">ID: {selectedNode.id}</p>
+      </details>
+
       <VariablesWorkspacePromo
         variables={variables}
         onOpenVariables={onOpenVariables}
       />
 
-      <div style={{ marginTop: 14 }}>
-        <button type="button" className="danger-button" onClick={deleteSelectedNode}>
-          Delete Block
-        </button>
-      </div>
-
-      <p className="sidebar-meta-id">ID: {selectedNode.id}</p>
-
-      <StoryDiagnostics nodes={nodes} variables={variables} />
+      <details className="editor-disclosure">
+        <summary>Story diagnostics</summary>
+        <StoryDiagnostics nodes={nodes} variables={variables} showHeading={false} />
+      </details>
     </div>
   );
 }

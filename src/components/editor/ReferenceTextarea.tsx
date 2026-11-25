@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useId, useRef } from "react";
 import {
   buildCharacterNameToken,
   renderStoryText,
@@ -6,6 +6,7 @@ import {
 import type { StoryCharacter } from "../../types/storyCore";
 
 interface ReferenceTextareaProps {
+  id?: string;
   value: string;
   onChange: (nextValue: string) => void;
   characters?: StoryCharacter[];
@@ -16,6 +17,7 @@ interface ReferenceTextareaProps {
 }
 
 export default function ReferenceTextarea({
+  id,
   value,
   onChange,
   characters = [],
@@ -24,6 +26,7 @@ export default function ReferenceTextarea({
   insertLabel = "Insert character",
   previewLabel = "Preview",
 }: ReferenceTextareaProps) {
+  const characterSelectId = useId();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   function insertCharacterReference(characterId: string) {
@@ -49,45 +52,43 @@ export default function ReferenceTextarea({
 
   return (
     <div className="reference-textarea">
-      <div className="reference-textarea__toolbar">
-        <label
-          className="reference-textarea__insert-label"
-          htmlFor="reference-character-select"
-        >
-          {insertLabel}
-        </label>
-        <select
-          id="reference-character-select"
-          className="form-select reference-textarea__select"
-          defaultValue=""
-          onChange={(event) => {
-            const characterId = event.target.value;
-            if (!characterId) return;
-            insertCharacterReference(characterId);
-            event.target.value = "";
-          }}
-        >
-          <option value="">Choose character…</option>
-          {characters.map((character) => (
-            <option key={character.id} value={character.id}>
-              {character.name || "Unnamed"}
-            </option>
-          ))}
-        </select>
-        {characters.length === 0 && (
-          <span className="reference-textarea__hint muted">
-            No characters yet.
-          </span>
-        )}
-      </div>
-
       <textarea
+        id={id}
         ref={textareaRef}
         className={className}
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
       />
+
+      {characters.length > 0 && (
+        <div className="reference-textarea__toolbar">
+          <label
+            className="reference-textarea__insert-label"
+            htmlFor={characterSelectId}
+          >
+            {insertLabel}
+          </label>
+          <select
+            id={characterSelectId}
+            className="form-select reference-textarea__select"
+            defaultValue=""
+            onChange={(event) => {
+              const characterId = event.target.value;
+              if (!characterId) return;
+              insertCharacterReference(characterId);
+              event.target.value = "";
+            }}
+          >
+            <option value="">Choose character…</option>
+            {characters.map((character) => (
+              <option key={character.id} value={character.id}>
+                {character.name || "Unnamed"}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
       {showPreview && (
         <div className="reference-textarea__preview">
