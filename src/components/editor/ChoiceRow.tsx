@@ -1,4 +1,4 @@
-import type { ChangeEvent } from "react";
+import { useId, type ChangeEvent } from "react";
 import ChoiceConditionsEditor from "./ChoiceConditionsEditor";
 import ChoiceEffectsEditor from "./ChoiceEffectsEditor";
 import ReferenceTextarea from "./ReferenceTextarea";
@@ -82,6 +82,7 @@ export default function ChoiceRow(props: ChoiceRowProps) {
     onExpand,
   } = props;
 
+  const fieldId = useId();
   const storyState = { characters };
   const isChatBlock = blockType === "chat";
   // Chat blocks always author replies — no Choice Type toggle.
@@ -114,7 +115,9 @@ export default function ChoiceRow(props: ChoiceRowProps) {
       ]
         .filter(Boolean)
         .join(" · ")
-    : targetLabel || choice.targetNodeId || "No target selected";
+    : targetLabel || choice.targetNodeId || "No destination yet";
+
+  const ruleCount = (choice.conditions?.length ?? 0) + (choice.effects?.length ?? 0);
 
   return (
     <div
@@ -169,8 +172,9 @@ export default function ChoiceRow(props: ChoiceRowProps) {
                   <div className="chat-turn-fields__side chat-turn-fields__side--player">
                     <span className="chat-turn-fields__badge">Player</span>
                     <div className="form-group">
-                      <label className="form-label">Reply button</label>
+                      <label className="form-label" htmlFor={`${fieldId}-reply`}>Reply button</label>
                       <ReferenceTextarea
+                        id={`${fieldId}-reply`}
                         className="form-textarea choice-row__label-field"
                         value={choice.label || ""}
                         characters={characters}
@@ -182,8 +186,9 @@ export default function ChoiceRow(props: ChoiceRowProps) {
                       />
                     </div>
                     <div className="form-group">
-                      <label className="form-label">Message in chat</label>
+                      <label className="form-label" htmlFor={`${fieldId}-message`}>Message in chat</label>
                       <ReferenceTextarea
+                        id={`${fieldId}-message`}
                         className="form-textarea"
                         value={choice.playerMessage || ""}
                         characters={characters}
@@ -203,8 +208,9 @@ export default function ChoiceRow(props: ChoiceRowProps) {
                   <div className="chat-turn-fields__side chat-turn-fields__side--npc">
                     <span className="chat-turn-fields__badge">NPC</span>
                     <div className="form-group">
-                      <label className="form-label">Character response</label>
+                      <label className="form-label" htmlFor={`${fieldId}-response`}>Character response</label>
                       <ReferenceTextarea
+                        id={`${fieldId}-response`}
                         className="form-textarea"
                         value={choice.npcResponse || ""}
                         characters={characters}
@@ -223,8 +229,9 @@ export default function ChoiceRow(props: ChoiceRowProps) {
                 </div>
               ) : (
                 <div className="form-group">
-                  <label className="form-label">Choice Label</label>
+                  <label className="form-label" htmlFor={`${fieldId}-choice`}>Choice text</label>
                   <ReferenceTextarea
+                    id={`${fieldId}-choice`}
                     className="form-textarea choice-row__label-field"
                     value={choice.label || ""}
                     characters={characters}
@@ -238,10 +245,11 @@ export default function ChoiceRow(props: ChoiceRowProps) {
               )}
 
               <div className="form-group">
-                <label className="form-label">
-                  {showAsChatReply ? "Exit to block after this reply" : "Target"}
+                <label className="form-label" htmlFor={`${fieldId}-destination`}>
+                  {showAsChatReply ? "After this reply" : "Where does this choice lead?"}
                 </label>
                 <select
+                  id={`${fieldId}-destination`}
                   className="form-select"
                   value={choice.targetNodeId || ""}
                   onChange={(e: ChangeEvent<HTMLSelectElement>) =>
@@ -255,7 +263,7 @@ export default function ChoiceRow(props: ChoiceRowProps) {
                   <option value="">
                     {showAsChatReply
                       ? "Stay in this chat (no exit yet)"
-                      : "Select target block"}
+                      : "Choose a block…"}
                   </option>
                   {availableTargets.map((node) => (
                     <option key={node.id} value={node.id}>
@@ -271,21 +279,27 @@ export default function ChoiceRow(props: ChoiceRowProps) {
                 )}
               </div>
 
-              <ChoiceConditionsEditor
-                choice={choice}
-                variables={variables}
-                onUpdate={(field, value) =>
-                  props.onUpdate(choiceIndex, field, value)
-                }
-              />
+              <details className="editor-disclosure">
+                <summary>
+                  {showAsChatReply ? "Reply rules" : "Choice rules"}
+                  {ruleCount > 0 && ` (${ruleCount})`}
+                </summary>
+                <ChoiceConditionsEditor
+                  choice={choice}
+                  variables={variables}
+                  onUpdate={(field, value) =>
+                    props.onUpdate(choiceIndex, field, value)
+                  }
+                />
 
-              <ChoiceEffectsEditor
-                choice={choice}
-                variables={variables}
-                onUpdate={(field, value) =>
-                  props.onUpdate(choiceIndex, field, value)
-                }
-              />
+                <ChoiceEffectsEditor
+                  choice={choice}
+                  variables={variables}
+                  onUpdate={(field, value) =>
+                    props.onUpdate(choiceIndex, field, value)
+                  }
+                />
+              </details>
 
               {!readOnly && (
                 <button

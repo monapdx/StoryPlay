@@ -1772,6 +1772,25 @@ select {
   color: #94a3b8;
 }
 
+.editor-disclosure {
+  margin-block: 12px;
+  padding: 0 12px;
+  border: 1px solid var(--border-default);
+  border-radius: 12px;
+}
+
+.editor-disclosure > summary {
+  padding-block: 10px;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.editor-disclosure[open] {
+  padding-bottom: 12px;
+}
+
 .choice-path-generator {
   display: grid;
   gap: 10px;

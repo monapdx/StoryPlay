@@ -9,6 +9,7 @@ import {
 export interface StoryDiagnosticsProps {
   nodes: StoryNode[];
   variables: StoryVariables;
+  showHeading?: boolean;
   onJumpToNode?: (nodeId: string) => void;
 }
 
@@ -16,6 +17,7 @@ export default function StoryDiagnostics({
   nodes,
   variables,
   onJumpToNode,
+  showHeading = true,
 }: StoryDiagnosticsProps) {
   const issues = useMemo(() => {
     return analyzeStoryGraph(nodes as GraphHealthNode[], variables);
@@ -23,9 +25,11 @@ export default function StoryDiagnostics({
 
   return (
     <div className="editor-section">
-      <div className="editor-section-header">
-        <h3 className="section-title">Story Diagnostics</h3>
-      </div>
+      {showHeading && (
+        <div className="editor-section-header">
+          <h3 className="section-title">Story Diagnostics</h3>
+        </div>
+      )}
 
       <div className="diagnostics-list">
         {issues.map((issue, index) => {
