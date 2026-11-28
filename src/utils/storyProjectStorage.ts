@@ -2,7 +2,9 @@
 import type { StoryVariables, VariableMetaMap } from "../types/storyCore";
 import { normalizeVariableMeta } from "./storyVariables";
 
-export const STORYPLAY_EDITOR_STORAGE_KEY = "storyplay-editor-project";
+export const STORYPLAY_EDITOR_STORAGE_KEY = import.meta.env.VITE_STORYPLAY_PREVIEW === "true"
+  ? "storyplay-redesign-editor-project"
+  : "storyplay-editor-project";
 
 /**
  * Input accepted by save — fields are not assumed canonical until
