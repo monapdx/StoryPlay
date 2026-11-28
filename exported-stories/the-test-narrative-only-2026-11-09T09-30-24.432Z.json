@@ -1,0 +1,1167 @@
+{
+  "formatVersion": 1,
+  "story": {
+    "variables": {
+      "relationship_type": "",
+      "location": "",
+      "paternity": "",
+      "emotion": ""
+    },
+    "characters": [
+      {
+        "id": "char_oyrs9ppb",
+        "name": "Marcus",
+        "description": "",
+        "aliases": []
+      }
+    ],
+    "nodes": [
+      {
+        "id": "node_cusjcu9t",
+        "type": "storyNode",
+        "position": {
+          "x": 170.1975101165981,
+          "y": 27.750816472336567
+        },
+        "data": {
+          "title": "Start",
+          "content": "You glance down at the pregnancy test you just bought from the dollar store.\n\nYou may think that you need to spend more than that to ensure reliability when it comes to such a consequential matter, but...as it turns out, you've come to find that they are every bit as accurate as the ones that cost upwards of $20 at other stores.\n\nYou just dipped the absorbent tip into the cup you urinated into less than a minute ago, replacing the plastic cover and setting it down on the edge of the bathtub.\n\nOne line means not pregnant.\n\nTwo lines means your fears are confirmed.\n\nIt's still too soon for any of them to have appeared yet.\n\nYou let out a long sigh of dread and anticipation.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "dcb5b4af-f6f5-491f-8c4f-49c59a1aada1",
+              "label": "Check your text messages",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_femer153",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "c62915ba-b4ab-4243-8195-9b97fce6cca6",
+              "label": "Continue staring at the test",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_ekahg7up",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_femer153",
+        "type": "storyNode",
+        "position": {
+          "x": 459.46255477991997,
+          "y": -28.070297593317918
+        },
+        "data": {
+          "title": "New Messages",
+          "content": "Marcus: You there??",
+          "blockType": "chat",
+          "choices": [
+            {
+              "id": "0a7410bb-803a-4d81-8273-c9e1198e0760",
+              "label": "Respond",
+              "choiceKind": "chatReply",
+              "playerMessage": "Yeah, what's up?",
+              "npcResponse": "Marcus: Hey...did you do the test yet??",
+              "targetNodeId": "node_cq6zjc8e",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "b227af64-59c8-4556-99af-768e804971c8",
+              "label": "Later",
+              "choiceKind": "chatReply",
+              "playerMessage": "In the middle of something right now, can I call you later?",
+              "npcResponse": "Marcus: wtf, I guess so...please don't forget to let me know what happens",
+              "targetNodeId": "node_cq6zjc8e",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_ekahg7up",
+        "type": "storyNode",
+        "position": {
+          "x": 572.3845495779324,
+          "y": 519.6191654026277
+        },
+        "data": {
+          "title": "Staring",
+          "content": "Write your story text here.",
+          "blockType": "ending",
+          "choices": [],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_nl4gushw",
+        "type": "storyNode",
+        "position": {
+          "x": 1286.2034069540882,
+          "y": 607.4407633057914
+        },
+        "data": {
+          "title": "Results",
+          "content": "You set your phone down for the moment, your eyes darting back to the ominous test on the edge of the tub.\n\nEnough time has passed now, the result is unmistakably clear: positive.\n\nYou are very early in the pregnancy. You've only missed one period and can't be more than a few weeks in.\n\nYou know that once you tell Marcus, he is going to ask you if the baby is his or not.\n\nWhat will you tell him?",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "d8a42a05-37af-4d38-b63d-2838568f0cae",
+              "label": "The truth",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_7icjpp7j",
+              "conditions": [
+                {
+                  "variable": "relationship_type",
+                  "operator": "equals",
+                  "value": "Monogamy"
+                }
+              ],
+              "effects": [
+                {
+                  "variable": "paternity",
+                  "action": "set",
+                  "value": "100%"
+                }
+              ]
+            },
+            {
+              "id": "d5acbe85-8f21-4343-9d13-7c5df7cf121c",
+              "label": "A comforting lie",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_wx9vbhhc",
+              "conditions": [
+                {
+                  "variable": "relationship_type",
+                  "operator": "equals",
+                  "value": "Monogamy"
+                }
+              ],
+              "effects": [
+                {
+                  "variable": "paternity",
+                  "action": "set",
+                  "value": "50%"
+                }
+              ]
+            },
+            {
+              "id": "d5929702-cd70-4a47-9c98-0b39aa424bfa",
+              "label": "The truth",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_0oufd6je",
+              "conditions": [
+                {
+                  "variable": "relationship_type",
+                  "operator": "equals",
+                  "value": "Casual"
+                }
+              ],
+              "effects": [
+                {
+                  "variable": "paternity",
+                  "action": "set",
+                  "value": "60%"
+                }
+              ]
+            },
+            {
+              "id": "1f873241-36e2-44a1-8e39-4e7ebc9828ca",
+              "label": "A comforting lie",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_ci8w5gdo",
+              "conditions": [
+                {
+                  "variable": "relationship_type",
+                  "operator": "equals",
+                  "value": "Casual"
+                }
+              ],
+              "effects": [
+                {
+                  "variable": "paternity",
+                  "action": "set",
+                  "value": "60%"
+                }
+              ]
+            },
+            {
+              "id": "14a53868-78b9-4a3d-a956-cbde022684c1",
+              "label": "The truth",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_l942ziit",
+              "conditions": [
+                {
+                  "variable": "relationship_type",
+                  "operator": "equals",
+                  "value": "Open"
+                }
+              ],
+              "effects": [
+                {
+                  "variable": "relationship_type",
+                  "action": "set",
+                  "value": "25%"
+                }
+              ]
+            },
+            {
+              "id": "27f541d3-5b87-4833-96a6-1d191e838fdb",
+              "label": "A comforting lie",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_aytz7ny7",
+              "conditions": [
+                {
+                  "variable": "relationship_type",
+                  "operator": "equals",
+                  "value": "Open"
+                }
+              ],
+              "effects": [
+                {
+                  "variable": "paternity",
+                  "action": "set",
+                  "value": "25%"
+                }
+              ]
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_cq6zjc8e",
+        "type": "storyNode",
+        "position": {
+          "x": 1114.076669811965,
+          "y": 157.9566550706254
+        },
+        "data": {
+          "title": "Partner in Crime",
+          "content": "You roll your eyes after reading the text from Marcus. He's your on-and-off again partner in crime, so to speak.\n\nThe relationship is quite volatile and unhealthy, but not explicitly violent or dangerous.\n\nYou know he's asking half out of a desire to show you support, and half because he would be nearly as displeased as you would to find out you're pregnant.\n\nThinking more about it now, you wonder why the hell he is even acting like it's that big of a deal to him.\n\nHow sure are you that he caused it, if the result is positive?",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "0330aeb3-55a1-4882-b0ea-fc625b7f2547",
+              "label": "He is the only person I have had sex with",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_r6bycdk4",
+              "conditions": [],
+              "effects": [
+                {
+                  "variable": "relationship_type",
+                  "action": "set",
+                  "value": "Monogamy"
+                }
+              ]
+            },
+            {
+              "id": "2e147b36-b4a1-43a2-873d-26ea66032af9",
+              "label": "He is one of several possible guys it could have been",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_zcpormof",
+              "conditions": [],
+              "effects": [
+                {
+                  "variable": "relationship_type",
+                  "action": "set",
+                  "value": "Casual"
+                }
+              ]
+            },
+            {
+              "id": "e98e24ac-bb2e-4cbd-a88d-bbb974d912a7",
+              "label": "I have no fucking idea, honestly",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_shzsccfm",
+              "conditions": [],
+              "effects": [
+                {
+                  "variable": "relationship_type",
+                  "action": "set",
+                  "value": "Open"
+                }
+              ]
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_r6bycdk4",
+        "type": "storyNode",
+        "position": {
+          "x": 1498.8179655679696,
+          "y": -13.87365389203734
+        },
+        "data": {
+          "title": "Monogamy",
+          "content": "If you are pregnant, Marcus is the only other possible responsible party. You haven't slept with anyone else, so paternity would be certain if you are indeed pregnant.\n\nIf the test result is positive, how will it make you feel about Marcus?",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "8df2beb0-1677-4a2b-9e80-d8ff10a13bfd",
+              "label": "Violated because the bond is toxic",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_qmuqq0wo",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "3144653b-e148-44c6-9c16-b3bf179852b0",
+              "label": "Smothered because it will make me feel trapped",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_4pwupyw2",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_zcpormof",
+        "type": "storyNode",
+        "position": {
+          "x": 1172.3805082555095,
+          "y": -112.57529893927077
+        },
+        "data": {
+          "title": "Casual Sex",
+          "content": "Marcus is certainly one possible candidate if you are pregnant, but the two of you break up so often that both of you have slept with other people here and there. \n\nIf the test is positive, how will it make you feel about Marcus?",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "f3b53a03-010f-4843-b278-196231f760b7",
+              "label": "Upset about how unstable the relationship has been",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_2ieydvsq",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "8ec22610-4ebc-49e6-a653-27564c2e4742",
+              "label": "Grateful that you have him to lean on",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_ydt6oar1",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_shzsccfm",
+        "type": "storyNode",
+        "position": {
+          "x": 830.5798354952767,
+          "y": -126.33442158074624
+        },
+        "data": {
+          "title": "Open Relationship",
+          "content": "You and Marcus have a sexually open relationship, even when things are at their best between the two of you. If you are pregnant, the other person responsible could be him or it could be any of the other guys you've had sex with recently.\n\nIf the test is positive, how will it make you feel towards Marcus?",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "46a6b0fc-54f6-4189-abda-df89119deca3",
+              "label": "Depends on how he handles it",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_ulsq6p5i",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "f54c0ba8-ba96-411a-84aa-071e1dc6cbe8",
+              "label": "Sad about the entire dynamic",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_mxkkn2xt",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_ulsq6p5i",
+        "type": "storyNode",
+        "position": {
+          "x": 1728.2239447569216,
+          "y": -424.8937708371034
+        },
+        "data": {
+          "title": "Dependent",
+          "content": "Based on your shared history with Marcus and the established behavioral patterns, it truly remains to be seen how you will ultimately end up feeling towards him...\n\nIt will mostly depend on his choices and how he reacts to the news.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "d9e5013a-4cd2-4d86-8cd7-eb4f26551150",
+              "label": "Check results",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_nl4gushw",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_mxkkn2xt",
+        "type": "storyNode",
+        "position": {
+          "x": 1899.9094753860018,
+          "y": -180.26739318288173
+        },
+        "data": {
+          "title": "Sadness",
+          "content": "It would be impossible to untangle all of your aggression towards Marcus from all of the sadness you feel about the relationship you have both found yourselfs stuck in together.\n\nYou have momentary flashes of anger at him, but the predominant emotion is an intense sadness at how things have all played out.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "2fa5a254-7974-4209-b33e-c20e603a0531",
+              "label": "Check results",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_nl4gushw",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_2ieydvsq",
+        "type": "storyNode",
+        "position": {
+          "x": 2256.069750553496,
+          "y": -588.6681405350373
+        },
+        "data": {
+          "title": "Upset",
+          "content": "You will find it difficult not to place some amount of blame on him for causing the entire situation directly, even if you might know that's unfair intellectually.\n\nEven though you both chose to have unprotected sex, it will be hard not to frame this as something wrong that he did to you, rather than with you.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "0292a7ac-0a35-4d10-8bae-c82b441f073a",
+              "label": "Check results",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_nl4gushw",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_ydt6oar1",
+        "type": "storyNode",
+        "position": {
+          "x": 1832.21501220222,
+          "y": 647.0522779448211
+        },
+        "data": {
+          "title": "Grateful",
+          "content": "You can admit that the relationship with Marcus is complicated and dysfunctional, to say the least. \n\nHowever, if you learn that you are pregnant (as you suspect), then you can't help but feel slightly comforted knowing that you won't have to face it completely on your own.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "e9185b2c-0981-4cb3-8204-b485adc5a723",
+              "label": "Check results",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_nl4gushw",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_qmuqq0wo",
+        "type": "storyNode",
+        "position": {
+          "x": 1957.5785636815087,
+          "y": 330.65281662708094
+        },
+        "data": {
+          "title": "Violated",
+          "content": "Finding out that Marcus had impregnated you right now would feel like a serious violation on his part, however unfair that might actually be.\n\nThe way you see things, if he had loved you and truly cared about you, he could have taken precautions to ensure you wouldn't have to go through this.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "0758b59d-7a1a-4de7-a70e-c44e3ef05e86",
+              "label": "Check results",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_nl4gushw",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_4pwupyw2",
+        "type": "storyNode",
+        "position": {
+          "x": 2108.163882667564,
+          "y": 34.59713384345571
+        },
+        "data": {
+          "title": "Smothered",
+          "content": "You strongly suspect that if the test result is positive, your feelings towards Marcus may become more irritated, detached or even intolerable.\n\nA pregnancy that you know he had caused would create a sense of being trapped in this current life you are living, and indefinitely tethered to him independent of your own desires.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "106a3d1f-0f31-4f96-97b3-a1df41984934",
+              "label": "Check results",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_nl4gushw",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_7icjpp7j",
+        "type": "storyNode",
+        "position": {
+          "x": 820,
+          "y": 540
+        },
+        "data": {
+          "title": "Exclusive Truth",
+          "content": "When he asks if the baby is his, you will tell him you are 100% certain that it is. ",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "4d27a985-9f6a-42d7-83be-62b369e6cf82",
+              "label": "Check phone",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_rjwqtdxv",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_wx9vbhhc",
+        "type": "storyNode",
+        "position": {
+          "x": 648.878734276337,
+          "y": 903.8355014255421
+        },
+        "data": {
+          "title": "Exclusive Lie",
+          "content": "You will pretend to be uncertain to avoid making him aware of his full responsibility in causing the situation.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "02a4766f-3502-4e43-ac34-48a01b46a944",
+              "label": "Check phone",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_rjwqtdxv",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_0oufd6je",
+        "type": "storyNode",
+        "position": {
+          "x": 2220.348681947776,
+          "y": -282.5159935147693
+        },
+        "data": {
+          "title": "Casual Truth",
+          "content": "When he asks if it's his, you will be honest and admit that you can't be sure.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "6b923151-1a62-41ee-ad46-a27db1ea9608",
+              "label": "Check phone",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_rjwqtdxv",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_ci8w5gdo",
+        "type": "storyNode",
+        "position": {
+          "x": 2571.386995136077,
+          "y": -518.2502641023553
+        },
+        "data": {
+          "title": "Casual Lie",
+          "content": "When he asks, you will reassure him that the baby is his, even though you are unsure.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "6cc1b667-aba4-4325-ad56-575fb7031bf7",
+              "label": "Check phone",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_rjwqtdxv",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_l942ziit",
+        "type": "storyNode",
+        "position": {
+          "x": 2276.527777777778,
+          "y": 228
+        },
+        "data": {
+          "title": "Open Truth",
+          "content": "When he asks if the baby is his, you will tell him the truth and admit that you truly do not know, nor do you feel certain of how likely it is to be his.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "effc4208-37ba-47ae-8bd7-105f962ecf99",
+              "label": "Check phone",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_rjwqtdxv",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_aytz7ny7",
+        "type": "storyNode",
+        "position": {
+          "x": 2630.648154972843,
+          "y": -197.84323408057145
+        },
+        "data": {
+          "title": "Open Lie",
+          "content": "When he asks if the baby is his, you will comfort him by saying that you are sure it is, even though that's wildly untrue.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "8eca34bc-dc7c-4c6b-be8c-d45b412b31fe",
+              "label": "Check phone",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_rjwqtdxv",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_rjwqtdxv",
+        "type": "storyNode",
+        "position": {
+          "x": 2029.9999999999998,
+          "y": 962
+        },
+        "data": {
+          "title": "New Message",
+          "content": "Marcus: It's been like an hour and I still haven't heard from you...starting to worry",
+          "blockType": "chat",
+          "choices": [
+            {
+              "id": "e51ea3c2-39e7-4880-b74f-3c0aac514dc7",
+              "label": "Tell him",
+              "choiceKind": "chatReply",
+              "playerMessage": "I'm pregnant",
+              "npcResponse": "Marcus: Oh fuck...are you sure?",
+              "targetNodeId": "",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "81f418b8-f448-4bb2-a91c-d302c5377f1e",
+              "label": "Avoid him",
+              "choiceKind": "chatReply",
+              "playerMessage": "Sorry, can't talk",
+              "npcResponse": "Marcus: ...",
+              "targetNodeId": "node_4vtzw6sz",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_4vtzw6sz",
+        "type": "storyNode",
+        "position": {
+          "x": 50.99074074074082,
+          "y": 810.074074074074
+        },
+        "data": {
+          "title": "Your Feelings",
+          "content": "Forgetting about everyone else for a moment, how does the test result make YOU feel?",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "85aecaa9-7aeb-489f-b166-8003eb81cf69",
+              "label": "Scared",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_op3wfp92",
+              "conditions": [],
+              "effects": [
+                {
+                  "variable": "emotion",
+                  "action": "set",
+                  "value": "Fear"
+                }
+              ]
+            },
+            {
+              "id": "daf42d5b-eed3-4191-a59b-7817d7036d80",
+              "label": "Angry",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_ojtpmjym",
+              "conditions": [],
+              "effects": [
+                {
+                  "variable": "emotion",
+                  "action": "set",
+                  "value": "Anger"
+                }
+              ]
+            },
+            {
+              "id": "4bcca351-4629-4555-b855-169647098911",
+              "label": "Sad",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_vkhraw99",
+              "conditions": [],
+              "effects": [
+                {
+                  "variable": "emotion",
+                  "action": "set",
+                  "value": "Sadness"
+                }
+              ]
+            },
+            {
+              "id": "e9747128-e7be-4104-b37a-b7befabec202",
+              "label": "Uncertain",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_dig30rdk",
+              "conditions": [],
+              "effects": [
+                {
+                  "variable": "emotion",
+                  "action": "set",
+                  "value": "Uncertainty"
+                }
+              ]
+            },
+            {
+              "id": "52b2bb21-f02a-4ed7-a085-4a79547d09f2",
+              "label": "Hopeful",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_ygi3t1yx",
+              "conditions": [],
+              "effects": [
+                {
+                  "variable": "emotion",
+                  "action": "set",
+                  "value": "Hopeful"
+                }
+              ]
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_op3wfp92",
+        "type": "storyNode",
+        "position": {
+          "x": 354.0000000000001,
+          "y": 1070
+        },
+        "data": {
+          "title": "Fear",
+          "content": "What about being pregnant scares you most?",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "9fc99bb1-0c04-4177-b1e8-768fabac59f6",
+              "label": "Lack of experience",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_rjwqtdxv",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "2afd6c35-e22f-4647-b7d2-002b61f5004b",
+              "label": "Being unprepared for parenthood",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_rjwqtdxv",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "4b5c1a4e-0477-4465-972b-337ddba3f0b6",
+              "label": "The physical realitites",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_rjwqtdxv",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "85d06f44-9bbe-4e67-af77-54572a56e53e",
+              "label": "The timing",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_rjwqtdxv",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_ojtpmjym",
+        "type": "storyNode",
+        "position": {
+          "x": 1090.0000000000002,
+          "y": 1217.2
+        },
+        "data": {
+          "title": "Anger",
+          "content": "What about being pregnant makes you most angry?",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "881f2196-dd72-44f7-a43e-851326c8b590",
+              "label": "The inequality of the burden",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_rjwqtdxv",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "920ba0d1-7e6f-439e-af00-2319c0578d61",
+              "label": "Being forced to make a choice about what to do",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_rjwqtdxv",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "779b942d-213f-42c1-ac36-49171e8e011e",
+              "label": "Lack of family and friends for support",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_rjwqtdxv",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "59c01a26-d19b-4047-bc3e-c4f628698a8e",
+              "label": "A feeling of your body being invaded and no longer fully your own",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_rjwqtdxv",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_vkhraw99",
+        "type": "storyNode",
+        "position": {
+          "x": 784.0000000000002,
+          "y": 1194
+        },
+        "data": {
+          "title": "Sadness",
+          "content": "What about being pregnant makes you most sad?",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "1c5d1a60-fa6b-4580-b4b3-5e45c5a53262",
+              "label": "Marcus is not the partner you want to have children with",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_rjwqtdxv",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "6a75ca86-6677-4b28-bd60-d052f5dd003c",
+              "label": "You are not confident of what the morally right choice is in this situation",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_rjwqtdxv",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "751b372e-5f79-40eb-815f-578ab9664b95",
+              "label": "All possible paths forward look equally as unappealing",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_rjwqtdxv",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "02261b27-1079-452e-97e4-ae56cf0f06f7",
+              "label": "You feel that you have let yourself down and knew better than to engage in the risky behaviors that led up to this moment",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_rjwqtdxv",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_dig30rdk",
+        "type": "storyNode",
+        "position": {
+          "x": -23.999999999999574,
+          "y": 428.0000000000001
+        },
+        "data": {
+          "title": "Uncertainty",
+          "content": "What does being pregnant make you feel most uncertain about?",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "ae22772d-932b-4a57-8a95-10bf2ca52278",
+              "label": "Whether or not to give birth",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_rjwqtdxv",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "bd112811-7e05-492d-8bf2-da650817edc7",
+              "label": "Whether or not you may regret having an abortion",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_rjwqtdxv",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "65a38120-0388-4d7f-b9d1-d13e55d2b728",
+              "label": "What an abortion procedure actually looks like and how the experience will feel to go through",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_rjwqtdxv",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "e68f5c32-59a6-4ce9-8ff9-dd7044f3a52d",
+              "label": "What will happen to your relationship with Marcus if you become parents",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_rjwqtdxv",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_ygi3t1yx",
+        "type": "storyNode",
+        "position": {
+          "x": 1415.5092592592591,
+          "y": 1293.0555555555554
+        },
+        "data": {
+          "title": "Hopeful",
+          "content": "What does being pregnant make you feel most hopeful about?",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "473dd725-a127-46a4-99ae-05ed1671d08b",
+              "label": "Motherhood: you would love to have children at some point, but this seems like a terrible time in your life to start",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_rjwqtdxv",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "0120505b-b8d0-4cec-8ab3-27c431ff314f",
+              "label": "Possibilities for your future: becoming the mother of this baby may end your unhappy relationship and mark the start of a new era in your life",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_rjwqtdxv",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "8e663413-b0d6-482c-b1a6-b8e91f362301",
+              "label": "Symbolism and motivations: what if the arrival of this baby will be the event we both need in our lives to truly change",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_rjwqtdxv",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "4868448b-b96a-4305-8d2d-66d6819a6530",
+              "label": "Ability to forget: if you choose to end this pregnancy, you don't have to share the news with anyone else and plan on simply moving forward alone in that knowledge",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_rjwqtdxv",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      }
+    ],
+    "variableMeta": {
+      "relationship_type": {
+        "playerDescription": "Relationship"
+      },
+      "location": {
+        "playerLabel": "Location"
+      },
+      "paternity": {
+        "playerLabel": "Paternity"
+      },
+      "emotion": {
+        "playerLabel": "Emotion"
+      }
+    }
+  },
+  "exportedAt": "2026-11-09T09:30:24.430Z"
+}

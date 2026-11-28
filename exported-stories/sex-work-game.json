@@ -1,0 +1,770 @@
+{
+  "formatVersion": 1,
+  "story": {
+    "variables": {
+      "services": "",
+      "fs": "",
+      "oral": "",
+      "Anal": "",
+      "rates": 0,
+      "clients": 0,
+      "fetishes": "",
+      "location": "",
+      "limits": "",
+      "earnings": 0
+    },
+    "characters": [
+      {
+        "id": "char_uszrp5lh",
+        "name": "Brad",
+        "description": "",
+        "aliases": []
+      },
+      {
+        "id": "char_tp5ec8t9",
+        "name": "Brian",
+        "description": "",
+        "aliases": []
+      },
+      {
+        "id": "char_84lxkp4g",
+        "name": "Ben",
+        "description": "",
+        "aliases": []
+      },
+      {
+        "id": "char_lto07006",
+        "name": "Mark",
+        "description": "",
+        "aliases": []
+      },
+      {
+        "id": "char_6gx3ssqt",
+        "name": "Chris",
+        "description": "",
+        "aliases": []
+      },
+      {
+        "id": "char_dtgm05hy",
+        "name": "Tim",
+        "description": "",
+        "aliases": []
+      },
+      {
+        "id": "char_dgrva848",
+        "name": "Glen",
+        "description": "",
+        "aliases": []
+      },
+      {
+        "id": "char_qif82glx",
+        "name": "Alex",
+        "description": "",
+        "aliases": []
+      },
+      {
+        "id": "char_hoawzt1f",
+        "name": "Curtis",
+        "description": "",
+        "aliases": []
+      },
+      {
+        "id": "char_228g0os5",
+        "name": "Charlie",
+        "description": "",
+        "aliases": []
+      },
+      {
+        "id": "char_5hi07smk",
+        "name": "David",
+        "description": "",
+        "aliases": []
+      },
+      {
+        "id": "char_kronzg37",
+        "name": "Greg",
+        "description": "\"Can I cum twice?\"",
+        "aliases": []
+      },
+      {
+        "id": "char_1rwy7wjk",
+        "name": "James",
+        "description": "\"I can hook you up with a free phone plan. You can just see me once a week and I'll pay the bill.\"",
+        "aliases": []
+      },
+      {
+        "id": "char_9phxoqll",
+        "name": "Jesse",
+        "description": "",
+        "aliases": []
+      },
+      {
+        "id": "char_5n2b7z27",
+        "name": "Mike",
+        "description": "",
+        "aliases": []
+      },
+      {
+        "id": "char_6mxi6u13",
+        "name": "Nick",
+        "description": "",
+        "aliases": []
+      },
+      {
+        "id": "char_xyd1c09o",
+        "name": "Pete",
+        "description": "",
+        "aliases": []
+      },
+      {
+        "id": "char_y5ur3gef",
+        "name": "Randy",
+        "description": "",
+        "aliases": []
+      },
+      {
+        "id": "char_41cjjawf",
+        "name": "Grant",
+        "description": "",
+        "aliases": []
+      },
+      {
+        "id": "char_0h6qi4ua",
+        "name": "Steve",
+        "description": "",
+        "aliases": []
+      }
+    ],
+    "nodes": [
+      {
+        "id": "node_64dhd0xp",
+        "type": "storyNode",
+        "position": {
+          "x": 69.72989458169769,
+          "y": 96.52511686397571
+        },
+        "data": {
+          "title": "Start",
+          "content": "Things have been rough lately; you recently moved out on your own. \n\nIt's what you wanted, but it's proven harder than you had anticipated to secure a place to live and meet the other demands of adulthood.\n\nWhat you desperately need is a job, or a reliable source of income.\n\nYou do not have a college degree, but you did get your GED as a teenager. You figure that's better than nothing, right?\n\nYou're still young, with most things still available to you as options for the future. That won't stay true forever though, so don't get too complacent. \n\nYou have an acquaintance who recently confided in you about how she started escorting about six months ago. Since she let you in on this secret, she's been occasionally mentioning how much money she sometimes makes in a day when you guys chat.\n\nIt seems like...a lot. \n\nYou ask her how long it took to make that, and she laughs and tells you only a few hours. Less than half of a shift at a regular full-time job.\n\nThat gives you pause.\n\nYou ask her how she got into this line of work.\n\nShe says she has a girlfriend who is a stripper and cam model, who sometimes sees clients privately and helped show her the ropes.\n\nHmmmm.\n\nWhat are you thinking right about now?",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "choice-1",
+              "label": "I'm skeptical; it can't be that easy and profitable without any down sides",
+              "targetNodeId": "story-node-1",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "choice-2",
+              "label": "Mind-blown! Why have I not asked her to help me get started sooner?!",
+              "targetNodeId": "story-node-2",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "story-node-1",
+        "type": "storyNode",
+        "position": {
+          "x": 792.5094683892727,
+          "y": 97.68350365966279
+        },
+        "data": {
+          "title": "Skeptical",
+          "content": "\"Yeah...but what's the catch?\"\n\nShe raises her eyebrows and looks you up and down.\n\n\"What do you mean?\"\n\n\"It can't all be good! Aren't you afraid of getting raped or murdered??\"\n\nShe smiles and looks at you as if she's not sure if you're serious or trolling her.\n\n\"Um...well, no. Not really.\"\n\nYou give her a look of suspicion.\n\n\"What about guys who are gross or really unattractive...surely you get some clients you'd rather not touch at all, right?\"\n\nShe shrugs a bit and replies: \n\n\"Maybe I've just been lucky or something...but all the clients I've met with have been polite, respectful, clean, and average looking most of the time.\"",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "choice-23",
+              "label": "Check messages",
+              "targetNodeId": "node_3e3eavxl",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "story-node-2",
+        "type": "storyNode",
+        "position": {
+          "x": 786.4577196988223,
+          "y": 231.72323426605493
+        },
+        "data": {
+          "title": "Mind Blown",
+          "content": "You ask her if she would be willing to help you get setup and started with finding an booking a few clients of your own.\n\nShe smiles and says of course...and tells you that the first thing you should do is start writing down your \"Menu\" of services.\n\nHow do I do that?\n\nIt's easy, you just make a list of the sexual acts you are willing to do and then decide how much money you will charge for each one. You should also make a list of your hard limits and things you do NOT offer, so people don't constantly ask about them and waste your time.\n\nHow do I know how much to charge??\n\nHere is a website where I post my ads. Browse the listings in our city for girls around the same age as us, and see what kind of rates they post in their ads.\n\nThat should give you an idea of what is reasonable.\n\nYou now have some research to do and decisions to make.\n\nWhich task do you want to get started on?",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "choice-5",
+              "label": "Writing list of services",
+              "targetNodeId": "story-node-5",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "choice-6",
+              "label": "Research escort listings",
+              "targetNodeId": "story-node-6",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "story-node-5",
+        "type": "storyNode",
+        "position": {
+          "x": 2456.2465473145194,
+          "y": -92.34321700370091
+        },
+        "data": {
+          "title": "Menu",
+          "content": "Well, you didn't have much luck browsing ads so you figure you should at least work on the menu as much as you can for now.\n\nYou might not have any realistic idea of how much it would make sense to charge, but you don't need help with figuring out which services you're comfortable offering.\n\nYou open up a new document on your computer and set everything up.\n\nAs you consider what to put on this list you're about to make, you wonder how specific it should be...?\n\nHmmm.\n\nWell, for now let's just cover the basics that everyone would expect to be a possibililty for this kind of thing.\n\nWhat's the first thing you add to the list of services?",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "choice-9",
+              "label": "Regular intercourse",
+              "targetNodeId": "story-node-7",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "choice-10",
+              "label": "Oral sex",
+              "targetNodeId": "story-node-8",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "choice-11",
+              "label": "Anal sex",
+              "targetNodeId": "story-node-9",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "story-node-6",
+        "type": "storyNode",
+        "position": {
+          "x": 1174.4113287767873,
+          "y": 346.88951393269633
+        },
+        "data": {
+          "title": "Browse Ads",
+          "content": "You open up the link she sent you and start scrolling down the screen and skimming the endless sea of ads for other women in your city.\n\nYou filter the results to women in their 20s and consider which ads you should click on to investigate.\n\nWhich will you open first?",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "choice-3",
+              "label": "🖤 EVENING DEAL: SIN & SEDUCTION 🖤",
+              "targetNodeId": "story-node-3",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "choice-4",
+              "label": "IN A CITY NEAR YOU 🍒💋LETS PLAY",
+              "targetNodeId": "story-node-4",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "story-node-3",
+        "type": "storyNode",
+        "position": {
+          "x": 1635.8373762718334,
+          "y": 199.7752485230406
+        },
+        "data": {
+          "title": "Sin & Seduction",
+          "content": "The devil wears lipstick, and she’s looking for playmates. 😈\n\n🚬 Smoke rings & control.\n🤫 Discretion guaranteed.\n🔥 One taste. Forever hooked.\n\nI don't beg. I select.\n\nYou want to be my dirty little secret 💦\n\nSend a message with your age/location/time.\n\nNo games. Just adrenaline.\n\n---\n\nUnfortunately, there is no information about specific services or rates in this ad.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "choice-7",
+              "label": "Menu",
+              "targetNodeId": "story-node-5",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "story-node-4",
+        "type": "storyNode",
+        "position": {
+          "x": 1635.9443275025599,
+          "y": 442.40542065513455
+        },
+        "data": {
+          "title": "Let's Play",
+          "content": "Hello Gentlemen\n\nmy name is Dila I am 5'4 140pd I am down to Earth, very outgoing in discreet\n\nI have a desire to please and I love to relieve your stress with my soft\ntouch 🛑Over Nights Welcome\n\n💯Real Pics NO Explicit Language\n\nPassport Ready ,Massage Ready NO AA🛑 No negotiating\n\n📍Serious inquries📍 I would love to see you\n\nFirst time callers will be screened 🚘 available 24/7\n\n---\n\nUnfortunately, there is no information about specific services or rates.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "choice-8",
+              "label": "Menu",
+              "targetNodeId": "story-node-5",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "story-node-7",
+        "type": "storyNode",
+        "position": {
+          "x": 2792.2465473145194,
+          "y": 57.65678299629906
+        },
+        "data": {
+          "title": "Full Service",
+          "content": "I mean...is this one even optional?!\n\nIsn't sex kinda the whole idea, or whatever?\n\nYou'll need to consult your friend on a few things, clearly.\n\nWhat feels like an appropriate rate for having sex with a guy?",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "choice-12",
+              "label": "No less than $200",
+              "targetNodeId": "story-node-10",
+              "conditions": [],
+              "effects": [
+                {
+                  "variable": "fs",
+                  "action": "set",
+                  "value": "available"
+                }
+              ],
+              "choiceKind": "goTo"
+            },
+            {
+              "id": "choice-13",
+              "label": "At least $300",
+              "targetNodeId": "story-node-11",
+              "conditions": [],
+              "effects": [
+                {
+                  "variable": "fs",
+                  "action": "set",
+                  "value": "available"
+                }
+              ],
+              "choiceKind": "goTo"
+            },
+            {
+              "id": "choice-14",
+              "label": "Around $400",
+              "targetNodeId": "story-node-12",
+              "conditions": [],
+              "effects": [
+                {
+                  "variable": "fs",
+                  "action": "set",
+                  "value": "available"
+                }
+              ],
+              "choiceKind": "goTo"
+            },
+            {
+              "id": "choice-15",
+              "label": "$500 or more",
+              "targetNodeId": "story-node-13",
+              "conditions": [],
+              "effects": [
+                {
+                  "variable": "fs",
+                  "action": "set",
+                  "value": "available"
+                }
+              ],
+              "choiceKind": "goTo"
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "story-node-8",
+        "type": "storyNode",
+        "position": {
+          "x": 2802.2465473145194,
+          "y": 171.65678299629906
+        },
+        "data": {
+          "title": "Blowjobs",
+          "content": "This one seems pretty absurd to refuse if you're going to do sex work...\n\nHow much are you comfortable charging for a blowjob?",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "choice-18",
+              "label": "No less than $100",
+              "targetNodeId": "story-node-15",
+              "conditions": [],
+              "effects": [
+                {
+                  "variable": "oral",
+                  "action": "set",
+                  "value": "available"
+                }
+              ],
+              "choiceKind": "goTo"
+            },
+            {
+              "id": "choice-19",
+              "label": "At least $150",
+              "targetNodeId": "story-node-14",
+              "conditions": [],
+              "effects": [
+                {
+                  "variable": "oral",
+                  "action": "set",
+                  "value": "available"
+                }
+              ],
+              "choiceKind": "goTo"
+            },
+            {
+              "id": "choice-20",
+              "label": "No less than $200",
+              "targetNodeId": "story-node-16",
+              "conditions": [],
+              "effects": [
+                {
+                  "variable": "oral",
+                  "action": "set",
+                  "value": "available"
+                }
+              ],
+              "choiceKind": "goTo"
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "story-node-9",
+        "type": "storyNode",
+        "position": {
+          "x": 2782.2465473145194,
+          "y": 301.65678299629894
+        },
+        "data": {
+          "title": "Anal",
+          "content": "",
+          "blockType": "narrative",
+          "choices": [],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "story-node-10",
+        "type": "storyNode",
+        "position": {
+          "x": 3112.2465473145194,
+          "y": 1057.6567829962992
+        },
+        "data": {
+          "title": "$200",
+          "content": "For now, you jot down $200 minimum next to regular intercourse.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "choice-16",
+              "label": "Add oral sex",
+              "targetNodeId": "story-node-8",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "choice-17",
+              "label": "Add anal sex",
+              "targetNodeId": "story-node-9",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "story-node-11",
+        "type": "storyNode",
+        "position": {
+          "x": 3112.2465473145194,
+          "y": 1157.6567829962992
+        },
+        "data": {
+          "title": "$300",
+          "content": "",
+          "blockType": "narrative",
+          "choices": [],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "story-node-12",
+        "type": "storyNode",
+        "position": {
+          "x": 3112.2465473145194,
+          "y": 1257.6567829962992
+        },
+        "data": {
+          "title": "$400",
+          "content": "",
+          "blockType": "narrative",
+          "choices": [],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "story-node-13",
+        "type": "storyNode",
+        "position": {
+          "x": 3112.2465473145194,
+          "y": 1357.6567829962992
+        },
+        "data": {
+          "title": "$500",
+          "content": "",
+          "blockType": "narrative",
+          "choices": [],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "story-node-14",
+        "type": "storyNode",
+        "position": {
+          "x": 3132.2465473145194,
+          "y": 1567.6567829962992
+        },
+        "data": {
+          "title": "$150",
+          "content": "For now, you jot down no less than $150 next to blowjobs.\n\n",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "choice-21",
+              "label": "Add anal sex",
+              "targetNodeId": "story-node-9",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "choice-22",
+              "label": "I'm done for now",
+              "targetNodeId": "story-node-17",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "story-node-15",
+        "type": "storyNode",
+        "position": {
+          "x": 3122.2465473145194,
+          "y": 1671.6567829962992
+        },
+        "data": {
+          "title": "$100",
+          "content": "",
+          "blockType": "narrative",
+          "choices": [],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "story-node-16",
+        "type": "storyNode",
+        "position": {
+          "x": 3122.2465473145194,
+          "y": 1771.6567829962992
+        },
+        "data": {
+          "title": "$200 BJ",
+          "content": "",
+          "blockType": "narrative",
+          "choices": [],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "story-node-17",
+        "type": "storyNode",
+        "position": {
+          "x": 3452.2465473145194,
+          "y": 3267.656782996299
+        },
+        "data": {
+          "title": "Break",
+          "content": "",
+          "blockType": "narrative",
+          "choices": [],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_3e3eavxl",
+        "type": "storyNode",
+        "position": {
+          "x": 1165.9688587029746,
+          "y": 103.36401177418514
+        },
+        "data": {
+          "title": "Incoming Message",
+          "content": "Brad: Hey, saw your ad from today. You avail?",
+          "blockType": "chat",
+          "choices": [
+            {
+              "id": "ae2ba0e4-db0e-4747-a764-500341760ac9",
+              "label": "Yes",
+              "choiceKind": "chatReply",
+              "playerMessage": "Yes, what time did you want to meet up?",
+              "npcResponse": "Brad: Great, how about I come pick you up at 2PM?",
+              "targetNodeId": "node_zrm1bgs8",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "2efcfdf7-fe25-4c20-94f2-6cc0652ede12",
+              "label": "No",
+              "choiceKind": "chatReply",
+              "playerMessage": "No, sorry!",
+              "npcResponse": "Brian: Bummer! No prob",
+              "targetNodeId": "node_zrm1bgs8",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_1bw2j6y8",
+        "type": "storyNode",
+        "position": {
+          "x": 2226,
+          "y": -388
+        },
+        "data": {
+          "title": "Message from Greg",
+          "content": "Greg: Hey there, I was wondering if I could cum twice during the same appointment?",
+          "blockType": "chat",
+          "choices": [
+            {
+              "id": "45f067d7-5a1a-405b-b1f9-8d22cb0bea63",
+              "label": "Sure",
+              "choiceKind": "chatReply",
+              "playerMessage": "You're free to use the time you book however you'd like, as long as you don't go over what we agreed to.",
+              "npcResponse": "Greg: Nice! I can head over now if you'd like.",
+              "targetNodeId": "story-node-5",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "e9127f41-dffb-41e5-9583-71a2387944b3",
+              "label": "No",
+              "choiceKind": "chatReply",
+              "playerMessage": "Sorry, I prefer to take our time and make the first one count.",
+              "npcResponse": "Greg: I see...okay, well I'll reach out soon about booking an appointment. Thanks!",
+              "targetNodeId": "story-node-5",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      },
+      {
+        "id": "node_zrm1bgs8",
+        "type": "storyNode",
+        "position": {
+          "x": 1776,
+          "y": -302
+        },
+        "data": {
+          "title": "New Messages",
+          "content": "Write your story text here.",
+          "blockType": "narrative",
+          "choices": [
+            {
+              "id": "5ae06301-d27f-4711-bfb5-ee467dd9fc9e",
+              "label": "Next message",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "node_1bw2j6y8",
+              "conditions": [],
+              "effects": []
+            },
+            {
+              "id": "1e85c898-b1bd-43ea-9f1a-9c262d3a8b01",
+              "label": "Inbox",
+              "choiceKind": "goTo",
+              "playerMessage": "",
+              "npcResponse": "",
+              "targetNodeId": "",
+              "conditions": [],
+              "effects": []
+            }
+          ],
+          "enterEffects": []
+        }
+      }
+    ],
+    "variableMeta": {
+      "services": {
+        "playerLabel": "Menu"
+      },
+      "fs": {
+        "playerLabel": "Intercourse"
+      },
+      "oral": {
+        "playerLabel": "Blowjobs"
+      },
+      "rates": {
+        "playerLabel": "Rates"
+      },
+      "clients": {
+        "playerLabel": "Clients"
+      },
+      "fetishes": {
+        "playerLabel": "Fetishes"
+      },
+      "location": {
+        "playerLabel": "Location"
+      },
+      "limits": {
+        "playerLabel": "Limits"
+      },
+      "earnings": {
+        "playerLabel": "Earnings"
+      }
+    }
+  },
+  "exportedAt": "2026-11-12T15:09:54.015Z"
+}
